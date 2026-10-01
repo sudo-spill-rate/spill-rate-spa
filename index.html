@@ -1,13 +1,54 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>feedback-rating-spa</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
-</html>
+<!doctype html>                                                                                              
+<html lang="en">                                                                                             
+                                                                                                              
+<head>                                                                                                       
+  <meta charset="UTF-8" />                                                                                   
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />                                   
+  <title>Feedback & Rating - Discover, Review, and Rate Trusted Businesses</title>                           
+                                                                                                              
+  <!-- SEO Meta -->                                                                                          
+  <meta name="description" content="Discover local businesses, read verified customer feedback, and share authentic ratings and reviews with photos.">                                                                   
+  <meta name="keywords" content="feedback, rating, business reviews, customer reviews, local businesses, star ratings, business directory">                                                                                  
+  <meta name="author" content="Feedback Rating Team">                                                        
+  <meta name="robots" content="index, follow">                                                               
+                                                                                                              
+  <!-- Favicon (Move image to public/assets/) -->                                                            
+  <link rel="icon" type="image/png" sizes="64x64" href="/logo.png" />                                        
+                                                                                                              
+  <!-- Open Graph -->                                                                                        
+  <meta property="og:title" content="Feedback & Rating - Discover, Review, and Rate Trusted Businesses">     
+  <meta property="og:description" content="Discover local businesses, read verified customer feedback, and share authentic ratings and reviews with photos.">                                                                                         
+  <meta property="og:type" content="website">                                                                
+  <meta property="og:url" content="%VITE_APP_URL%">                                                          
+  <meta property="og:image" content="%VITE_APP_URL%/assets/logo.png">                                        
+                                                                                                              
+  <!-- Twitter Card -->                                                                                      
+  <meta name="twitter:card" content="summary_large_image">                                                   
+  <meta name="twitter:title" content="Feedback & Rating - Discover, Review, and Rate Trusted Businesses">    
+  <meta name="twitter:description" content="Discover local businesses, read verified customer feedback, and share authentic ratings and reviews with photos.">                                                                                         
+  <meta name="twitter:image" content="%VITE_APP_URL%/assets/logo.png">                                       
+                                                                                                              
+  <!-- Structured Data -->                                                                                   
+  <script type="application/ld+json">                                                                        
+  {                                                                                                          
+    "@context": "https://schema.org",                                                                        
+    "@type": "WebSite",                                                                                      
+    "name": "Feedback Rating",                                                                               
+    "url": "%VITE_APP_URL%",                                                                                 
+    "description": "Customer feedback, ratings, and business directory platform.",                           
+    "potentialAction": {                                                                                     
+      "@type": "SearchAction",                                                                               
+      "target": "%VITE_APP_URL%/businesses?search={search_term_string}",                                     
+      "query-input": "required name=search_term_string"                                                      
+    }                                                                                                        
+  }                                                                                                          
+  </script>                                                                                                  
+                                                                                                              
+</head>                                                                                                      
+                                                                                                              
+<body>                                                                                                       
+  <div id="root"><!-- ssr --></div>                                                                          
+  <script type="module" src="/src/client-entry.jsx"></script>                                                
+</body>                                                                                                      
+                                                                                                              
+</html>              
