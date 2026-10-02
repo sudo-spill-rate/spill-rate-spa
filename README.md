@@ -1,16 +1,57 @@
-# React + Vite
+# 🚀 Feedback & Rating Platform (Frontend SPA)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, responsive Single Page Application (SPA) built with **React**, **Vite**, **TypeScript**, **React Router v7**, **Tailwind CSS**, and **TanStack Query**.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 📚 Documentation Links
+* 📡 **[Full Backend API Endpoints Reference](./API_ENDPOINTS.md)** — Comprehensive documentation covering all API endpoints (`/auth`, `/businesses`, `/review`, and moderation).
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠️ Tech Stack & Architecture
+* **Framework:** React 19 + Vite
+* **Routing:** React Router v7 (Modular route files: `Routes.auth.tsx`, `Routes.public.tsx`, `Routes.business.tsx`, `Routes.review.tsx`)
+* **State & Data Fetching:** TanStack React Query (`@tanstack/react-query`) + React Context API
+* **HTTP Client:** Axios (Custom configured instance with base URL `/v1/api` and token interceptors)
+* **Styling:** Tailwind CSS + PostCSS
+* **Backend:** Express 5 + Supabase PostgreSQL + Cloudinary
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 📂 Project Structure
+
+```text
+src/
+├── context/               # React Context Providers (Auth, Business, Review, ManageReview)
+├── hooks/                 # Custom React Hooks (useUserAuth, useBusinessProfile, useCustomerReviews, etc.)
+├── lib/                   # API Axios client instance and utility helpers
+├── pages/
+│   ├── PublicPages/       # Landing, Directory, About, Contact, FAQ, Legal
+│   ├── BusinessPages/     # Owner Dashboard, Business Profile, Moderation Hub
+│   ├── ReviewPages/       # Public Business View, 1-5 Star Review Submission Form
+│   └── SignIn/            # Google OAuth Login & Callback
+├── routes/                # Modular route configs and ProtectedRoute guard
+├── services/              # API Service layer (authService, businessService, reviewService, manageReviewService)
+└── types/                 # Strict TypeScript models and API contracts
+```
+
+---
+
+## 🚦 Getting Started
+
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+2. **Configure Environment Variables (`.env`):**
+   ```env
+   VITE_API_BASE_URL=http://localhost:3000/v1/api
+   VITE_APP_URL=http://localhost:5173
+   ```
+
+3. **Run Development Server:**
+   ```bash
+   npm run dev
+   ```

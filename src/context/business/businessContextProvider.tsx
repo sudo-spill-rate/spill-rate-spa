@@ -44,7 +44,7 @@ export const BusinessProvider: React.FC<BusinessProviderProps> = ({ children }) 
     }, []);                                                                                                        
                                                                                                                     
     // Load more gamit ang cursor                                                                                  
-    const loadMoreBusinesses = async (): Promise<void> => {                                                        
+    const loadMoreBusinesses = useCallback(async (): Promise<void> => {                                                        
         if (!pagination?.has_more || !pagination?.next_cursor || isLoadingMore) return;                            
                                                                                                                     
         try {                                                                                                      
@@ -63,10 +63,10 @@ export const BusinessProvider: React.FC<BusinessProviderProps> = ({ children }) 
         } finally {                                                                                                
             setIsLoadingMore(false);                                                                               
         }                                                                                                          
-    };                                                                                                             
+    }, [pagination, isLoadingMore]);                                                                                                             
                                                                                                                     
     // Kumuha ng single profile gamit ang slug                                                                     
-    const fetchBusinessBySlug = async (slug: string): Promise<Business | null> => {                                
+    const fetchBusinessBySlug = useCallback(async (slug: string): Promise<Business | null> => {                                
         try {                                                                                                      
             setIsLoading(true);                                                                                    
             setError(null);                                                                                        
@@ -88,10 +88,10 @@ export const BusinessProvider: React.FC<BusinessProviderProps> = ({ children }) 
         } finally {                                                                                                
             setIsLoading(false);                                                                                   
         }                                                                                                          
-    };                                                                                                             
+    }, []);                                                                                                             
                                                                                                                     
     // Lumikha ng bagong negosyo gamit ang businessService                                                         
-    const createBusiness = async (                                                                                 
+    const createBusiness = useCallback(async (                                                                                 
         payload: CreateBusinessPayload                                                                             
     ): Promise<{ success: boolean; data?: Business; message?: string }> => {                                       
         try {                                                                                                      
@@ -121,11 +121,11 @@ export const BusinessProvider: React.FC<BusinessProviderProps> = ({ children }) 
         } finally {                                                                                                
             setIsCreating(false);                                                                                  
         }                                                                                                          
-    };                                                                                                             
+    }, []);                                                                                                             
                                                                                                                     
-    const clearSelectedBusiness = (): void => {                                                                    
+    const clearSelectedBusiness = useCallback((): void => {                                                                    
         setSelectedBusiness(null);                                                                                 
-    };                                                                                                             
+    }, []);                                                                                                             
                                                                                                                     
     useEffect(() => {                                                                                              
         fetchBusinesses();                                                                                         

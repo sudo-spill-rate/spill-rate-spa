@@ -73,7 +73,7 @@ export const ReviewProvider: React.FC<ReviewProviderProps> = ({ children }) => {
     }, []);                                                                                                        
                                                                                                                     
     // Load more reviews gamit ang cursor                                                                          
-    const loadMoreReviews = async (businessSlug: string, ratingFilter?: number): Promise<void> => {                
+    const loadMoreReviews = useCallback(async (businessSlug: string, ratingFilter?: number): Promise<void> => {                
         if (!pagination?.has_more || !pagination?.next_cursor || isLoadingMore) return;                            
                                                                                                                     
         try {                                                                                                      
@@ -94,10 +94,10 @@ export const ReviewProvider: React.FC<ReviewProviderProps> = ({ children }) => {
         } finally {                                                                                                
             setIsLoadingMore(false);                                                                               
         }                                                                                                          
-    };                                                                                                             
+    }, [pagination, isLoadingMore]);                                                                                                             
                                                                                                                     
     // Mag-submit ng review gamit ang reviewService                                                                
-    const submitReview = async (                                                                                   
+    const submitReview = useCallback(async (                                                                                   
         businessSlug: string,                                                                                      
         payload: CreateReviewPayload                                                                               
     ): Promise<{ success: boolean; data?: Review; message?: string }> => {                                         
@@ -143,13 +143,13 @@ export const ReviewProvider: React.FC<ReviewProviderProps> = ({ children }) => {
         } finally {                                                                                                
             setIsSubmitting(false);                                                                                
         }                                                                                                          
-    };                                                                                                             
+    }, [eligibility]);                                                                                                             
                                                                                                                     
-    const clearReviews = (): void => {                                                                             
+    const clearReviews = useCallback((): void => {                                                                             
         setReviews([]);                                                                                            
         setPagination(null);                                                                                       
         setEligibility(null);                                                                                      
-    };                                                                                                             
+    }, []);                                                                                                             
                                                                                                                     
     return (                                                                                                       
         <ReviewContext.Provider                                                                                    

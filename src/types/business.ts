@@ -19,6 +19,11 @@ export interface Business {
     image_public_id?: string | null; // Cloudinary asset ID                                      
     user_id?: string; // Owner User UUID                                                         
     created_at: string; // ISO timestamp                                                         
+    category?: string | null; // e.g. "Food & Beverage", "Technology", "Retail"
+    address?: string | null; // Physical address
+    phone?: string | null; // Contact telephone or mobile number
+    website?: string | null; // External website link
+    is_verified?: boolean; // Verified Business Badge status
                                                                                                     
     // Aggregated rating statistics (Ibinabalik ng GET /businesses at GET /businesses/:slug)     
     total_reviews?: number;                                                                      
@@ -31,6 +36,10 @@ export interface Business {
 export interface CreateBusinessPayload {                                                         
     name: string;                                                                                
     description?: string;                                                                        
+    category?: string;                                                                           
+    address?: string;                                                                            
+    phone?: string;                                                                              
+    website?: string;                                                                            
     image?: File | Blob | null; // Single business logo/cover image (max 5MB)                    
 }                                                                                                
                                                                                                     
@@ -51,6 +60,8 @@ export interface BusinessQuotaLimitError {
 export interface BusinessListQuery {                                                             
     cursor?: string; // created_at ISO string para sa pagination                                 
     limit?: number;  // Default: 10, Max: 50                                                     
+    category?: string; // Filter by business category                                            
+    search?: string;   // Filter by business name keyword                                        
 }                                                                                                
                                                                                                     
 // 7. Response mula sa Business Directory (GET /v1/api/businesses)                               

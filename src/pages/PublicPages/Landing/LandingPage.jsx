@@ -1,10 +1,16 @@
-import React, { useEffect, useState } from "react";                                 
-                                                                                    
-export default function LandingPage() {                                             
-    return (                                                                          
-    <div>                                                                           
-        <h1>Landing Page - Lorem Ipsum</h1>                                           
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>               
-    </div>                                                                          
-    );                                                                                
+import React from "react";
+import LandingHero from "../components/landing/LandingHero";
+import FeaturedSection from "../components/landing/FeaturedSection";
+import HowItWorks from "../components/landing/HowItWorks";
+import OwnerCallToAction from "../components/landing/OwnerCallToAction";
+
+export default function LandingPage() {
+  return (
+    <div className="flex flex-col">
+      <LandingHero />
+      <FeaturedSection />
+      <HowItWorks />
+      <OwnerCallToAction />
+    </div>
+  );
 }

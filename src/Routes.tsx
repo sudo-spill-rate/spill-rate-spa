@@ -14,7 +14,8 @@ import { BusinessProvider } from "./context/business/businessContextProvider";
                                                                                                                         
 // 3. Pages & Guards                                                                                                    
 import { ProtectedRoute } from "./routes/ProtectedRoute";                                                               
-import PageNotFound from "./pages/PageNotFound/PageNotFoundPage";                                                 
+import PageNotFound from "./pages/PageNotFound/PageNotFoundPage";
+import PublicLayout from "./pages/PublicPages/components/layout/PublicLayout";                                                 
                                                                                                                         
 const queryClient = new QueryClient({                                                                                   
     defaultOptions: {                                                                                                     
@@ -32,13 +33,15 @@ export default function Routes() {
         <AuthProvider>                                                                                                    
         <ReactRoutes>                                                                                                   
             {/* 1. Public Pages (Landing, About, Contact, FAQ, Terms, Privacy) */}                                        
-            {PublicRoutes.map((route) => (                                                                                
-            <Route                                                                                                      
-                key={route.key}                                                                                           
-                path={route.path}                                                                                         
-                element={route.element}                                                                                   
-            />                                                                                                          
-            ))}                                                                                                           
+            <Route element={<PublicLayout />}>
+              {PublicRoutes.map((route) => (                                                                                
+                <Route                                                                                                      
+                    key={route.key}                                                                                           
+                    path={route.path}                                                                                         
+                    element={route.element}                                                                                   
+                />                                                                                                          
+              ))}
+            </Route>                                                                                                           
                                                                                                                         
             {/* 2. Authentication Routes (/login, /oauth/callback) */}                                                    
             {AuthRoutes.map((route) => (                                                                                  
