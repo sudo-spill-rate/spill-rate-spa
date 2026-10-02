@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link, NavLink, useLocation } from "react-router";
-import { Menu, X, Star, Building2, User, LogOut, Compass, HelpCircle, PhoneCall, Info } from "lucide-react";
+import { Menu, X, Star, User, LogOut, Compass, HelpCircle, PhoneCall, Info } from "lucide-react";
 import { useUserAuth } from "../../../../hooks/useUserAuth";
 
 export default function PublicNavbar() {
@@ -98,21 +98,12 @@ export default function PublicNavbar() {
                 </button>
               </div>
             ) : (
-              <>
-                <Link
-                  to="/login"
-                  className="px-3.5 py-2 text-sm font-medium text-slate-700 hover:text-slate-950 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600 rounded-lg"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  to="/login"
-                  className="flex items-center gap-1.5 px-4 py-2.5 text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 active:bg-slate-950 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[44px]"
-                >
-                  <Building2 className="w-4 h-4 text-teal-400" />
-                  <span>Business Portal</span>
-                </Link>
-              </>
+              <Link
+                to="/login"
+                className="px-4 py-2 text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 active:bg-slate-950 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[44px] inline-flex items-center justify-center"
+              >
+                Sign In
+              </Link>
             )}
           </div>
 
@@ -175,21 +166,12 @@ export default function PublicNavbar() {
                 </button>
               </>
             ) : (
-              <>
-                <Link
-                  to="/login"
-                  className="w-full py-3 px-4 text-center font-medium text-slate-700 hover:bg-slate-100 rounded-lg min-h-[44px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-teal-600"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  to="/login"
-                  className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-slate-900 text-white font-semibold rounded-lg text-center min-h-[44px] focus:outline-none focus:ring-2 focus:ring-teal-600"
-                >
-                  <Building2 className="w-4 h-4 text-teal-400" />
-                  <span>Business Portal</span>
-                </Link>
-              </>
+              <Link
+                to="/login"
+                className="w-full py-3 px-4 text-center font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-lg min-h-[44px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-teal-600"
+              >
+                Sign In
+              </Link>
             )}
           </div>
         </div>
