@@ -62,6 +62,7 @@ export interface BusinessListQuery {
     limit?: number;  // Default: 10, Max: 50                                                     
     category?: string; // Filter by business category                                            
     search?: string;   // Filter by business name keyword                                        
+    user_id?: string;  // Filter by owner user id
 }                                                                                                
                                                                                                     
 // 7. Response mula sa Business Directory (GET /v1/api/businesses)                               

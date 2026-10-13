@@ -155,13 +155,15 @@ export default function BusinessDashboardPage() {
           {/* Portfolio Metric Overview */}
           <PortfolioStatsOverview businesses={businesses} />
 
-          {/* Quota Banner */}
-          <BusinessLimitBanner count={businessCount} maxLimit={5} />
+          {/* Quota Reached Alert only if at 5/5 */}
+          {businessCount >= 5 && (
+            <BusinessLimitBanner count={businessCount} maxLimit={5} />
+          )}
 
           {/* Section Header & Local Search */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-4">
             <h2 className="text-sm sm:text-base font-bold text-slate-900">
-              Active Profiles ({filteredBusinesses.length} of {businessCount})
+              Active Storefronts ({filteredBusinesses.length} of {businessCount})
             </h2>
 
             {businessCount > 2 && (
@@ -181,7 +183,7 @@ export default function BusinessDashboardPage() {
 
           {/* Business Cards Grid */}
           {filteredBusinesses.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 gap-4">
               {filteredBusinesses.map((biz) => (
                 <OwnerBusinessCard key={biz.id || biz.slug} business={biz} />
               ))}

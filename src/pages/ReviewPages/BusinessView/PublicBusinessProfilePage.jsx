@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams, useNavigate, Link } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { AlertCircle, Building, ChevronLeft } from "lucide-react";
 import BusinessPublicHeader from "../components/businessView/BusinessPublicHeader";
@@ -61,7 +61,7 @@ export default function PublicBusinessProfilePage() {
 
   const handleWriteReview = () => {
     if (business) {
-      navigate(`/business/${business.id}/write-review`);
+      navigate(`/business/${business.slug || business.id}/write-review`);
     }
   };
 
@@ -98,12 +98,13 @@ export default function PublicBusinessProfilePage() {
             >
               Retry
             </button>
-            <Link
-              to="/explore"
-              className="px-5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[40px] flex items-center justify-center"
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
+              className="px-5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[40px] flex items-center justify-center cursor-pointer"
             >
               Back to Directory
-            </Link>
+            </button>
           </div>
         </div>
       </div>

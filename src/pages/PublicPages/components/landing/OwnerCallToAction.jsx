@@ -20,7 +20,7 @@ export default function OwnerCallToAction() {
 
               <div className="pt-1 sm:pt-2 flex flex-col sm:flex-row sm:items-center gap-2.5 sm:gap-3">
                 <Link
-                  to="/login"
+                  to="/dashboard/business/new"
                   className="w-full sm:w-auto inline-flex items-center justify-center px-5 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 active:bg-slate-950 text-white font-semibold text-xs sm:text-sm transition-colors min-h-[44px] focus:outline-none focus:ring-2 focus:ring-teal-600 shadow-xs"
                 >
                   Register Business

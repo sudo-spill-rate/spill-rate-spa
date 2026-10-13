@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router";
 import {
-  Building2,
   Building,
   LayoutDashboard,
   Compass,
@@ -30,7 +29,7 @@ export default function DashboardNavbar() {
     try {
       setIsLoggingOut(true);
       await logout();
-      navigate("/login", { replace: true });
+      navigate("/", { replace: true });
     } catch {
       setIsLoggingOut(false);
     }
@@ -51,9 +50,11 @@ export default function DashboardNavbar() {
               to="/dashboard"
               className="flex items-center gap-2 sm:gap-2.5 focus:outline-none focus:ring-2 focus:ring-teal-600 rounded-lg p-1"
             >
-              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-teal-700 flex items-center justify-center text-white shrink-0">
-                <Building2 className="w-4 h-4 sm:w-5 sm:h-5" />
-              </div>
+              <img
+                src="/logo.png"
+                alt="TrustRate Logo"
+                className="w-8 h-8 sm:w-9 sm:h-9 object-contain shrink-0"
+              />
               <div className="flex items-baseline gap-1.5 sm:gap-2">
                 <span className="font-bold text-base sm:text-lg text-slate-900 tracking-tight">TrustRate</span>
                 <span className="text-[10px] sm:text-xs font-medium text-teal-800 bg-teal-50 border border-teal-200 px-1.5 sm:px-2 py-0.5 rounded-full">

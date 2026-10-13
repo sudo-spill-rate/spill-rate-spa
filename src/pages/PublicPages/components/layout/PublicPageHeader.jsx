@@ -2,10 +2,17 @@ import React from "react";
 import { Link } from "react-router";
 import { ChevronRight } from "lucide-react";
 
-export default function PublicPageHeader({ title, description, breadcrumbs = [], children }) {
+export default function PublicPageHeader({
+  title,
+  description,
+  breadcrumbs = [],
+  children,
+  compact = false,
+  containerClassName = "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+}) {
   return (
-    <div className="bg-white border-b border-slate-200/80 py-6 sm:py-10 lg:py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className={`bg-white border-b border-slate-200/80 ${compact ? "py-5 sm:py-6" : "py-6 sm:py-10 lg:py-12"}`}>
+      <div className={containerClassName}>
         {breadcrumbs.length > 0 && (
           <nav aria-label="Breadcrumb" className="mb-3 sm:mb-4">
             <ol className="flex items-center gap-1.5 text-xs text-slate-500">

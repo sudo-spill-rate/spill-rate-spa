@@ -1,35 +1,54 @@
 import React from "react";
-import { Link } from "react-router";
-import { Star } from "lucide-react";
+import { Link, useLocation } from "react-router";
 
 export default function PublicFooter() {
   const currentYear = new Date().getFullYear();
+  const { pathname } = useLocation();
+  const isHomePage = pathname === "/";
 
   return (
-    <footer className="bg-slate-50 border-t border-slate-200/80 py-6 sm:py-8 text-slate-600">
+    <footer className="bg-slate-50 border-t border-slate-200/80 text-slate-600">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        {/* On Homepage: Notice row directly integrated into the footer top */}
+        {isHomePage && (
+          <div className="py-3 sm:py-3.5 border-b border-slate-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 text-xs sm:text-sm text-slate-500">
+            <span>
+              Ratings reflect unfiltered community feedback. Scores are mathematical averages from 1 to 5 stars.
+            </span>
+            <Link
+              to="/explore"
+              className="font-semibold text-teal-700 hover:text-teal-800 focus:outline-none focus:ring-2 focus:ring-teal-600 rounded shrink-0"
+            >
+              Browse all businesses →
+            </Link>
+          </div>
+        )}
+
+        {/* Main Footer Links & Brand */}
+        <div className="py-4 sm:py-5 flex flex-col md:flex-row md:items-center md:justify-between gap-3 sm:gap-4">
           {/* Brand Logo & Short Identifier */}
           <div className="flex items-center gap-2.5">
             <Link
               to="/"
               className="inline-flex items-center gap-2 font-bold text-base text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-600 rounded p-0.5"
             >
-              <div className="w-6 h-6 rounded-md bg-slate-900 flex items-center justify-center text-teal-400">
-                <Star className="w-3.5 h-3.5 fill-teal-400 text-teal-400" />
-              </div>
+              <img
+                src="/logo.png"
+                alt="TrustRate Logo"
+                className="w-5 h-5 sm:w-6 sm:h-6 object-contain shrink-0"
+              />
               <span className="tracking-tight text-base font-bold">
                 Trust<span className="text-teal-700">Rate</span>
               </span>
             </Link>
-            <span className="text-xs text-slate-400 hidden sm:inline" aria-hidden="true">|</span>
+            <span className="text-xs text-slate-300 hidden sm:inline" aria-hidden="true">|</span>
             <span className="text-xs text-slate-500 hidden sm:inline">
               Authentic community ratings
             </span>
           </div>
 
           {/* Clean Inline Navigation Links */}
-          <nav aria-label="Footer Navigation" className="flex flex-wrap items-center gap-x-4 sm:gap-x-5 gap-y-1.5 text-xs sm:text-sm">
+          <nav aria-label="Footer Navigation" className="flex flex-wrap items-center gap-x-4 sm:gap-x-5 gap-y-1 text-xs sm:text-sm">
             <Link
               to="/explore"
               className="text-slate-600 hover:text-slate-900 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600 rounded py-0.5"
@@ -70,7 +89,7 @@ export default function PublicFooter() {
         </div>
 
         {/* Minimized Copyright & Metadata Row */}
-        <div className="mt-4 pt-4 border-t border-slate-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-slate-500">
+        <div className="pt-3 pb-4 border-t border-slate-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-slate-500">
           <p>© {currentYear} TrustRate. Community ratings protected by device cooldowns.</p>
           <p className="text-slate-400">Philippines</p>
         </div>

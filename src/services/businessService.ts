@@ -20,6 +20,7 @@ class BusinessService {
             if (query?.limit) params.append("limit", String(query.limit));
             if (query?.category?.trim()) params.append("category", query.category.trim());
             if (query?.search?.trim()) params.append("search", query.search.trim());
+            if (query?.user_id?.trim()) params.append("user_id", query.user_id.trim());
 
             const queryString = params.toString() ? `?${params.toString()}` : "";
             const response = await api.get<BusinessListResponse>(`/businesses${queryString}`);
@@ -35,6 +36,40 @@ class BusinessService {
                 data: [],
                 pagination: { limit: 10, has_more: false, next_cursor: null },
                 message: error.response?.data?.message || "Failed to fetch businesses",
+            };
+        }
+    }
+
+    /**
+     * Kumuha ng mga negosyo na pag-aari ng kasalukuyang naka-log in na business owner
+     * GET /v1/api/business/owner (o fallback sa GET /businesses?user_id=...)
+     */
+    async getOwnerBusinesses(query?: BusinessListQuery): Promise<PaginatedApiResponse<Business>> {
+        try {
+            const params = new URLSearchParams();
+            if (query?.cursor) params.append("cursor", query.cursor);
+            if (query?.limit) params.append("limit", String(query.limit));
+            if (query?.category?.trim()) params.append("category", query.category.trim());
+            if (query?.search?.trim()) params.append("search", query.search.trim());
+            if (query?.user_id?.trim()) params.append("user_id", query.user_id.trim());
+
+            const queryString = params.toString() ? `?${params.toString()}` : "";
+            try {
+                const response = await api.get<BusinessListResponse>(`/business/owner${queryString}`);
+                return {
+                    success: true,
+                    data: response.data.data || [],
+                    pagination: response.data.pagination,
+                };
+            } catch {
+                return await this.getBusinesses(query);
+            }
+        } catch (error: any) {
+            return {
+                success: false,
+                data: [],
+                pagination: { limit: 10, has_more: false, next_cursor: null },
+                message: error.response?.data?.message || "Failed to fetch owner businesses",
             };
         }
     }

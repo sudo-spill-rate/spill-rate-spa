@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { useSearchParams } from "react-router";
+import { useSearchParams, Link } from "react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Search, X, Compass, Filter } from "lucide-react";
+import {
+  Search,
+  X,
+  AlertCircle,
+  PlusCircle,
+  Building,
+} from "lucide-react";
 import DashboardLayout from "../components/layout/DashboardLayout";
-import CategoryFilters from "../../PublicPages/components/explore/CategoryFilters";
-import DirectorySearchResults from "../../PublicPages/components/explore/DirectorySearchResults";
+import StorefrontFeedCard from "../components/explore/StorefrontFeedCard";
 import { businessService } from "../../../services/businessService";
+import { useBusiness } from "../../../context/business/useBusiness";
 
 const CATEGORIES = [
   "Food & Beverage",
@@ -16,105 +22,36 @@ const CATEGORIES = [
   "Professional Services",
 ];
 
-const SAMPLE_DIRECTORY = [
-  {
-    id: "sample-1",
-    name: "Kape Balangay Artisanal Roastery",
-    slug: "kape-balangay",
-    category: "Food & Beverage",
-    description: "Specialty Philippine coffee beans, pour-overs, and freshly baked pastries.",
-    address: "123 Rizal St., Poblacion, Makati City",
-    image_url: "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=600&auto=format&fit=crop&q=80",
-    is_verified: true,
-    rating_breakdown: { average_rating: 4.9, total_reviews: 48 },
-  },
-  {
-    id: "sample-2",
-    name: "Nexus Cloud & Cyber Solutions",
-    slug: "nexus-cloud-solutions",
-    category: "Technology",
-    description: "Enterprise IT support, cloud migrations, and network security for SMEs.",
-    address: "88 Ortigas Ave., Pasig City",
-    image_url: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&auto=format&fit=crop&q=80",
-    is_verified: true,
-    rating_breakdown: { average_rating: 4.8, total_reviews: 26 },
-  },
-  {
-    id: "sample-3",
-    name: "Verde Wellness & Botanical Spa",
-    slug: "verde-wellness-spa",
-    category: "Health & Wellness",
-    description: "Therapeutic massages, natural aromatherapy, and organic skin treatments.",
-    address: "45 Bonifacio High St., Taguig City",
-    image_url: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=600&auto=format&fit=crop&q=80",
-    is_verified: true,
-    rating_breakdown: { average_rating: 5.0, total_reviews: 39 },
-  },
-  {
-    id: "sample-4",
-    name: "Panaderia dela Luna",
-    slug: "panaderia-dela-luna",
-    category: "Food & Beverage",
-    description: "Traditional sourdough pandesal, artisanal Spanish breads, and hot cocoa.",
-    address: "12 Luna St., Quezon City",
-    image_url: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=600&auto=format&fit=crop&q=80",
-    is_verified: false,
-    rating_breakdown: { average_rating: 4.7, total_reviews: 19 },
-  },
-  {
-    id: "sample-5",
-    name: "Apex Auto Repair & Detailing",
-    slug: "apex-auto-repair",
-    category: "Automotive",
-    description: "Complete vehicle maintenance, computer diagnostics, and ceramic coating.",
-    address: "204 C5 Road, Pasig City",
-    image_url: "https://images.unsplash.com/photo-1486006920555-c77dce18193b?w=600&auto=format&fit=crop&q=80",
-    is_verified: true,
-    rating_breakdown: { average_rating: 4.6, total_reviews: 31 },
-  },
-  {
-    id: "sample-6",
-    name: "Craft & Loom Artisan Goods",
-    slug: "craft-and-loom",
-    category: "Retail",
-    description: "Locally handcrafted textiles, sustainable woven baskets, and home decor.",
-    address: "77 Maginhawa St., Quezon City",
-    image_url: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=600&auto=format&fit=crop&q=80",
-    is_verified: true,
-    rating_breakdown: { average_rating: 4.9, total_reviews: 22 },
-  },
-];
-
 export default function BusinessExplorePage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const searchParam = searchParams.get("search") || "";
   const categoryParam = searchParams.get("category") || "";
 
   const [searchInput, setSearchInput] = useState(searchParam);
+  const { businesses: ownerBusinesses } = useBusiness();
 
   useEffect(() => {
     setSearchInput(searchParam);
   }, [searchParam]);
 
-  const { data: response, isLoading, isError, refetch } = useQuery({
-    queryKey: ["dashboard-businesses", searchParam, categoryParam],
+  const {
+    data: response,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
+    queryKey: ["community-feed-businesses", searchParam, categoryParam],
     queryFn: () =>
       businessService.getBusinesses({
         search: searchParam || undefined,
         category: categoryParam || undefined,
-        limit: 30,
+        limit: 50,
       }),
     staleTime: 30000,
   });
 
-  const apiBusinesses = response?.success && Array.isArray(response.data) ? response.data : [];
-
-  const displayBusinesses =
-    apiBusinesses.length > 0
-      ? apiBusinesses
-      : !isLoading && !searchParam && !categoryParam
-      ? SAMPLE_DIRECTORY
-      : apiBusinesses;
+  const apiBusinesses =
+    response?.success && Array.isArray(response.data) ? response.data : [];
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
@@ -137,11 +74,29 @@ export default function BusinessExplorePage() {
   const handleCategorySelect = (category) => {
     const nextParams = new URLSearchParams(searchParams);
     if (category) {
-      nextParams.set("category", category);
+      if (categoryParam.toLowerCase() === category.toLowerCase()) {
+        nextParams.delete("category");
+      } else {
+        nextParams.set("category", category);
+      }
     } else {
       nextParams.delete("category");
     }
     setSearchParams(nextParams);
+  };
+
+  const handleClearAllFilters = () => {
+    setSearchInput("");
+    setSearchParams(new URLSearchParams());
+  };
+
+  const hasActiveFilters = Boolean(searchParam || categoryParam);
+
+  const isBusinessOwned = (biz) => {
+    if (!ownerBusinesses || ownerBusinesses.length === 0) return false;
+    return ownerBusinesses.some(
+      (b) => b.id === biz.id || (b.slug && b.slug === biz.slug)
+    );
   };
 
   return (
@@ -149,59 +104,187 @@ export default function BusinessExplorePage() {
       title="Directory Explorer"
       description="Inspect active business profiles, explore industry ratings, and review customer sentiment across the platform."
     >
-      <div className="space-y-6">
-        {/* Search Bar Panel */}
-        <div className="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-xs">
-          <form onSubmit={handleSearchSubmit} className="relative flex items-center">
-            <Search className="w-5 h-5 text-slate-400 absolute left-3.5 pointer-events-none" />
-            <input
-              type="text"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Search directory by business name or keyword..."
-              aria-label="Search directory"
-              className="w-full pl-10 pr-24 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:bg-white"
-            />
-            {searchInput && (
+      <div className="space-y-4">
+        {/* Search & Category Filter Bar */}
+        <div className="space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
+            <h2 className="text-sm sm:text-base font-bold text-slate-900">
+              Active Storefronts ({apiBusinesses.length})
+            </h2>
+
+            {/* Search Input */}
+            <form onSubmit={handleSearchSubmit} className="relative w-full sm:w-72">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <input
+                type="text"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                placeholder="Filter by name or keyword..."
+                aria-label="Filter registered storefronts"
+                className="w-full pl-9 pr-14 py-2 text-xs rounded-lg border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-teal-600 min-h-[38px]"
+              />
+              {searchInput && (
+                <button
+                  type="button"
+                  onClick={handleClearSearch}
+                  aria-label="Clear search"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-slate-600 rounded cursor-pointer"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </form>
+          </div>
+
+          {/* Category Filter Pills */}
+          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none -mx-1 px-1">
+            <button
+              type="button"
+              onClick={() => handleCategorySelect("")}
+              className={`px-3 py-1 rounded-full text-xs font-semibold transition-colors whitespace-nowrap cursor-pointer shrink-0 focus:outline-none focus:ring-2 focus:ring-teal-600 ${
+                !categoryParam
+                  ? "bg-slate-900 text-white shadow-2xs"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 border border-slate-200"
+              }`}
+            >
+              All Storefronts
+            </button>
+
+            {CATEGORIES.map((cat) => {
+              const isSelected =
+                categoryParam.toLowerCase() === cat.toLowerCase();
+              return (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => handleCategorySelect(cat)}
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors whitespace-nowrap cursor-pointer shrink-0 focus:outline-none focus:ring-2 focus:ring-teal-600 ${
+                    isSelected
+                      ? "bg-slate-900 text-white font-semibold shadow-2xs"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 border border-slate-200"
+                  }`}
+                >
+                  {cat}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Active Filter Notification */}
+          {hasActiveFilters && (
+            <div className="flex items-center justify-between text-xs text-slate-500 pt-1">
+              <span>
+                Filtered by{" "}
+                {searchParam && <strong className="text-slate-800">"{searchParam}"</strong>}
+                {searchParam && categoryParam && " in "}
+                {categoryParam && <span className="text-teal-700 font-semibold">[{categoryParam}]</span>}
+              </span>
               <button
                 type="button"
-                onClick={handleClearSearch}
-                aria-label="Clear search text"
-                className="absolute right-20 p-1 text-slate-400 hover:text-slate-600 rounded"
+                onClick={handleClearAllFilters}
+                className="text-teal-700 hover:text-teal-800 font-semibold underline cursor-pointer ml-2"
               >
-                <X className="w-4 h-4" />
+                Clear filter
               </button>
-            )}
-            <button
-              type="submit"
-              className="absolute right-1.5 px-4 py-1.5 bg-teal-700 hover:bg-teal-800 text-white rounded-md text-xs font-semibold transition-colors"
-            >
-              Search
-            </button>
-          </form>
+            </div>
+          )}
         </div>
 
-        {/* Content Layout with Category Filter + Results Grid */}
-        <div className="flex flex-col lg:flex-row gap-6 items-start">
-          {/* Category Filter Column */}
-          <aside className="w-full lg:w-56 shrink-0 bg-white rounded-xl border border-slate-200 p-4 shadow-xs">
-            <CategoryFilters
-              categories={CATEGORIES}
-              selectedCategory={categoryParam}
-              onSelectCategory={handleCategorySelect}
-            />
-          </aside>
-
-          {/* Results Grid */}
-          <div className="flex-1 w-full min-w-0">
-            <DirectorySearchResults
-              businesses={displayBusinesses}
-              isLoading={isLoading}
-              isError={isError}
-              onRetry={refetch}
-            />
+        {/* Loading Skeletons */}
+        {isLoading && (
+          <div className="grid grid-cols-1 gap-4" aria-busy="true" aria-label="Loading storefronts">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-xs space-y-3 animate-pulse"
+              >
+                <div className="flex items-start gap-3 sm:gap-3.5">
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-slate-200 shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-5 w-40 bg-slate-200 rounded" />
+                    <div className="h-3 w-28 bg-slate-200 rounded" />
+                  </div>
+                </div>
+                <div className="pt-2 border-t border-slate-100">
+                  <div className="h-3 w-full bg-slate-200 rounded" />
+                </div>
+                <div className="pt-2 border-t border-slate-100 flex justify-between">
+                  <div className="h-3 w-32 bg-slate-200 rounded" />
+                  <div className="h-3 w-24 bg-slate-200 rounded" />
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
+        )}
+
+        {/* Error State */}
+        {isError && (
+          <div className="bg-white rounded-xl border border-slate-200 p-8 text-center shadow-xs space-y-3">
+            <AlertCircle className="w-8 h-8 text-amber-600 mx-auto" aria-hidden="true" />
+            <h3 className="text-base font-bold text-slate-900">
+              Unable to Load Storefront Directory
+            </h3>
+            <p className="text-xs text-slate-600 max-w-sm mx-auto">
+              We couldn't retrieve the storefront directory right now. Please check your connection.
+            </p>
+            <button
+              type="button"
+              onClick={() => refetch()}
+              className="mt-2 px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold transition-colors cursor-pointer"
+            >
+              Retry
+            </button>
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!isLoading && !isError && apiBusinesses.length === 0 && (
+          <div className="bg-white rounded-xl border border-slate-200 p-8 sm:p-12 text-center shadow-xs space-y-3">
+            <div className="w-12 h-12 rounded-full bg-teal-50 border border-teal-200 text-teal-700 flex items-center justify-center mx-auto mb-2">
+              <Building className="w-6 h-6" />
+            </div>
+            <h3 className="text-base font-bold text-slate-900">
+              {hasActiveFilters ? "No storefronts found" : "No storefronts registered yet"}
+            </h3>
+            <p className="text-xs text-slate-600 max-w-md mx-auto">
+              {hasActiveFilters
+                ? `No businesses match your filter "${searchInput || categoryParam}".`
+                : "Be the first business owner to register a storefront and collect authentic customer reviews."}
+            </p>
+            <div className="pt-2">
+              {hasActiveFilters ? (
+                <button
+                  type="button"
+                  onClick={handleClearAllFilters}
+                  className="px-4 py-2 text-xs font-semibold text-teal-700 hover:text-teal-800 underline cursor-pointer"
+                >
+                  Clear search filter
+                </button>
+              ) : (
+                <Link
+                  to="/dashboard/business/new"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 bg-teal-700 hover:bg-teal-800 text-white rounded-lg text-xs font-semibold transition-colors"
+                >
+                  <PlusCircle className="w-4 h-4" />
+                  <span>Register Business</span>
+                </Link>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Storefront Cards Grid (Identical to Active Storefronts) */}
+        {!isLoading && !isError && apiBusinesses.length > 0 && (
+          <div className="grid grid-cols-1 gap-4">
+            {apiBusinesses.map((biz) => (
+              <StorefrontFeedCard
+                key={biz.id || biz.slug}
+                business={biz}
+                isOwner={isBusinessOwned(biz)}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </DashboardLayout>
   );

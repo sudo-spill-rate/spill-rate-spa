@@ -1,85 +1,64 @@
 import React from "react";
 import { Link } from "react-router";
-import { Mail, Clock, MapPin, HelpCircle, ShieldCheck } from "lucide-react";
 
 export default function ContactDetailsCard() {
   return (
-    <div className="bg-slate-100/90 p-6 sm:p-8 rounded-xl border border-slate-200/90 shadow-xs space-y-6">
+    <div className="bg-white p-5 sm:p-7 rounded-2xl border border-slate-200/90 shadow-xs space-y-5">
       <div>
-        <h2 className="text-xl font-bold text-slate-900 mb-1">Direct Assistance</h2>
-        <p className="text-xs sm:text-sm text-slate-600">
-          Have an urgent inquiry or questions about review moderation? Reach out to our operational team.
+        <h2 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight mb-1">
+          Direct Assistance
+        </h2>
+        <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+          Have an inquiry about a business profile or review moderation? Our operational team is available to assist.
         </p>
       </div>
 
-      <div className="space-y-4 text-sm">
-        <div className="flex items-start gap-3">
-          <div className="p-2 rounded-lg bg-white border border-slate-200 text-teal-700 shrink-0">
-            <Mail className="w-4 h-4" />
-          </div>
-          <div>
-            <h3 className="font-semibold text-slate-900 text-xs uppercase tracking-wider">Email Support</h3>
-            <p className="text-slate-600 mt-0.5">
-              <a
-                href="mailto:support@trustrate.local"
-                className="text-teal-700 hover:text-teal-800 font-medium underline focus:outline-none focus:ring-2 focus:ring-teal-600 rounded"
-              >
-                support@trustrate.local
-              </a>
-            </p>
-          </div>
+      <div className="space-y-3.5 text-sm">
+        <div className="pb-3 border-b border-slate-100">
+          <h3 className="font-semibold text-slate-900 text-xs uppercase tracking-wider">Email Support</h3>
+          <p className="text-slate-600 mt-1 text-xs sm:text-sm">
+            <a
+              href="mailto:support@trustrate.local"
+              className="text-teal-700 hover:text-teal-800 font-medium underline focus:outline-none focus:ring-2 focus:ring-teal-600 rounded"
+            >
+              support@trustrate.local
+            </a>
+          </p>
         </div>
 
-        <div className="flex items-start gap-3">
-          <div className="p-2 rounded-lg bg-white border border-slate-200 text-teal-700 shrink-0">
-            <Clock className="w-4 h-4" />
-          </div>
-          <div>
-            <h3 className="font-semibold text-slate-900 text-xs uppercase tracking-wider">Operating Hours</h3>
-            <p className="text-slate-600 mt-0.5">
-              Monday to Friday, 9:00 AM to 6:00 PM (PHT)
-            </p>
-            <p className="text-xs text-slate-500 mt-0.5">
-              Inquiries submitted over the weekend are answered the following business day.
-            </p>
-          </div>
+        <div className="pb-3 border-b border-slate-100">
+          <h3 className="font-semibold text-slate-900 text-xs uppercase tracking-wider">Operating Hours</h3>
+          <p className="text-slate-700 mt-1 text-xs sm:text-sm">
+            Monday to Friday, 9:00 AM to 6:00 PM (PHT)
+          </p>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Weekend inquiries are answered on the following business day.
+          </p>
         </div>
 
-        <div className="flex items-start gap-3">
-          <div className="p-2 rounded-lg bg-white border border-slate-200 text-teal-700 shrink-0">
-            <MapPin className="w-4 h-4" />
-          </div>
-          <div>
-            <h3 className="font-semibold text-slate-900 text-xs uppercase tracking-wider">Headquarters</h3>
-            <p className="text-slate-600 mt-0.5">
-              Metro Manila, Philippines
-            </p>
-          </div>
+        <div>
+          <h3 className="font-semibold text-slate-900 text-xs uppercase tracking-wider">Headquarters</h3>
+          <p className="text-slate-700 mt-1 text-xs sm:text-sm">
+            Metro Manila, Philippines
+          </p>
         </div>
       </div>
 
       {/* Verification Notice */}
-      <div className="pt-4 border-t border-slate-200 space-y-3">
-        <div className="flex items-start gap-2.5 text-xs text-slate-600">
-          <ShieldCheck className="w-4 h-4 text-teal-700 shrink-0 mt-0.5" />
-          <span>
-            Business owner accounts require official document verification before merchant access is granted.
-          </span>
-        </div>
-
-        <div className="flex items-start gap-2.5 text-xs text-slate-600">
-          <HelpCircle className="w-4 h-4 text-teal-700 shrink-0 mt-0.5" />
-          <span>
-            Looking for quick answers? Visit our{" "}
-            <Link
-              to="/faq"
-              className="text-teal-700 hover:text-teal-800 font-medium underline focus:outline-none focus:ring-2 focus:ring-teal-600 rounded"
-            >
-              FAQ section
-            </Link>{" "}
-            for common inquiries.
-          </span>
-        </div>
+      <div className="pt-4 border-t border-slate-100 space-y-2 text-xs text-slate-600 leading-relaxed">
+        <p>
+          Business owner accounts require official document verification before merchant access is granted.
+        </p>
+        <p>
+          Looking for quick answers? Visit our{" "}
+          <Link
+            to="/faq"
+            className="text-teal-700 hover:text-teal-800 font-medium underline focus:outline-none focus:ring-2 focus:ring-teal-600 rounded"
+          >
+            FAQ section
+          </Link>{" "}
+          for common inquiries.
+        </p>
       </div>
     </div>
   );

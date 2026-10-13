@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router";
-import { Compass, Home, Star } from "lucide-react";
+import { Compass, Home } from "lucide-react";
 
 export default function PageNotFoundPage() {
   return (
@@ -11,9 +11,11 @@ export default function PageNotFoundPage() {
           to="/"
           className="inline-flex items-center gap-2.5 font-bold text-xl text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-600 rounded p-1"
         >
-          <div className="w-8 h-8 rounded-lg bg-slate-900 flex items-center justify-center text-teal-400">
-            <Star className="w-4 h-4 fill-teal-400 text-teal-400" />
-          </div>
+          <img
+            src="/logo.png"
+            alt="TrustRate Logo"
+            className="w-8 h-8 object-contain shrink-0"
+          />
           <span className="tracking-tight text-xl">
             Trust<span className="text-teal-700">Rate</span>
           </span>

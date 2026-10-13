@@ -1,14 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router";
+import { useParams, useNavigate, Link } from "react-router";
 import {
   ChevronLeft,
-  ExternalLink,
   RotateCw,
   AlertTriangle,
   Building,
   CheckCircle2,
-  Copy,
-  Check,
   MapPin,
   Phone,
   Globe,
@@ -16,11 +13,13 @@ import {
 import DashboardLayout from "../components/layout/DashboardLayout";
 import ReviewModerationHub from "../components/profile/ReviewModerationHub";
 import BusinessRatingStatsCard from "../components/profile/BusinessRatingStatsCard";
+import ShareStorefrontMenu from "../components/profile/ShareStorefrontMenu";
 import { ReviewProvider } from "../../../context/review/reviewContextProvider";
 import { useBusinessProfile } from "../../../hooks/useBusinessProfile";
 
 export default function BusinessManageProfilePage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const {
     selectedBusiness,
     fetchBusinessBySlug,
@@ -29,7 +28,6 @@ export default function BusinessManageProfilePage() {
     error,
   } = useBusinessProfile();
 
-  const [copied, setCopied] = useState(false);
   const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
@@ -41,29 +39,23 @@ export default function BusinessManageProfilePage() {
     };
   }, [id, fetchBusinessBySlug, clearSelectedBusiness]);
 
-  const handleCopyUrl = async () => {
-    if (!selectedBusiness?.slug) return;
-    const url = `${window.location.origin}/business/${selectedBusiness.slug}`;
-    try {
-      await navigator.clipboard.writeText(url);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    } catch {
-      // Fallback if clipboard API is denied
-    }
+  const handleBack = () => {
+    navigate(-1);
   };
 
   return (
     <DashboardLayout activeBusinessSlug={id}>
       {/* 1. Breadcrumb / Back Link */}
       <div className="mb-4">
-        <Link
-          to="/dashboard"
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600 rounded p-1 min-h-[44px]"
+        <button
+          type="button"
+          onClick={handleBack}
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600 rounded p-1 min-h-[44px] cursor-pointer"
+          aria-label="Back to dashboard"
         >
-          <ChevronLeft className="w-4 h-4" />
+          <ChevronLeft className="w-4 h-4" aria-hidden="true" />
           <span>Back to Dashboard</span>
-        </Link>
+        </button>
       </div>
 
       {/* 2. Loading State */}
@@ -162,35 +154,12 @@ export default function BusinessManageProfilePage() {
                 </div>
               </div>
 
-              {/* Action Buttons: 2-column grid on mobile, inline on sm+ */}
-              <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 pt-1.5 sm:pt-0 border-t sm:border-t-0 border-slate-100 w-full sm:w-auto shrink-0">
-                <button
-                  type="button"
-                  onClick={handleCopyUrl}
-                  className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg transition-colors min-h-[44px] shadow-2xs focus:outline-none focus:ring-2 focus:ring-teal-600"
-                >
-                  {copied ? (
-                    <>
-                      <Check className="w-3.5 h-3.5 text-teal-600" />
-                      <span className="text-teal-700">Copied</span>
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="w-3.5 h-3.5 text-slate-500" />
-                      <span>Copy Link</span>
-                    </>
-                  )}
-                </button>
-
-                <Link
-                  to={`/business/${selectedBusiness.slug}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors min-h-[44px] shadow-xs focus:outline-none focus:ring-2 focus:ring-teal-600 truncate"
-                >
-                  <span className="truncate">View Public</span>
-                  <ExternalLink className="w-3.5 h-3.5 text-slate-300 shrink-0" />
-                </Link>
+              {/* Share Storefront Menu */}
+              <div className="pt-1.5 sm:pt-0 border-t sm:border-t-0 border-slate-100 w-full sm:w-auto flex justify-end shrink-0">
+                <ShareStorefrontMenu
+                  slug={selectedBusiness.slug}
+                  businessName={selectedBusiness.name}
+                />
               </div>
             </div>
 

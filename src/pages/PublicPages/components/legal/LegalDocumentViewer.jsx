@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import React from "react";
+import { Link } from "react-router";
 import PublicPageHeader from "../layout/PublicPageHeader";
 
 export default function LegalDocumentViewer({
@@ -9,94 +9,80 @@ export default function LegalDocumentViewer({
   breadcrumbs = [],
   sections = [],
 }) {
-  const [mobileTocOpen, setMobileTocOpen] = useState(false);
-
   return (
-    <div>
+    <article itemScope itemType="https://schema.org/WebPage" className="bg-slate-50 min-h-screen">
       <PublicPageHeader
         title={title}
         description={description}
         breadcrumbs={breadcrumbs}
+        compact={true}
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-14">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
-          {/* Table of Contents */}
-          <aside className="lg:col-span-4">
-            <div className="bg-white p-5 rounded-xl border border-slate-200 shadow-xs lg:sticky lg:top-24">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-xs font-bold uppercase tracking-wide text-slate-900">
-                    Document Sections
-                  </h2>
-                  <p className="text-xs text-slate-500 mt-0.5">
-                    Last updated: {lastUpdated}
-                  </p>
-                </div>
-                {/* Mobile toggle button */}
-                <button
-                  type="button"
-                  onClick={() => setMobileTocOpen(!mobileTocOpen)}
-                  className="lg:hidden p-1.5 text-slate-500 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-600 rounded"
-                  aria-label="Toggle document contents"
-                  aria-expanded={mobileTocOpen}
-                >
-                  <ChevronDown className={`w-4 h-4 transition-transform ${mobileTocOpen ? "rotate-180" : ""}`} />
-                </button>
-              </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8">
+        <main className="bg-white p-5 sm:p-8 lg:p-10 rounded-2xl border border-slate-200/90 shadow-xs">
+          {lastUpdated && (
+            <p className="text-xs text-slate-500 mb-6 pb-4 border-b border-slate-100">
+              Last updated: {lastUpdated}
+            </p>
+          )}
 
-              {/* Navigation list (always visible on desktop, toggled on mobile) */}
-              <nav
-                aria-label="Table of Contents"
-                className={`mt-4 pt-3 border-t border-slate-100 ${mobileTocOpen ? "block" : "hidden lg:block"}`}
+          <div className="space-y-7 sm:space-y-8">
+            {sections.map((section, idx) => (
+              <section
+                key={section.id}
+                id={section.id}
+                className="scroll-mt-28 pb-6 sm:pb-7 border-b border-slate-100 last:border-0 last:pb-0"
               >
-                <ol className="space-y-2 text-xs sm:text-sm">
-                  {sections.map((section, idx) => (
-                    <li key={section.id}>
-                      <a
-                        href={`#${section.id}`}
-                        onClick={() => setMobileTocOpen(false)}
-                        className="text-slate-600 hover:text-teal-800 transition-colors block py-1 focus:outline-none focus:ring-2 focus:ring-teal-600 rounded"
-                      >
-                        {idx + 1}. {section.heading}
-                      </a>
-                    </li>
-                  ))}
-                </ol>
-              </nav>
-            </div>
-          </aside>
+                <h2 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 tracking-tight mb-3">
+                  <span className="text-slate-400 mr-2">{idx + 1}.</span>
+                  {section.heading}
+                </h2>
 
-          {/* Document Content */}
-          <main className="lg:col-span-8 bg-white p-6 sm:p-10 rounded-xl border border-slate-200 shadow-xs">
-            <div className="space-y-10">
-              {sections.map((section, idx) => (
-                <section
-                  key={section.id}
-                  id={section.id}
-                  className="scroll-mt-24 pt-2 border-b border-slate-100 last:border-0 pb-8 last:pb-0"
-                >
-                  <h2 className="text-lg sm:text-xl font-bold text-slate-900 mb-3">
-                    {idx + 1}. {section.heading}
-                  </h2>
-                  <div className="text-xs sm:text-sm text-slate-600 leading-relaxed space-y-3 max-w-prose">
-                    {section.paragraphs &&
-                      section.paragraphs.map((p, pIdx) => <p key={pIdx}>{p}</p>)}
+                <div className="text-sm sm:text-[15px] text-slate-700 leading-relaxed space-y-3">
+                  {section.paragraphs &&
+                    section.paragraphs.map((p, pIdx) => <p key={pIdx}>{p}</p>)}
 
-                    {section.list && (
-                      <ul className="list-disc pl-5 space-y-1.5 mt-2">
-                        {section.list.map((item, itemIdx) => (
-                          <li key={itemIdx}>{item}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </section>
-              ))}
+                  {section.list && (
+                    <ul className="space-y-2 mt-3 pl-1">
+                      {section.list.map((item, itemIdx) => {
+                        const colonIndex = item.indexOf(":");
+                        const hasPrefix = colonIndex > 0 && colonIndex < 35;
+                        const title = hasPrefix ? item.slice(0, colonIndex + 1) : "";
+                        const content = hasPrefix ? item.slice(colonIndex + 1) : item;
+
+                        return (
+                          <li key={itemIdx} className="flex items-start gap-2">
+                            <span className="text-teal-700 font-bold shrink-0 mt-0.5">•</span>
+                            <span>
+                              {hasPrefix && (
+                                <strong className="font-semibold text-slate-900 mr-1">
+                                  {title}
+                                </strong>
+                              )}
+                              {content}
+                            </span>
+                          </li>
+                        );
+                      })}
+                    </ul>
+                  )}
+                </div>
+              </section>
+            ))}
+
+            {/* End-of-document footer note */}
+            <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs text-slate-500">
+              <span>Terms apply to all users and visitors of TrustRate.</span>
+              <Link
+                to="/contact"
+                className="font-medium text-teal-700 hover:text-teal-800 transition-colors inline-flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-teal-600 rounded"
+              >
+                Have questions? Contact our team →
+              </Link>
             </div>
-          </main>
-        </div>
+          </div>
+        </main>
       </div>
-    </div>
+    </article>
   );
 }
