@@ -9,11 +9,14 @@ import {
   MapPin,
   Phone,
   Globe,
+  Edit3,
+  Trash2,
 } from "lucide-react";
 import DashboardLayout from "../components/layout/DashboardLayout";
 import ReviewModerationHub from "../components/profile/ReviewModerationHub";
 import BusinessRatingStatsCard from "../components/profile/BusinessRatingStatsCard";
 import ShareStorefrontMenu from "../components/profile/ShareStorefrontMenu";
+import { EditBusinessModal, DeleteBusinessModal } from "../components/profile/BusinessActionModals";
 import { ReviewProvider } from "../../../context/review/reviewContextProvider";
 import { useBusinessProfile } from "../../../hooks/useBusinessProfile";
 
@@ -23,12 +26,18 @@ export default function BusinessManageProfilePage() {
   const {
     selectedBusiness,
     fetchBusinessBySlug,
+    updateBusiness,
+    deleteBusiness,
     clearSelectedBusiness,
     isLoading,
+    isUpdating,
+    isDeleting,
     error,
   } = useBusinessProfile();
 
   const [imageError, setImageError] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -41,6 +50,22 @@ export default function BusinessManageProfilePage() {
 
   const handleBack = () => {
     navigate(-1);
+  };
+
+  const handleUpdate = async (bizId, payload) => {
+    const res = await updateBusiness(bizId, payload);
+    if (res.success && id) {
+      fetchBusinessBySlug(id);
+    }
+    return res;
+  };
+
+  const handleDelete = async (bizId) => {
+    const res = await deleteBusiness(bizId);
+    if (res.success) {
+      navigate("/dashboard");
+    }
+    return res;
   };
 
   return (
@@ -115,19 +140,17 @@ export default function BusinessManageProfilePage() {
           <div className="bg-white rounded-xl border border-slate-200 p-3.5 sm:p-4 shadow-xs space-y-2.5 sm:space-y-3">
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
               <div className="flex items-start gap-3 sm:gap-3.5 flex-1 min-w-0">
-                {/* Storefront Logo or Fallback */}
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shrink-0 flex items-center justify-center">
-                  {selectedBusiness.image_url && !imageError ? (
+                {/* Storefront Logo (Only if business uploaded a logo) */}
+                {selectedBusiness.image_url && !imageError && (
+                  <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden shrink-0 flex items-center justify-center">
                     <img
                       src={selectedBusiness.image_url}
                       alt={`Logo of ${selectedBusiness.name}`}
                       className="w-full h-full object-cover"
                       onError={() => setImageError(true)}
                     />
-                  ) : (
-                    <Building className="w-6 h-6 text-slate-400" />
-                  )}
-                </div>
+                  </div>
+                )}
 
                 {/* Name, Verified Badge, Category, and Slug */}
                 <div className="flex-1 min-w-0">
@@ -154,12 +177,33 @@ export default function BusinessManageProfilePage() {
                 </div>
               </div>
 
-              {/* Share Storefront Menu */}
-              <div className="pt-1.5 sm:pt-0 border-t sm:border-t-0 border-slate-100 w-full sm:w-auto flex justify-end shrink-0">
+              {/* Action Buttons: Edit, Share Storefront, Delete */}
+              <div className="pt-1.5 sm:pt-0 border-t sm:border-t-0 border-slate-100 w-full sm:w-auto flex items-center justify-end gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setIsEditModalOpen(true)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer min-h-[38px]"
+                >
+                  <Edit3 className="w-3.5 h-3.5 text-slate-600" />
+                  <span>Edit Profile</span>
+                </button>
+
                 <ShareStorefrontMenu
                   slug={selectedBusiness.slug}
                   businessName={selectedBusiness.name}
+                  logoUrl={selectedBusiness.image_url}
+                  isOwner={true}
                 />
+
+                <button
+                  type="button"
+                  onClick={() => setIsDeleteModalOpen(true)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-red-200 bg-red-50 text-red-700 hover:bg-red-100 transition-colors cursor-pointer min-h-[38px]"
+                  title="Delete Storefront"
+                >
+                  <Trash2 className="w-3.5 h-3.5 text-red-600" />
+                  <span className="hidden sm:inline">Delete</span>
+                </button>
               </div>
             </div>
 
@@ -208,8 +252,29 @@ export default function BusinessManageProfilePage() {
             <BusinessRatingStatsCard business={selectedBusiness} />
 
             {/* 3. Customer Reviews & Moderation Feed */}
-            <ReviewModerationHub businessSlug={selectedBusiness.slug} />
+            <ReviewModerationHub
+              businessId={selectedBusiness.id}
+              businessSlug={selectedBusiness.slug}
+            />
           </ReviewProvider>
+
+          {/* Edit Business Modal */}
+          <EditBusinessModal
+            isOpen={isEditModalOpen}
+            onClose={() => setIsEditModalOpen(false)}
+            business={selectedBusiness}
+            onUpdate={handleUpdate}
+            isUpdating={isUpdating}
+          />
+
+          {/* Delete Business Confirmation Modal */}
+          <DeleteBusinessModal
+            isOpen={isDeleteModalOpen}
+            onClose={() => setIsDeleteModalOpen(false)}
+            business={selectedBusiness}
+            onDelete={handleDelete}
+            isDeleting={isDeleting}
+          />
         </div>
       )}
     </DashboardLayout>

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { X, AlertCircle } from "lucide-react";
 import { useUserAuth } from "../../../../hooks/useUserAuth";
+import { useBodyScrollLock } from "../../../../hooks/useBodyScrollLock";
 import GoogleSignInButton from "../../../SignInPages/components/GoogleSignInButton";
 import AuthLegalNotice from "../../../SignInPages/components/AuthLegalNotice";
 
 export default function SignInModal({ isOpen, onClose, redirectPath = "/dashboard" }) {
+  useBodyScrollLock(isOpen);
   const { loginWithGoogle, isAuthenticated, isLoading } = useUserAuth();
   const [errorMessage, setErrorMessage] = useState("");
   const [isRedirecting, setIsRedirecting] = useState(false);
@@ -24,11 +26,9 @@ export default function SignInModal({ isOpen, onClose, redirectPath = "/dashboar
       }
     };
     if (isOpen) {
-      document.body.style.overflow = "hidden";
       window.addEventListener("keydown", handleKeyDown);
     }
     return () => {
-      document.body.style.overflow = "unset";
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen, onClose]);
@@ -58,7 +58,7 @@ export default function SignInModal({ isOpen, onClose, redirectPath = "/dashboar
       {/* Dimmed Backdrop */}
       <div
         onClick={onClose}
-        className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs transition-opacity"
+        className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity"
         aria-hidden="true"
       />
 

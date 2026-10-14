@@ -8,12 +8,20 @@ import {
   Globe,
   Star,
   Briefcase,
+  ExternalLink,
 } from "lucide-react";
 import { useBusiness } from "../../../../context/business/useBusiness";
+import { useUserAuth } from "../../../../hooks/useUserAuth";
 
 export default function StorefrontFeedCard({ business, isOwner = false }) {
   const [imageError, setImageError] = useState(false);
   const { businesses: ownerBusinesses } = useBusiness();
+  const { user } = useUserAuth();
+
+  const isFounderOrAdmin = user?.role === "founder" || user?.role === "admin";
+  const isActualOwner =
+    isOwner ||
+    (ownerBusinesses || []).some((b) => b.id === business?.id || b.slug === business?.slug);
 
   const eligibleEndorsingBiz = (ownerBusinesses || []).find(
     (b) => b.id !== business?.id && b.slug !== business?.slug
@@ -28,7 +36,9 @@ export default function StorefrontFeedCard({ business, isOwner = false }) {
     business?.rating_breakdown?.total_reviews ?? business?.total_reviews ?? 0;
 
   const publicHref = `/business/${business.slug || business.id}`;
-  const manageHref = `/dashboard/business/${business.slug || business.id}`;
+  const manageHref = isFounderOrAdmin
+    ? `/admin/my-store/${business.slug || business.id}`
+    : `/dashboard/business/${business.slug || business.id}`;
 
   return (
     <article className="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-xs space-y-3 hover:border-slate-300 transition-colors">
@@ -144,14 +154,25 @@ export default function StorefrontFeedCard({ business, isOwner = false }) {
           )}
         </div>
 
-        {isOwner ? (
-          <Link
-            to={manageHref}
-            className="inline-flex items-center gap-1 font-semibold text-teal-700 hover:text-teal-800 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600 rounded"
-          >
-            <span>Manage Storefront</span>
-            <span aria-hidden="true">→</span>
-          </Link>
+        {isActualOwner || isFounderOrAdmin ? (
+          <div className="flex items-center gap-2">
+            <a
+              href={publicHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-1 text-slate-400 hover:text-slate-700 rounded cursor-pointer"
+              title="View Public Page"
+            >
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+            <Link
+              to={manageHref}
+              className="inline-flex items-center gap-1 font-semibold text-teal-700 hover:text-teal-800 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600 rounded"
+            >
+              <span>Manage Storefront</span>
+              <span aria-hidden="true">→</span>
+            </Link>
+          </div>
         ) : (
           <div className="flex items-center gap-3">
             {eligibleEndorsingBiz && (

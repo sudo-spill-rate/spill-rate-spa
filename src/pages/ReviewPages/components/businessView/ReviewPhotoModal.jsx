@@ -1,7 +1,10 @@
 import React, { useEffect } from "react";
 import { X } from "lucide-react";
+import { useBodyScrollLock } from "../../../../hooks/useBodyScrollLock";
 
 export default function ReviewPhotoModal({ imageUrl, alt = "Review photo", onClose }) {
+  useBodyScrollLock(Boolean(imageUrl));
+
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
@@ -19,7 +22,7 @@ export default function ReviewPhotoModal({ imageUrl, alt = "Review photo", onClo
       role="dialog"
       aria-modal="true"
       aria-label="Enlarged review photo"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-xs"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs"
       onClick={onClose}
     >
       <div

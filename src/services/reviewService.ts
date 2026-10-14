@@ -3,7 +3,11 @@ import {
     Review,                                                                                                        
     CreateReviewPayload,                                                                                           
     ReviewListQuery,                                                                                               
-    ReviewListResponse,                                                                                            
+    ReviewListResponse,
+    ReviewSummaryData,
+    ReviewVoteData,
+    ReportReviewPayload,
+    ReportReviewResponseData,                                                                                            
 } from "../types/review";                                                                                          
 import { CheckEligibilityResponse } from "../types/eligibility";                                                   
 import { ApiResponse, PaginatedApiResponse } from "../types/api";                                                  
@@ -73,7 +77,7 @@ class ReviewService {
     }                                                                                                              
                                                                                                                     
     /**                                                                                                            
-     * Magsumite ng review gamit ang FormData (May suporta para sa hanggang 2 litrato)                             
+     * Magsumite ng review gamit ang FormData (May suporta para sa hanggang 3 litrato)                             
      * POST /v1/api/review/:slug                                                                                   
      */                                                                                                            
     async submitReview(                                                                                            
@@ -94,9 +98,9 @@ class ReviewService {
                 formData.append("reviewer_business_id", payload.reviewer_business_id.trim());                      
             }                                                                                                      
                                                                                                                     
-            // Maglakip ng hanggang 2 litrato (Kung mayroon)                                                       
+            // Maglakip ng hanggang 3 litrato (Kung mayroon)                                                       
             if (payload.images && payload.images.length > 0) {                                                     
-                payload.images.slice(0, 2).forEach((file) => {                                                     
+                payload.images.slice(0, 3).forEach((file) => {                                                     
                     formData.append("images", file);                                                               
                 });                                                                                                
             }                                                                                                      
@@ -114,6 +118,102 @@ class ReviewService {
                 message: error.response?.data?.message || error.message || "Failed to submit review",              
             };                                                                                                     
         }                                                                                                          
+    }
+
+    /**
+     * Kumuha ng star distribution breakdown & rating summary
+     * GET /v1/api/review/:id/summary
+     */
+    async getReviewSummary(id: string): Promise<ApiResponse<ReviewSummaryData | null>> {
+        try {
+            const response = await api.get<{ success: boolean; data: ReviewSummaryData; message?: string }>(
+                `/review/${encodeURIComponent(id)}/summary`
+            );
+            return {
+                success: true,
+                data: response.data.data,
+                message: response.data.message,
+            };
+        } catch (error: any) {
+            return {
+                success: false,
+                data: null,
+                message: error.response?.data?.message || error.message || "Failed to fetch review summary",
+            };
+        }
+    }
+
+    /**
+     * Kumuha ng detalye ng isang review
+     * GET /v1/api/review/detail/:reviewId
+     */
+    async getReviewDetail(reviewId: string): Promise<ApiResponse<Review | null>> {
+        try {
+            const response = await api.get<{ success: boolean; data: Review; message?: string }>(
+                `/review/detail/${encodeURIComponent(reviewId)}`
+            );
+            return {
+                success: true,
+                data: response.data.data,
+                message: response.data.message,
+            };
+        } catch (error: any) {
+            return {
+                success: false,
+                data: null,
+                message: error.response?.data?.message || error.message || "Failed to fetch review detail",
+            };
+        }
+    }
+
+    /**
+     * I-toggle ang "Helpful" upvote sa review (+1 / -1)
+     * POST /v1/api/review/:reviewId/vote
+     */
+    async toggleHelpfulVote(reviewId: string): Promise<ApiResponse<ReviewVoteData | null>> {
+        try {
+            const response = await api.post<{ success: boolean; data: ReviewVoteData; message?: string }>(
+                `/review/${encodeURIComponent(reviewId)}/vote`
+            );
+            return {
+                success: true,
+                data: response.data.data,
+                message: response.data.message || "Helpful vote updated.",
+            };
+        } catch (error: any) {
+            return {
+                success: false,
+                data: null,
+                message: error.response?.data?.message || error.message || "Failed to toggle helpful vote",
+            };
+        }
+    }
+
+    /**
+     * I-report ang isang review (spam, offensive, fake, conflict of interest)
+     * POST /v1/api/review/:reviewId/report
+     */
+    async reportReview(
+        reviewId: string,
+        payload: ReportReviewPayload
+    ): Promise<ApiResponse<ReportReviewResponseData | null>> {
+        try {
+            const response = await api.post<{ success: boolean; data: ReportReviewResponseData; message?: string }>(
+                `/review/${encodeURIComponent(reviewId)}/report`,
+                payload
+            );
+            return {
+                success: true,
+                data: response.data.data,
+                message: response.data.message || "Review reported successfully.",
+            };
+        } catch (error: any) {
+            return {
+                success: false,
+                data: null,
+                message: error.response?.data?.message || error.message || "Failed to submit review report",
+            };
+        }
     }                                                                                                              
 }                                                                                                                  
                                                                                                                     

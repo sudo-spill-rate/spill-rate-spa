@@ -23,8 +23,8 @@ export default function DashboardLayout({
       <DashboardNavbar />
 
       {/* Main Body with Sidebar */}
-      <div className="flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-5 sm:py-8">
-        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
+      <div className="flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-3 sm:py-6">
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8 items-start">
           {/* Sidebar */}
           <DashboardSidebar activeBusinessSlug={activeBusinessSlug} />
 
@@ -32,15 +32,15 @@ export default function DashboardLayout({
           <main id="dashboard-main" tabIndex={-1} className="flex-1 w-full min-w-0">
             {/* Optional Header Banner */}
             {(title || action) && (
-              <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 pb-4 sm:pb-5 border-b border-slate-200">
-                <div>
+              <div className="mb-4 sm:mb-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-4 pb-3 sm:pb-3.5 border-b border-slate-200/90">
+                <div className="min-w-0 flex-1">
                   {title && (
-                    <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
+                    <h1 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
                       {title}
                     </h1>
                   )}
                   {description && (
-                    <p className="mt-1 text-xs sm:text-sm text-slate-600 leading-relaxed">
+                    <p className="mt-0.5 text-xs text-slate-500 line-clamp-2 leading-relaxed">
                       {description}
                     </p>
                   )}

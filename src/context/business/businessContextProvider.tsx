@@ -5,7 +5,12 @@ import React, {
     useCallback,
 } from "react";
 import { BusinessContext } from "./businessContext";
-import { Business, CreateBusinessPayload } from "../../types/business";
+import {
+    Business,
+    CreateBusinessPayload,
+    UpdateBusinessPayload,
+    BusinessAnalyticsData,
+} from "../../types/business";
 import { PaginationMeta } from "../../types/api";
 import { businessService } from "../../services/businessService";
 import { useUserAuth } from "../../hooks/useUserAuth";
@@ -22,6 +27,8 @@ export const BusinessProvider: React.FC<BusinessProviderProps> = ({ children }) 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
     const [isCreating, setIsCreating] = useState<boolean>(false);
+    const [isUpdating, setIsUpdating] = useState<boolean>(false);
+    const [isDeleting, setIsDeleting] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
     // Kumuha ng listahan ng negosyo para sa naka-log in na may-ari (owner)
@@ -42,7 +49,6 @@ export const BusinessProvider: React.FC<BusinessProviderProps> = ({ children }) 
             });
 
             if (res.success) {
-                // I-filter para sigurado na ang sariling businesses lang ng naka-log in ang makikita
                 const ownerBusinesses = user?.id
                     ? (res.data || []).filter((b) => b.user_id === user.id)
                     : res.data || [];
@@ -142,6 +148,96 @@ export const BusinessProvider: React.FC<BusinessProviderProps> = ({ children }) 
         }
     }, []);
 
+    // I-update ang negosyo (PATCH /v1/api/business/:id)
+    const updateBusiness = useCallback(async (
+        id: string,
+        payload: UpdateBusinessPayload
+    ): Promise<{ success: boolean; data?: Partial<Business>; message?: string }> => {
+        try {
+            setIsUpdating(true);
+            setError(null);
+
+            const res = await businessService.updateBusiness(id, payload);
+
+            if (res.success) {
+                // Update local selectedBusiness state kung active
+                setSelectedBusiness((prev) => (prev && prev.id === id ? { ...prev, ...res.data } : prev));
+                // Update list state
+                setBusinesses((prev) =>
+                    prev.map((b) => (b.id === id ? { ...b, ...res.data } : b))
+                );
+                return {
+                    success: true,
+                    data: res.data || undefined,
+                    message: res.message || "Business updated successfully.",
+                };
+            }
+
+            return {
+                success: false,
+                message: res.message || "Failed to update business.",
+            };
+        } catch (err: any) {
+            const message = err?.message || "Failed to update business.";
+            return { success: false, message };
+        } finally {
+            setIsUpdating(false);
+        }
+    }, []);
+
+    // I-delete ang negosyo (DELETE /v1/api/business/:id)
+    const deleteBusiness = useCallback(async (
+        id: string
+    ): Promise<{ success: boolean; message?: string }> => {
+        try {
+            setIsDeleting(true);
+            setError(null);
+
+            const res = await businessService.deleteBusiness(id);
+
+            if (res.success) {
+                setBusinesses((prev) => prev.filter((b) => b.id !== id));
+                if (selectedBusiness?.id === id) {
+                    setSelectedBusiness(null);
+                }
+                return {
+                    success: true,
+                    message: res.message || "Business deleted successfully.",
+                };
+            }
+
+            return {
+                success: false,
+                message: res.message || "Failed to delete business.",
+            };
+        } catch (err: any) {
+            const message = err?.message || "Failed to delete business.";
+            return { success: false, message };
+        } finally {
+            setIsDeleting(false);
+        }
+    }, [selectedBusiness?.id]);
+
+    // Kumuha ng analytics (GET /v1/api/business/:id/analytics)
+    const getAnalytics = useCallback(async (
+        id: string
+    ): Promise<{ success: boolean; data?: BusinessAnalyticsData | null; message?: string }> => {
+        const res = await businessService.getBusinessAnalytics(id);
+        return {
+            success: res.success,
+            data: res.data,
+            message: res.message,
+        };
+    }, []);
+
+    // Export reviews to CSV (GET /v1/api/business/:id/reviews/export)
+    const exportReviews = useCallback(async (
+        id: string,
+        businessSlugOrName?: string
+    ): Promise<{ success: boolean; message?: string }> => {
+        return await businessService.exportReviewsCsv(id, businessSlugOrName);
+    }, []);
+
     const clearSelectedBusiness = useCallback((): void => {
         setSelectedBusiness(null);
     }, []);
@@ -160,11 +256,17 @@ export const BusinessProvider: React.FC<BusinessProviderProps> = ({ children }) 
                 isLoading,
                 isLoadingMore,
                 isCreating,
+                isUpdating,
+                isDeleting,
                 error,
                 fetchBusinesses,
                 loadMoreBusinesses,
                 fetchBusinessBySlug,
                 createBusiness,
+                updateBusiness,
+                deleteBusiness,
+                getAnalytics,
+                exportReviews,
                 clearSelectedBusiness,
             }}
         >

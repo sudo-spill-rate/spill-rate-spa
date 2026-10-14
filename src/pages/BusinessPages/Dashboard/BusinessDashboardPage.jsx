@@ -50,7 +50,7 @@ export default function BusinessDashboardPage() {
         canCreateMore && businessCount > 0 ? (
           <Link
             to="/dashboard/business/new"
-            className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 text-xs font-semibold text-white bg-teal-700 hover:bg-teal-800 rounded-lg transition-colors min-h-[44px] w-full sm:w-auto shadow-xs focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2"
+            className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs sm:text-sm font-semibold text-white bg-teal-700 hover:bg-teal-800 rounded-xl transition-colors min-h-[38px] w-full sm:w-auto shadow-2xs focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2 cursor-pointer"
           >
             <PlusCircle className="w-4 h-4" />
             <span>Register Business</span>
@@ -170,6 +170,8 @@ export default function BusinessDashboardPage() {
               <div className="relative w-full sm:w-64">
                 <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
+                  id="dashboard-search-input"
+                  name="search"
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}

@@ -12,15 +12,7 @@ import DashboardLayout from "../components/layout/DashboardLayout";
 import StorefrontFeedCard from "../components/explore/StorefrontFeedCard";
 import { businessService } from "../../../services/businessService";
 import { useBusiness } from "../../../context/business/useBusiness";
-
-const CATEGORIES = [
-  "Food & Beverage",
-  "Technology",
-  "Health & Wellness",
-  "Retail",
-  "Automotive",
-  "Professional Services",
-];
+import { useCategories } from "../../../hooks/useCategories";
 
 export default function BusinessExplorePage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -29,6 +21,7 @@ export default function BusinessExplorePage() {
 
   const [searchInput, setSearchInput] = useState(searchParam);
   const { businesses: ownerBusinesses } = useBusiness();
+  const { categories } = useCategories();
 
   useEffect(() => {
     setSearchInput(searchParam);
@@ -116,6 +109,8 @@ export default function BusinessExplorePage() {
             <form onSubmit={handleSearchSubmit} className="relative w-full sm:w-72">
               <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
+                id="explore-filter-input"
+                name="search"
                 type="text"
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
@@ -150,21 +145,23 @@ export default function BusinessExplorePage() {
               All Storefronts
             </button>
 
-            {CATEGORIES.map((cat) => {
+            {categories.map((cat) => {
+              const catName = typeof cat === "string" ? cat : cat.name;
+              const catKey = typeof cat === "string" ? cat : cat.id || cat.slug || cat.name;
               const isSelected =
-                categoryParam.toLowerCase() === cat.toLowerCase();
+                categoryParam.toLowerCase() === catName.toLowerCase();
               return (
                 <button
-                  key={cat}
+                  key={catKey}
                   type="button"
-                  onClick={() => handleCategorySelect(cat)}
+                  onClick={() => handleCategorySelect(catName)}
                   className={`px-3 py-1 rounded-full text-xs font-medium transition-colors whitespace-nowrap cursor-pointer shrink-0 focus:outline-none focus:ring-2 focus:ring-teal-600 ${
                     isSelected
                       ? "bg-slate-900 text-white font-semibold shadow-2xs"
                       : "bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900 border border-slate-200"
                   }`}
                 >
-                  {cat}
+                  {catName}
                 </button>
               );
             })}

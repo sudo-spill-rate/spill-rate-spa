@@ -151,90 +151,75 @@ export default function FeaturedSection() {
   }, [businesses]);
 
   return (
-    <div className="flex-1 flex flex-col bg-white">
-      {/* Featured Section Grid */}
-      <section className="flex-1 flex flex-col pt-6 sm:pt-10 lg:pt-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full flex-1 flex flex-col">
-          {/* Header Row */}
-          <div className="mb-6 sm:mb-8">
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-slate-900">
-              Featured Establishments
-            </h1>
-            <p className="mt-1 sm:mt-1.5 text-xs sm:text-sm text-slate-600">
-              Verified local businesses with real customer ratings and active community feedback.
-            </p>
-          </div>
-
-          {/* Loading State */}
-          {isLoading && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 flex-1" aria-busy="true">
-              {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                <div
-                  key={i}
-                  className="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-xs animate-pulse space-y-3"
-                >
-                  <div className="flex justify-between items-start gap-3">
-                    <div className="space-y-2 flex-1">
-                      <div className="h-4 w-20 bg-slate-200 rounded" />
-                      <div className="h-5 w-3/4 bg-slate-200 rounded" />
-                    </div>
-                    <div className="w-12 h-12 rounded-xl bg-slate-200 shrink-0" />
-                  </div>
-                  <div className="h-3.5 w-full bg-slate-200 rounded" />
-                  <div className="h-4 w-1/2 bg-slate-200 rounded" />
-                  <div className="pt-2 border-t border-slate-100 h-8 bg-slate-50 rounded" />
+    <div className="w-full flex-1 flex flex-col">
+      {/* Loading State */}
+      {isLoading && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 flex-1" aria-busy="true">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+            <div
+              key={i}
+              className="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-xs animate-pulse space-y-3"
+            >
+              <div className="flex justify-between items-start gap-3">
+                <div className="space-y-2 flex-1">
+                  <div className="h-4 w-20 bg-slate-200 rounded" />
+                  <div className="h-5 w-3/4 bg-slate-200 rounded" />
                 </div>
-              ))}
-            </div>
-          )}
-
-          {/* Error State */}
-          {isError && (
-            <div className="p-6 sm:p-8 text-center bg-white rounded-xl border border-slate-200 shadow-xs my-auto">
-              <AlertCircle className="w-7 h-7 text-amber-600 mx-auto mb-2" aria-hidden="true" />
-              <p className="text-sm sm:text-base font-semibold text-slate-900">Unable to load featured businesses</p>
-              <p className="text-xs sm:text-sm text-slate-600 mt-1 mb-4">Please verify your connection and try again.</p>
-              <button
-                type="button"
-                onClick={() => refetch()}
-                className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[44px]"
-              >
-                Retry Loading
-              </button>
-            </div>
-          )}
-
-          {/* Empty State */}
-          {!isLoading && !isError && businesses.length === 0 && (
-            <div className="p-6 sm:p-10 text-center bg-slate-50/70 rounded-xl border border-slate-200 shadow-xs my-auto">
-              <CheckCircle2 className="w-10 h-10 text-slate-400 mx-auto mb-3" aria-hidden="true" />
-              <h3 className="text-sm sm:text-base font-bold text-slate-900">
-                No businesses registered yet
-              </h3>
-              <p className="mt-1 text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
-                Be the first local merchant to register your establishment and start collecting authentic community feedback.
-              </p>
-              <div className="mt-4 sm:mt-5">
-                <Link
-                  to="/dashboard/business/new"
-                  className="inline-flex items-center justify-center px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs sm:text-sm font-semibold transition-colors min-h-[44px] focus:outline-none focus:ring-2 focus:ring-teal-600"
-                >
-                  Register Your Business
-                </Link>
+                <div className="w-12 h-12 rounded-xl bg-slate-200 shrink-0" />
               </div>
+              <div className="h-3.5 w-full bg-slate-200 rounded" />
+              <div className="h-4 w-1/2 bg-slate-200 rounded" />
+              <div className="pt-2 border-t border-slate-100 h-8 bg-slate-50 rounded" />
             </div>
-          )}
-
-          {/* Real Data Cards Grid */}
-          {!isLoading && !isError && featuredTen.length > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 pb-8 sm:pb-12">
-              {featuredTen.map((biz) => (
-                <BusinessCard key={biz.id} biz={biz} />
-              ))}
-            </div>
-          )}
+          ))}
         </div>
-      </section>
+      )}
+
+      {/* Error State */}
+      {isError && (
+        <div className="p-6 sm:p-8 text-center bg-white rounded-xl border border-slate-200 shadow-xs my-auto">
+          <AlertCircle className="w-7 h-7 text-amber-600 mx-auto mb-2" aria-hidden="true" />
+          <p className="text-sm sm:text-base font-semibold text-slate-900">Unable to load featured businesses</p>
+          <p className="text-xs sm:text-sm text-slate-600 mt-1 mb-4">Please verify your connection and try again.</p>
+          <button
+            type="button"
+            onClick={() => refetch()}
+            className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[44px]"
+          >
+            Retry Loading
+          </button>
+        </div>
+      )}
+
+      {/* Empty State */}
+      {!isLoading && !isError && businesses.length === 0 && (
+        <div className="p-6 sm:p-10 text-center bg-white rounded-xl border border-slate-200 shadow-xs my-auto">
+          <CheckCircle2 className="w-10 h-10 text-slate-400 mx-auto mb-3" aria-hidden="true" />
+          <h3 className="text-sm sm:text-base font-bold text-slate-900">
+            No businesses registered yet
+          </h3>
+          <p className="mt-1 text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
+            Be the first local merchant to register your establishment and start collecting authentic community feedback.
+          </p>
+          <div className="mt-4 sm:mt-5">
+            <Link
+              to="/dashboard/business/new"
+              className="inline-flex items-center justify-center px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs sm:text-sm font-semibold transition-colors min-h-[44px] focus:outline-none focus:ring-2 focus:ring-teal-600"
+            >
+              Register Your Business
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {/* Real Data Cards Grid */}
+      {!isLoading && !isError && featuredTen.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 pb-6 sm:pb-8">
+          {featuredTen.map((biz) => (
+            <BusinessCard key={biz.id} biz={biz} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

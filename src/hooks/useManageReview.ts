@@ -15,7 +15,11 @@ export const useManageReview = () => {
         pinReview: context.pinReview,                                                            
         unpinReview: context.unpinReview,                                                        
         toggleVisibility: context.toggleVisibility,                                              
-        deleteReview: context.deleteReview,                                                      
+        deleteReview: context.deleteReview,
+        postReply: context.postReply,
+        deleteReply: context.deleteReply,
+        fetchReports: context.fetchReports,
+        updateReportStatus: context.updateReportStatus,                                                      
     };                                                                                           
 };                                                                                               
                                                                                                     

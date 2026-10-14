@@ -24,10 +24,12 @@ export interface CheckEligibilityQuery {
 // 4. Response mula sa GET /v1/api/review/:slug/eligibility                                      
 export interface CheckEligibilityResponse {                                                      
     success: true;                                                                               
-    eligible: boolean; // True kung puwedeng mag-iwan ng review, False kung naka-cooldown        
-    cooldown_remaining_hours: number; // 0 kung eligible; 1 to 24 kung naka-cooldown             
+    canReview?: boolean; // True kung puwedeng mag-iwan ng review (mula sa backend spec)
+    remainingHours?: number; // 0 kung puwede mag-review; > 0 kung naka-cooldown
+    eligible?: boolean; // Fallback compatibility alias
+    cooldown_remaining_hours?: number; // Fallback compatibility alias
     business: EligibilityBusinessRef;                                                            
-    message: string;                                                                             
+    message?: string;                                                                             
 }                                                                                                
                                                                                                     
 // 5. Data payload sa loob ng HTTP 429 Error kapag sinubukang mag-submit habang naka-cooldown    

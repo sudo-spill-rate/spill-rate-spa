@@ -138,6 +138,98 @@ export const ManageReviewProvider: React.FC<ManageReviewProviderProps> = ({ chil
             setActiveReviewId(null);                                                                               
         }                                                                                                          
     };                                                                                                             
+
+    // 5. Post or Update Reply
+    const postReply = async (
+        reviewId: string,
+        reply: string
+    ): Promise<{ success: boolean; data?: any; message?: string }> => {
+        try {
+            setIsActionLoading(true);
+            setActiveReviewId(reviewId);
+            setActionError(null);
+
+            const res = await manageReviewService.postReply(reviewId, reply);
+            if (res.success && res.data) {
+                return {
+                    success: true,
+                    data: res.data,
+                    message: res.message || "Reply posted successfully!",
+                };
+            }
+
+            setActionError(res.message || "Failed to post reply.");
+            return { success: false, message: res.message };
+        } catch (err: any) {
+            const message = err?.message || "Failed to post reply.";
+            setActionError(message);
+            return { success: false, message };
+        } finally {
+            setIsActionLoading(false);
+            setActiveReviewId(null);
+        }
+    };
+
+    // 6. Delete Reply
+    const deleteReply = async (
+        reviewId: string
+    ): Promise<{ success: boolean; message?: string }> => {
+        try {
+            setIsActionLoading(true);
+            setActiveReviewId(reviewId);
+            setActionError(null);
+
+            const res = await manageReviewService.deleteReply(reviewId);
+            if (res.success) {
+                return {
+                    success: true,
+                    message: res.message || "Reply deleted successfully.",
+                };
+            }
+
+            setActionError(res.message || "Failed to delete reply.");
+            return { success: false, message: res.message };
+        } catch (err: any) {
+            const message = err?.message || "Failed to delete reply.";
+            setActionError(message);
+            return { success: false, message };
+        } finally {
+            setIsActionLoading(false);
+            setActiveReviewId(null);
+        }
+    };
+
+    // 7. Fetch Flagged Reports
+    const fetchReports = async (
+        businessId: string
+    ): Promise<{ success: boolean; data?: any[]; message?: string }> => {
+        try {
+            const res = await manageReviewService.getFlaggedReports(businessId);
+            return {
+                success: res.success,
+                data: res.data,
+                message: res.message,
+            };
+        } catch (err: any) {
+            return { success: false, message: err?.message || "Failed to fetch reports." };
+        }
+    };
+
+    // 8. Update Report Status
+    const updateReportStatus = async (
+        reportId: string,
+        status: any
+    ): Promise<{ success: boolean; message?: string }> => {
+        try {
+            const res = await manageReviewService.updateReportStatus(reportId, status);
+            return {
+                success: res.success,
+                message: res.message || "Report status updated.",
+            };
+        } catch (err: any) {
+            return { success: false, message: err?.message || "Failed to update report status." };
+        }
+    };
                                                                                                                     
     return (                                                                                                       
         <ManageReviewContext.Provider                                                                              
@@ -148,7 +240,11 @@ export const ManageReviewProvider: React.FC<ManageReviewProviderProps> = ({ chil
                 pinReview,                                                                                         
                 unpinReview,                                                                                       
                 toggleVisibility,                                                                                  
-                deleteReview,                                                                                      
+                deleteReview,
+                postReply,
+                deleteReply,
+                fetchReports,
+                updateReportStatus,                                                                                      
             }}                                                                                                     
         >                                                                                                          
             {children}                                                                                             

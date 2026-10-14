@@ -4,7 +4,7 @@ import { ImagePlus, X, AlertCircle } from "lucide-react";
 export default function PhotoAttachmentUploader({
   images = [],
   onChange,
-  maxFiles = 2,
+  maxFiles = 3,
   maxSizeMb = 5,
   disabled = false,
 }) {
@@ -98,6 +98,8 @@ export default function PhotoAttachmentUploader({
 
       <input
         ref={fileInputRef}
+        id="photo-file-input"
+        name="photos"
         type="file"
         accept="image/*"
         multiple
@@ -114,7 +116,7 @@ export default function PhotoAttachmentUploader({
       )}
 
       <p className="text-[11px] text-slate-500">
-        Photos of your receipt, product, or visit help verify authenticity. Up to 2 photos, 5MB each.
+        Photos of your receipt, product, or visit help verify authenticity. Up to 3 photos, 5MB each.
       </p>
     </div>
   );

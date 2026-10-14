@@ -15,11 +15,14 @@ export interface Review {
     name: string; // Pangalan ng reviewer o negosyo                                              
     rating: StarRating; // 1 hanggang 5                                                          
     comment: string; // Maximum 500 characters                                                   
-    image_urls?: string[] | null; // Array ng hanggang 2 Cloudinary image URLs                   
+    image_urls?: string[] | null; // Array ng hanggang 3 Cloudinary image URLs                   
     image_public_ids?: string[] | null; // Cloudinary asset IDs (ginagamit sa pagbura)           
     is_pinned: boolean; // True kung naka-pin sa pinakatuktok ng profile                         
     is_private: boolean; // True kung nakatago sa public feed (default sa B2B)                   
     pinned_at?: string | null; // ISO timestamp kung kailan na-pin                               
+    helpful_count: number; // Bilang ng Helpful upvotes
+    reply_comment?: string | null; // Opisyal na tugon ng may-ari ng negosyo
+    replied_at?: string | null; // ISO timestamp ng tugon ng may-ari
     created_at: string; // ISO timestamp                                                         
 }                                                                                                
                                                                                                     
@@ -31,7 +34,7 @@ export interface CreateReviewPayload {
     comment: string; // Max 500 chars                                                            
     device_id?: string; // Fingerprint ID para sa anti-spam cooldown tracking                    
     reviewer_business_id?: string; // Opsyonal: Business UUID para sa B2B review                 
-    images?: (File | Blob)[]; // Maximum 2 images (max 5MB bawat isa)                            
+    images?: (File | Blob)[]; // Maximum 3 images (max 5MB bawat isa)                            
 }                                                                                                
                                                                                                     
 // 4. Response mula sa POST /v1/api/review/:id                                                   
@@ -56,4 +59,58 @@ export interface ReviewListResponse {
     data: Review[]; // Naka-sort: Nauuna ang is_pinned: true, kasunod ang pinakabago             
     pagination: PaginationMeta;                                                                  
     message: string;                                                                             
+}
+
+// 7. Rating Breakdown & Summary (GET /v1/api/review/:id/summary)
+export interface RatingDistribution {
+    1: number;
+    2: number;
+    3: number;
+    4: number;
+    5: number;
+    [key: number]: number;
+}
+
+export interface ReviewSummaryData {
+    average_rating: number;
+    total_reviews: number;
+    breakdown: RatingDistribution;
+}
+
+export interface ReviewSummaryResponse {
+    success: true;
+    data: ReviewSummaryData;
+    message?: string;
+}
+
+// 8. Helpful Vote Toggle Response (POST /v1/api/review/:reviewId/vote)
+export interface ReviewVoteData {
+    voted: boolean;
+    helpful_count: number;
+}
+
+export interface ReviewVoteResponse {
+    success: true;
+    message: string;
+    data: ReviewVoteData;
+}
+
+// 9. Report Flag Types (POST /v1/api/review/:reviewId/report)
+export type ReportReason = 'spam' | 'offensive' | 'fake' | 'conflict_of_interest' | 'other';
+
+export interface ReportReviewPayload {
+    reason: ReportReason;
+    details?: string;
+}
+
+export interface ReportReviewResponseData {
+    report_id: string;
+    review_id: string;
+    status: 'pending' | 'resolved' | 'dismissed';
+}
+
+export interface ReportReviewResponse {
+    success: true;
+    message: string;
+    data: ReportReviewResponseData;
 }           

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, NavLink, useLocation } from "react-router";
 import { Menu, X, User, LogOut, Compass, Info } from "lucide-react";
 import { useUserAuth } from "../../../../hooks/useUserAuth";
+import { useBodyScrollLock } from "../../../../hooks/useBodyScrollLock";
 import SignInModal from "./SignInModal";
 
 export default function PublicNavbar() {
@@ -9,6 +10,9 @@ export default function PublicNavbar() {
   const [isSignInModalOpen, setIsSignInModalOpen] = useState(false);
   const location = useLocation();
   const { user, isAuthenticated, logout } = useUserAuth();
+
+  // Lock body scroll when mobile menu overlay is open
+  useBodyScrollLock(mobileMenuOpen);
 
   // Close mobile drawer on route change
   useEffect(() => {
@@ -84,7 +88,7 @@ export default function PublicNavbar() {
               {isAuthenticated ? (
                 <div className="flex items-center gap-3">
                   <Link
-                    to="/dashboard"
+                    to={user?.role === "founder" ? "/admin/dashboard" : (user?.is_admin || user?.role === "admin") ? "/admin/dashboard" : "/dashboard"}
                     className="flex items-center gap-2 px-3.5 py-2 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600"
                   >
                     {user?.avatar_url || user?.picture ? (
@@ -96,7 +100,9 @@ export default function PublicNavbar() {
                     ) : (
                       <User className="w-4 h-4 text-slate-600" />
                     )}
-                    <span>Dashboard</span>
+                    <span>
+                      {user?.role === "founder" ? "Founder Portal" : (user?.is_admin || user?.role === "admin") ? "Admin Portal" : "Dashboard"}
+                    </span>
                   </Link>
                   <button
                     onClick={logout}
@@ -121,21 +127,61 @@ export default function PublicNavbar() {
             {/* Mobile Hamburger Toggle */}
             <div className="flex items-center gap-2 md:hidden">
               <button
-                onClick={() => setMobileMenuOpen((prev) => !prev)}
-                aria-label="Toggle navigation menu"
+                type="button"
+                onClick={() => setMobileMenuOpen(true)}
+                aria-label="Open navigation menu"
                 aria-expanded={mobileMenuOpen}
-                className="p-2.5 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[44px] min-w-[44px] flex items-center justify-center"
+                className="p-2.5 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
               >
-                {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                <Menu className="w-6 h-6" />
               </button>
             </div>
           </div>
         </div>
+      </header>
 
-        {/* Mobile Drawer Navigation */}
-        {mobileMenuOpen && (
-          <div className="md:hidden border-t border-slate-200 bg-white px-4 pt-3 pb-6 shadow-lg">
-            <nav aria-label="Mobile Navigation" className="flex flex-col space-y-1">
+      {/* Mobile Full-Screen Navigation Modal / Overlay */}
+      {mobileMenuOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="Navigation Menu"
+          className="fixed inset-0 z-50 md:hidden bg-white flex flex-col"
+        >
+          {/* Top Bar: Perfectly aligned with the Navbar position & dimensions */}
+          <div className="border-b border-slate-200 px-4 sm:px-6 shrink-0">
+            <div className="flex items-center justify-between h-16 sm:h-20 max-w-7xl mx-auto">
+              {/* Brand Logo */}
+              <Link
+                to="/"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-2.5 font-bold text-xl text-slate-900 group focus:outline-none focus:ring-2 focus:ring-teal-600 rounded-lg p-1"
+              >
+                <img
+                  src="/logo.png"
+                  alt="TrustRate Logo"
+                  className="w-8 h-8 object-contain shrink-0"
+                />
+                <span className="tracking-tight text-xl font-bold">
+                  Trust<span className="text-teal-700">Rate</span>
+                </span>
+              </Link>
+
+              {/* Close Button ('X') in the exact same spot as the hamburger toggle */}
+              <button
+                type="button"
+                onClick={() => setMobileMenuOpen(false)}
+                aria-label="Close navigation menu"
+                className="p-2.5 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+          </div>
+
+          {/* Full Screen Menu Content with Solid Theme Background */}
+          <div className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 flex flex-col justify-between max-w-md w-full mx-auto">
+            <nav aria-label="Mobile Navigation" className="flex flex-col space-y-2">
               {navLinks.map((link) => {
                 const Icon = link.icon;
                 return (
@@ -143,10 +189,11 @@ export default function PublicNavbar() {
                     key={link.path}
                     to={link.path}
                     end={link.path === "/"}
+                    onClick={() => setMobileMenuOpen(false)}
                     className={({ isActive }) =>
-                      `flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-colors min-h-[44px] focus:outline-none focus:ring-2 focus:ring-teal-600 ${
+                      `flex items-center gap-3.5 px-4 py-3.5 rounded-xl text-base font-semibold transition-colors min-h-[48px] focus:outline-none focus:ring-2 focus:ring-teal-600 ${
                         isActive
-                          ? "text-teal-800 bg-teal-50 font-semibold"
+                          ? "text-teal-800 bg-teal-50 border border-teal-200/80 shadow-2xs font-bold"
                           : "text-slate-700 hover:text-slate-900 hover:bg-slate-100"
                       }`
                     }
@@ -158,19 +205,27 @@ export default function PublicNavbar() {
               })}
             </nav>
 
-            <div className="mt-4 pt-4 border-t border-slate-200 flex flex-col gap-2.5">
+            {/* Auth / Account Actions */}
+            <div className="mt-8 pt-6 border-t border-slate-200 flex flex-col gap-3">
               {isAuthenticated ? (
                 <>
                   <Link
-                    to="/dashboard"
-                    className="flex items-center justify-center gap-2 w-full py-3 px-4 bg-slate-100 text-slate-900 font-semibold rounded-lg text-center min-h-[44px] focus:outline-none focus:ring-2 focus:ring-teal-600"
+                    to={user?.role === "founder" ? "/admin/dashboard" : (user?.is_admin || user?.role === "admin") ? "/admin/dashboard" : "/dashboard"}
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center justify-center gap-2 w-full py-3.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-900 font-semibold rounded-xl text-center min-h-[48px] focus:outline-none focus:ring-2 focus:ring-teal-600 transition-colors"
                   >
-                    <User className="w-5 h-5" />
-                    <span>Go to Business Dashboard</span>
+                    <User className="w-5 h-5 text-slate-700" />
+                    <span>
+                      {user?.role === "founder" ? "Go to Founder Portal" : (user?.is_admin || user?.role === "admin") ? "Go to Admin Portal" : "Go to Business Dashboard"}
+                    </span>
                   </Link>
                   <button
-                    onClick={logout}
-                    className="flex items-center justify-center gap-2 w-full py-2.5 px-4 text-red-700 hover:bg-red-50 rounded-lg font-medium text-sm transition-colors min-h-[44px] focus:outline-none focus:ring-2 focus:ring-red-600"
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      logout();
+                    }}
+                    className="flex items-center justify-center gap-2 w-full py-3 px-4 text-red-700 hover:bg-red-50 rounded-xl font-medium text-sm transition-colors min-h-[44px] focus:outline-none focus:ring-2 focus:ring-red-600 cursor-pointer"
                   >
                     <LogOut className="w-4 h-4" />
                     <span>Sign Out</span>
@@ -183,15 +238,15 @@ export default function PublicNavbar() {
                     setMobileMenuOpen(false);
                     setIsSignInModalOpen(true);
                   }}
-                  className="w-full py-3 px-4 text-center font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-lg min-h-[44px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer"
+                  className="w-full py-3.5 px-4 text-center font-semibold text-white bg-slate-900 hover:bg-slate-800 active:bg-slate-950 rounded-xl min-h-[48px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer shadow-xs transition-colors"
                 >
                   Sign In
                 </button>
               )}
             </div>
           </div>
-        )}
-      </header>
+        </div>
+      )}
 
       {/* Render SignInModal */}
       <SignInModal

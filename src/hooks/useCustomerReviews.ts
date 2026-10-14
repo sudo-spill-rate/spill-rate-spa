@@ -20,7 +20,9 @@ export const useCustomerReviews = () => {
         checkEligibility: context.checkEligibility,                                              
         fetchReviews: context.fetchReviews,                                                      
         loadMoreReviews: context.loadMoreReviews,                                                
-        submitReview: context.submitReview,                                                      
+        submitReview: context.submitReview,
+        toggleHelpfulVote: context.toggleHelpfulVote,
+        reportReview: context.reportReview,                                                      
         clearReviews: context.clearReviews,                                                      
     };                                                                                           
 };                                                                                               

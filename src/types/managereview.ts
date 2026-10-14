@@ -43,4 +43,74 @@ export interface DeleteReviewResponse {
 export interface OwnershipForbiddenError {                                                       
     success: false;                                                                              
     message: 'Forbidden: You are not authorized to manage reviews for this business.';           
+}
+
+// 8. Management Reviews Query & List (GET /v1/api/review/manage/:businessId)
+export type ManageReviewFilter = 'all' | 'public' | 'private' | 'pinned';
+
+export interface ManageReviewQuery {
+    filter?: ManageReviewFilter;
+    limit?: number;
+    cursor?: string;
+}
+
+export interface ManageReviewListResponse {
+    success: true;
+    data: Review[];
+    pagination: {
+        limit: number;
+        has_more: boolean;
+        next_cursor?: string | null;
+    };
+    message?: string;
+}
+
+// 9. Owner Official Reply Types (POST & DELETE /v1/api/review/:reviewId/reply)
+export interface PostReplyPayload {
+    reply: string;
+}
+
+export interface ReplyReviewData {
+    id: string;
+    reply_comment: string;
+    replied_at: string;
+}
+
+export interface ReplyReviewResponse {
+    success: true;
+    message: string;
+    data: ReplyReviewData;
+}
+
+export interface DeleteReplyResponse {
+    success: true;
+    message: string;
+}
+
+// 10. Flagged Reports Management (GET /manage/:businessId/reports & PATCH /manage/report/:reportId)
+export type ReportStatus = 'pending' | 'resolved' | 'dismissed';
+
+export interface BusinessFlaggedReport {
+    id: string;
+    review_id: string;
+    reason: string;
+    details?: string;
+    status: ReportStatus;
+    created_at: string;
+    review?: Review;
+}
+
+export interface FlaggedReportsResponse {
+    success: true;
+    data: BusinessFlaggedReport[];
+    message?: string;
+}
+
+export interface UpdateReportStatusResponse {
+    success: true;
+    message: string;
+    data: {
+        id: string;
+        status: ReportStatus;
+    };
 }    

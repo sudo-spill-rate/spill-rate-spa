@@ -5,7 +5,7 @@ import { useUserAuth } from "../../../hooks/useUserAuth";
 import OAuthProcessingState from "../components/OAuthProcessingState";
 
 export default function OAuthCallbackPage() {
-  const { setToken, checkAuth, isAuthenticated } = useUserAuth();
+  const { setToken, checkAuth, handleOAuthCode } = useUserAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -19,6 +19,9 @@ export default function OAuthCallbackPage() {
 
     const processCallback = async () => {
       try {
+        const targetDestination =
+          sessionStorage.getItem("auth_redirect_target") || "/dashboard";
+
         // 1. Check for error parameters in query string
         const searchParams = new URLSearchParams(location.search);
         const searchError =
@@ -39,27 +42,33 @@ export default function OAuthCallbackPage() {
           throw new Error(decodeURIComponent(hashError));
         }
 
-        // 3. Extract access token from hash or query
+        // 3. Official Flow: Check for Google OAuth code parameter (?code=...)
+        const oauthCode = searchParams.get("code");
+        if (oauthCode) {
+          const res = await handleOAuthCode(oauthCode);
+          if (res.success) {
+            sessionStorage.removeItem("auth_redirect_target");
+            navigate(targetDestination, { replace: true });
+            return;
+          }
+          throw new Error(res.message || "Failed to exchange authorization code.");
+        }
+
+        // 4. Token fragment fallback (access_token sa hash o query)
         const tokenFromHash = hashParams.get("access_token");
         const tokenFromSearch =
           searchParams.get("access_token") || searchParams.get("token");
-
         const accessToken = tokenFromHash || tokenFromSearch;
 
-        const targetDestination =
-          sessionStorage.getItem("auth_redirect_target") || "/dashboard";
-
         if (accessToken) {
-          // Remove hash from browser history for security
           window.history.replaceState(null, "", window.location.pathname);
-
           await setToken(accessToken);
           sessionStorage.removeItem("auth_redirect_target");
           navigate(targetDestination, { replace: true });
           return;
         }
 
-        // 4. Fallback: check if existing session or storage is valid
+        // 5. Fallback: check if existing session or storage is valid
         const alreadyAuthed = await checkAuth();
         if (alreadyAuthed) {
           sessionStorage.removeItem("auth_redirect_target");
@@ -80,7 +89,7 @@ export default function OAuthCallbackPage() {
     };
 
     processCallback();
-  }, [location, setToken, checkAuth, navigate]);
+  }, [location, setToken, checkAuth, handleOAuthCode, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4 py-12">

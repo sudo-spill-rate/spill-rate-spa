@@ -7,6 +7,7 @@ import {
   Trash2,
   RotateCw,
   MoreVertical,
+  MessageSquare,
 } from "lucide-react";
 import { useManageReview } from "../../../../hooks/useManageReview";
 
@@ -14,6 +15,7 @@ export default function ReviewModerationActions({
   review,
   onActionComplete,
   onRequestDelete,
+  onRequestReply,
   variant = "bar", // "bar" | "menu"
 }) {
   const {
@@ -143,6 +145,23 @@ export default function ReviewModerationActions({
               )}
             </button>
 
+            {/* Reply Item */}
+            {onRequestReply && (
+              <button
+                type="button"
+                role="menuitem"
+                onClick={() => {
+                  setMenuOpen(false);
+                  onRequestReply(review);
+                }}
+                disabled={isCurrentActionPending}
+                className="w-full flex items-center gap-2.5 px-3.5 py-2.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors min-h-[44px] text-left"
+              >
+                <MessageSquare className="w-4 h-4 text-teal-700 shrink-0" />
+                <span>{review.reply_comment ? "Edit Response" : "Respond to Review"}</span>
+              </button>
+            )}
+
             {/* Visibility Item */}
             <button
               type="button"
@@ -186,6 +205,25 @@ export default function ReviewModerationActions({
   // 2. Default Inline Action Bar Variant (Desktop)
   return (
     <div className="flex items-center gap-2 w-full sm:w-auto">
+      {/* 0. Official Reply Button */}
+      {onRequestReply && (
+        <button
+          type="button"
+          onClick={() => onRequestReply(review)}
+          disabled={isCurrentActionPending}
+          title={review.reply_comment ? "Edit official response" : "Respond to review"}
+          aria-label={review.reply_comment ? "Edit official response" : "Respond to review"}
+          className={`inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-lg border transition-colors min-h-[44px] focus:outline-none focus:ring-2 focus:ring-teal-600 disabled:opacity-50 ${
+            review.reply_comment
+              ? "bg-teal-50 text-teal-900 border-teal-300 hover:bg-teal-100"
+              : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50"
+          }`}
+        >
+          <MessageSquare className="w-3.5 h-3.5 text-teal-700 shrink-0" />
+          <span>{review.reply_comment ? "Edit Reply" : "Reply"}</span>
+        </button>
+      )}
+
       {/* 1. Pin / Unpin Button */}
       <button
         type="button"

@@ -9,24 +9,13 @@ import {
 } from "lucide-react";
 import { useBusinessProfile } from "../../../../hooks/useBusinessProfile";
 import { useBusinessDirectory } from "../../../../hooks/useBusinessDirectory";
-
-const CATEGORIES = [
-  "Food & Beverage",
-  "Retail & Shopping",
-  "Health & Wellness",
-  "Technology & IT",
-  "Professional Services",
-  "Automotive",
-  "Hospitality & Tourism",
-  "Education",
-  "Beauty & Personal Care",
-  "Other",
-];
+import { useCategories } from "../../../../hooks/useCategories";
 
 export default function CreateBusinessForm() {
   const navigate = useNavigate();
   const { createBusiness, isCreating } = useBusinessProfile();
   const { businesses } = useBusinessDirectory();
+  const { categories } = useCategories();
 
   const businessCount = businesses?.length || 0;
   const quotaLimit = 5;
@@ -282,11 +271,15 @@ export default function CreateBusinessForm() {
                 } disabled:bg-slate-50 disabled:text-slate-400`}
               >
                 <option value="">Select industry category...</option>
-                {CATEGORIES.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
+                {categories.map((cat) => {
+                  const catName = typeof cat === "string" ? cat : cat.name;
+                  const catKey = typeof cat === "string" ? cat : cat.id || cat.slug || cat.name;
+                  return (
+                    <option key={catKey} value={catName}>
+                      {catName}
+                    </option>
+                  );
+                })}
               </select>
               {formErrors.category && (
                 <p id="category-error" className="mt-1 text-xs text-red-600">
@@ -390,10 +383,13 @@ export default function CreateBusinessForm() {
                     </span>
                   </div>
                   <input
+                    id="biz-logo-upload"
+                    name="logo"
                     type="file"
                     accept="image/png,image/jpeg,image/webp"
                     onChange={handleImageChange}
                     disabled={isCreating}
+                    aria-label="Upload storefront logo image"
                     className="sr-only"
                   />
                 </label>

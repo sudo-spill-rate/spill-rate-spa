@@ -18,6 +18,8 @@ export interface ReviewContextType {
     fetchReviews: (businessSlug: string, query?: ReviewListQuery) => Promise<void>;              
     loadMoreReviews: (businessSlug: string, ratingFilter?: number) => Promise<void>;             
     submitReview: (businessSlug: string, payload: CreateReviewPayload) => Promise<{ success: boolean; data?: Review; message?: string }>;                                                       
+    toggleHelpfulVote: (reviewId: string) => Promise<{ success: boolean; data?: { voted: boolean; helpful_count: number }; message?: string }>;
+    reportReview: (reviewId: string, payload: { reason: any; details?: string }) => Promise<{ success: boolean; message?: string }>;
     clearReviews: () => void;                                                                    
 }                                                                                                
                                                                                                     

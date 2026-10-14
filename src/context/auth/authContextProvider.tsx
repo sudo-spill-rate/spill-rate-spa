@@ -6,7 +6,7 @@ import React, {
     useCallback,
 } from "react";
 import { AuthContext } from "./authContext";
-import { AuthUser } from "../../types/auth";
+import { AuthUser, UpdateProfilePayload } from "../../types/auth";
 import { authService } from "../../services/authService";
 import { api } from "../../lib/api";
 
@@ -31,7 +31,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         []
     );
 
-    // Kumuha ng user profile gamit ang authService
+    // Kumuha ng user profile gamit ang authService (GET /v1/api/auth/me)
     const checkAuth = async (explicitToken?: string): Promise<boolean> => {
         if (isCheckingRef.current) return isAuthenticated;
         isCheckingRef.current = true;
@@ -73,7 +73,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
     };
 
-    // Google OAuth redirection gamit ang authService
+    // Google OAuth redirection gamit ang authService (GET /v1/api/auth/google)
     const loginWithGoogle = async (targetRedirectPath?: string): Promise<void> => {
         try {
             setIsLoading(true);
@@ -97,17 +97,89 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         }
     };
 
+    // Exchange Google OAuth code para sa session (GET /v1/api/auth/callback?code=...)
+    const handleOAuthCode = async (code: string): Promise<{ success: boolean; message?: string }> => {
+        try {
+            setIsLoading(true);
+            const res = await authService.handleOAuthCallback(code);
+
+            if (res.success && res.data?.session?.access_token) {
+                const accessToken = res.data.session.access_token;
+                await setToken(accessToken);
+                return { success: true };
+            }
+
+            return {
+                success: false,
+                message: res.message || "Failed to exchange OAuth code",
+            };
+        } catch (err: any) {
+            return {
+                success: false,
+                message: err?.message || "Failed to exchange OAuth code",
+            };
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     const setToken = async (newToken: string): Promise<void> => {
         localStorage.setItem("accessToken", newToken);
         api.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
         await checkAuth(newToken);
     };
 
-    const logout = (): void => {
-        localStorage.removeItem("accessToken");
-        sessionStorage.removeItem("accessToken");
-        delete api.defaults.headers.common["Authorization"];
-        updateAuthState(false, null, null);
+    // Update Profile details (PATCH /v1/api/auth/profile)
+    const updateProfile = async (
+        payload: UpdateProfilePayload
+    ): Promise<{ success: boolean; user?: AuthUser; message?: string }> => {
+        try {
+            setIsLoading(true);
+            const res = await authService.updateProfile(payload);
+            if (res.success && res.data) {
+                setUser(res.data);
+                return { success: true, user: res.data, message: res.message };
+            }
+            return { success: false, message: res.message || "Failed to update profile" };
+        } catch (err: any) {
+            return { success: false, message: err?.message || "Failed to update profile" };
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // Revoke session server-side at linisin ang client-side tokens (POST /v1/api/auth/logout)
+    const logout = async (): Promise<void> => {
+        try {
+            await authService.logoutServer();
+        } catch (err) {
+            console.error("Server logout error:", err);
+        } finally {
+            localStorage.removeItem("accessToken");
+            sessionStorage.removeItem("accessToken");
+            delete api.defaults.headers.common["Authorization"];
+            updateAuthState(false, null, null);
+        }
+    };
+
+    // Delete user account permanently (DELETE /v1/api/auth/account)
+    const deleteAccount = async (): Promise<{ success: boolean; message?: string }> => {
+        try {
+            setIsLoading(true);
+            const res = await authService.deleteAccount();
+            if (res.success) {
+                localStorage.removeItem("accessToken");
+                sessionStorage.removeItem("accessToken");
+                delete api.defaults.headers.common["Authorization"];
+                updateAuthState(false, null, null);
+                return { success: true, message: res.message };
+            }
+            return { success: false, message: res.message || "Failed to delete account" };
+        } catch (err: any) {
+            return { success: false, message: err?.message || "Failed to delete account" };
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     const refreshUser = async (): Promise<void> => {
@@ -116,7 +188,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     useEffect(() => {
         const handleInitialAuth = async () => {
-            // Huwag kainin ang hash kung nasa /oauth/callback upang mabasa ito ng OAuthCallbackPage
+            // Huwag kainin ang hash/query kung nasa /oauth/callback upang mabasa ito ng OAuthCallbackPage
             if (window.location.pathname === "/oauth/callback") {
                 setIsLoading(false);
                 return;
@@ -149,6 +221,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
                 isLoading,
                 isAuthenticated,
                 loginWithGoogle,
+                handleOAuthCode,
+                updateProfile,
+                deleteAccount,
                 logout,
                 checkAuth,
                 refreshUser,
