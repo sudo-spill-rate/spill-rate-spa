@@ -260,28 +260,28 @@ export default function PublicBusinessProfilePage() {
               <div className="flex-1 min-w-0 w-full space-y-2.5 sm:space-y-3">
                 
                 {/* Identity Header: Logo on left, Name + Badge (Row 1) & Category (Row 2) on right */}
-                <div className="flex items-start gap-3 sm:gap-3.5">
-                  {/* Business Logo / Profile Avatar: 48px-52px on mobile to align nicely with the 2 rows */}
-                  <div className="shrink-0 pt-0.5">
+                <div className="w-full flex items-center gap-3.5 sm:gap-4">
+                  {/* Business Logo / Profile Avatar: Scaled up to 64px–80px (w-16 h-16 sm:w-20 sm:h-20) */}
+                  <div className="shrink-0">
                     {business.image_url && !imageError ? (
                       <img
                         src={business.image_url}
                         alt={`Logo of ${business.name}`}
-                        className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-xl sm:rounded-2xl object-cover border border-slate-200/90 shadow-2xs bg-white ring-1 ring-slate-100"
+                        className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl object-cover border border-slate-200/90 shadow-2xs bg-white ring-1 ring-slate-100"
                         onError={() => setImageError(true)}
                       />
                     ) : (
-                      <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-xl sm:rounded-2xl bg-teal-50 border border-teal-200/80 flex items-center justify-center font-bold text-teal-800 text-lg sm:text-2xl shadow-2xs ring-1 ring-teal-100">
+                      <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl sm:rounded-2xl bg-teal-50 border border-teal-200/80 flex items-center justify-center font-bold text-teal-800 text-xl sm:text-2xl shadow-2xs ring-1 ring-teal-100">
                         {business.name ? business.name.charAt(0).toUpperCase() : "B"}
                       </div>
                     )}
                   </div>
 
                   {/* Right side of Logo: Row 1 = Business Name + Badge | Row 2 = Category */}
-                  <div className="flex-1 min-w-0 space-y-1">
+                  <div className="flex-1 min-w-0 space-y-1 sm:space-y-1.5">
                     {/* Row 1: Logo | Business Name | Badge */}
                     <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-                      <h1 className="text-base sm:text-lg lg:text-xl font-extrabold text-slate-900 tracking-tight truncate">
+                      <h1 className="text-lg sm:text-xl lg:text-2xl font-extrabold text-slate-900 tracking-tight truncate">
                         {business.name}
                       </h1>
 
@@ -291,7 +291,7 @@ export default function PublicBusinessProfilePage() {
                           <img
                             src="https://res.cloudinary.com/qzludnat/image/upload/v1792131560/Teal_Verified_Shield_Icon-removebg-preview.png"
                             alt="Verified Establishment"
-                            className="w-4 h-4 sm:w-4.5 sm:h-4.5 object-contain inline-block drop-shadow-2xs"
+                            className="w-4 h-4 sm:w-5 sm:h-5 object-contain inline-block drop-shadow-2xs"
                             loading="lazy"
                           />
                         </div>
@@ -312,7 +312,7 @@ export default function PublicBusinessProfilePage() {
                     {/* Row 2: Category under Name */}
                     {business.category && (
                       <div className="flex items-center">
-                        <span className="inline-flex items-center text-[10px] sm:text-[11px] font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md border border-slate-200/80">
+                        <span className="inline-flex items-center text-[10px] sm:text-xs font-semibold bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-md border border-slate-200/80">
                           {business.category}
                         </span>
                       </div>
