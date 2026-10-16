@@ -47,18 +47,18 @@ export default function PublicNavbar() {
     <>
       <header className="sticky top-0 z-50 bg-white border-b border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16 sm:h-20">
+          <div className="flex items-center justify-between h-14 sm:h-16">
             {/* Brand Logo */}
             <Link
               to="/"
-              className="flex items-center gap-2.5 font-bold text-xl text-slate-900 group focus:outline-none focus:ring-2 focus:ring-teal-600 rounded-lg p-1"
+              className="flex items-center gap-2 font-bold text-lg sm:text-xl text-slate-900 group focus:outline-none focus:ring-2 focus:ring-teal-600 rounded-lg p-1"
             >
               <img
                 src="/logo.png"
                 alt="SpillRate Logo"
-                className="w-8 h-8 object-contain shrink-0"
+                className="w-7 h-7 sm:w-8 sm:h-8 object-contain shrink-0"
               />
-              <span className="tracking-tight text-xl font-bold">
+              <span className="tracking-tight text-lg sm:text-xl font-bold">
                 Spill<span className="text-teal-700">Rate</span>
               </span>
             </Link>
@@ -71,7 +71,7 @@ export default function PublicNavbar() {
                   to={link.path}
                   end={link.path === "/"}
                   className={({ isActive }) =>
-                    `px-3.5 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600 ${
+                    `px-3 py-1.5 rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600 ${
                       isActive
                         ? "text-teal-800 bg-teal-50 font-semibold"
                         : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
@@ -84,18 +84,18 @@ export default function PublicNavbar() {
             </nav>
 
             {/* Right Action Buttons (Desktop) */}
-            <div className="hidden md:flex items-center gap-3">
+            <div className="hidden md:flex items-center gap-2.5">
               {isAuthenticated ? (
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2">
                   <Link
                     to={user?.role === "founder" ? "/admin/dashboard" : (user?.is_admin || user?.role === "admin") ? "/admin/dashboard" : "/dashboard"}
-                    className="flex items-center gap-2 px-3.5 py-2 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600"
+                    className="flex items-center gap-2 px-3 py-1.5 text-xs sm:text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[36px]"
                   >
                     {user?.avatar_url || user?.picture ? (
                       <img
                         src={user.avatar_url || user.picture}
                         alt={user.name || "User account"}
-                        className="w-5 h-5 rounded-full object-cover"
+                        className="w-4 h-4 sm:w-5 sm:h-5 rounded-full object-cover"
                       />
                     ) : (
                       <User className="w-4 h-4 text-slate-600" />
@@ -107,7 +107,7 @@ export default function PublicNavbar() {
                   <button
                     onClick={logout}
                     title="Sign out"
-                    className="p-2 text-slate-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-red-600"
+                    className="p-1.5 text-slate-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-red-600 cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
                   >
                     <LogOut className="w-4 h-4" />
                     <span className="sr-only">Sign out</span>
@@ -117,7 +117,7 @@ export default function PublicNavbar() {
                 <button
                   type="button"
                   onClick={() => setIsSignInModalOpen(true)}
-                  className="px-4 py-2 text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 active:bg-slate-950 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[44px] inline-flex items-center justify-center cursor-pointer"
+                  className="px-3.5 py-1.5 text-xs sm:text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 active:bg-slate-950 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[36px] inline-flex items-center justify-center cursor-pointer"
                 >
                   Sign In
                 </button>
@@ -131,9 +131,9 @@ export default function PublicNavbar() {
                 onClick={() => setMobileMenuOpen(true)}
                 aria-label="Open navigation menu"
                 aria-expanded={mobileMenuOpen}
-                className="p-2.5 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
+                className="p-2 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[40px] min-w-[40px] flex items-center justify-center cursor-pointer"
               >
-                <Menu className="w-6 h-6" />
+                <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
             </div>
           </div>
@@ -150,19 +150,19 @@ export default function PublicNavbar() {
         >
           {/* Top Bar: Perfectly aligned with the Navbar position & dimensions */}
           <div className="border-b border-slate-200 px-4 sm:px-6 shrink-0">
-            <div className="flex items-center justify-between h-16 sm:h-20 max-w-7xl mx-auto">
+            <div className="flex items-center justify-between h-14 sm:h-16 max-w-7xl mx-auto">
               {/* Brand Logo */}
               <Link
                 to="/"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-2.5 font-bold text-xl text-slate-900 group focus:outline-none focus:ring-2 focus:ring-teal-600 rounded-lg p-1"
+                className="flex items-center gap-2 font-bold text-lg sm:text-xl text-slate-900 group focus:outline-none focus:ring-2 focus:ring-teal-600 rounded-lg p-1"
               >
                 <img
                   src="/logo.png"
                   alt="SpillRate Logo"
-                  className="w-8 h-8 object-contain shrink-0"
+                  className="w-7 h-7 sm:w-8 sm:h-8 object-contain shrink-0"
                 />
-                <span className="tracking-tight text-xl font-bold">
+                <span className="tracking-tight text-lg sm:text-xl font-bold">
                   Spill<span className="text-teal-700">Rate</span>
                 </span>
               </Link>
@@ -172,9 +172,9 @@ export default function PublicNavbar() {
                 type="button"
                 onClick={() => setMobileMenuOpen(false)}
                 aria-label="Close navigation menu"
-                className="p-2.5 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
+                className="p-2 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[40px] min-w-[40px] flex items-center justify-center cursor-pointer"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5 sm:w-6 sm:h-6" />
               </button>
             </div>
           </div>
