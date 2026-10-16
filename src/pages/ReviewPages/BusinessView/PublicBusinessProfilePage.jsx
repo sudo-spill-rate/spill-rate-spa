@@ -226,165 +226,156 @@ export default function PublicBusinessProfilePage() {
           </button>
         </div>
 
-        {/* 2. Responsive 2-Column Split: Left (Profile & Ratings) + Right (Reviews & Moderation) */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-3.5 sm:gap-4 lg:gap-6 items-start">
-          {/* Left Column: Storefront Profile Card & Desktop Ratings Breakdown */}
-          <div className="lg:col-span-5 space-y-3.5 lg:sticky lg:top-20">
-            {/* Single Consolidated Storefront Business Card */}
-            <div className="relative bg-white rounded-xl border border-slate-200 p-3.5 sm:p-4 lg:p-5 shadow-xs space-y-3">
-              {/* Top Section: Logo, Name, Badges, and Top-Right Action Row (Owner controls & Share icon) */}
-              <div className="flex items-start justify-between gap-3">
-                <div className="flex items-start gap-3 sm:gap-3.5 flex-1 min-w-0 pr-1">
-                  {/* Storefront Logo (Only if business uploaded a logo) */}
-                  {business.image_url && !imageError && (
-                    <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-lg bg-slate-100 border border-slate-200 overflow-hidden shrink-0 flex items-center justify-center">
-                      <img
-                        src={business.image_url}
-                        alt={`Logo of ${business.name}`}
-                        className="w-full h-full object-cover"
-                        onError={() => setImageError(true)}
-                      />
-                    </div>
-                  )}
+        {/* 2. Top Sticky Business Details Card */}
+        <div className="sticky top-14 sm:top-16 z-30 bg-slate-50/95 backdrop-blur-xs py-1">
+          <div className="bg-white rounded-xl border border-slate-200 p-3 sm:p-3.5 lg:p-4 shadow-xs space-y-2">
+            {/* Top Row: Logo, Name & Badges on Left; Primary Actions on Right */}
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5 sm:gap-3 flex-1 min-w-0">
+                {/* Storefront Logo */}
+                {business.image_url && !imageError && (
+                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-slate-100 border border-slate-200 overflow-hidden shrink-0 flex items-center justify-center">
+                    <img
+                      src={business.image_url}
+                      alt={`Logo of ${business.name}`}
+                      className="w-full h-full object-cover"
+                      onError={() => setImageError(true)}
+                    />
+                  </div>
+                )}
 
-                  {/* Name and Metadata Chips (Verified, Category, and Cooldown Status) */}
-                  <div className="flex-1 min-w-0">
-                    <h1 className="text-base sm:text-xl lg:text-2xl font-bold text-slate-900 tracking-tight break-words">
+                {/* Name and Metadata Chips */}
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h1 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 tracking-tight truncate">
                       {business.name}
                     </h1>
-
-                    {/* Metadata Chips: Verified, Category, Cooldown Status */}
-                    <div className="flex items-center gap-1.5 flex-wrap mt-1">
-                      {business.is_verified && (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-teal-800 bg-teal-50 px-2 py-0.5 rounded border border-teal-200/60">
-                          <CheckCircle2 className="w-3 h-3 text-teal-700" aria-hidden="true" />
-                          <span>Verified</span>
-                        </span>
-                      )}
-                      {business.category && (
-                        <span className="inline-flex items-center text-[11px] font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded border border-slate-200/60">
-                          {business.category}
-                        </span>
-                      )}
-                      {!isEligible && (
-                        <span
-                          className="inline-flex items-center gap-1 text-[11px] font-medium bg-slate-100 text-slate-600 px-2 py-0.5 rounded border border-slate-200/60"
-                          title={`You recently reviewed this business. You can submit another review in ${cooldownHours} hours.`}
-                        >
-                          <Clock className="w-3 h-3 text-slate-500 shrink-0" aria-hidden="true" />
-                          <span>Reviewed ({cooldownHours}h wait)</span>
-                        </span>
-                      )}
-                    </div>
+                    {business.is_verified && (
+                      <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-teal-800 bg-teal-50 px-2 py-0.5 rounded border border-teal-200/60">
+                        <CheckCircle2 className="w-3 h-3 text-teal-700" aria-hidden="true" />
+                        <span>Verified</span>
+                      </span>
+                    )}
+                    {business.category && (
+                      <span className="inline-flex items-center text-[11px] font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded border border-slate-200/60">
+                        {business.category}
+                      </span>
+                    )}
+                    {!isEligible && (
+                      <span
+                        className="inline-flex items-center gap-1 text-[11px] font-medium bg-slate-100 text-slate-600 px-2 py-0.5 rounded border border-slate-200/60"
+                        title={`You recently reviewed this business. You can submit another review in ${cooldownHours} hours.`}
+                      >
+                        <Clock className="w-3 h-3 text-slate-500 shrink-0" aria-hidden="true" />
+                        <span>Reviewed ({cooldownHours}h wait)</span>
+                      </span>
+                    )}
                   </div>
-                </div>
-
-                {/* Top-Right Corner Controls: Owner Actions (if any) and Icon-only Share Button */}
-                <div className="flex items-center gap-1.5 shrink-0 self-start">
-                  {isOwnerOrFounder && (
-                    <>
-                      <Link
-                        to={manageLink}
-                        className="inline-flex items-center justify-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer min-h-[34px]"
-                        title="Edit Storefront Profile"
-                      >
-                        <Edit3 className="w-3.5 h-3.5 text-slate-600" aria-hidden="true" />
-                        <span className="hidden sm:inline">Edit</span>
-                      </Link>
-
-                      <button
-                        type="button"
-                        onClick={() => setIsDeleteModalOpen(true)}
-                        className="inline-flex items-center justify-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg border border-red-200 bg-red-50 text-red-700 hover:bg-red-100 transition-colors cursor-pointer min-h-[34px]"
-                        title="Delete Storefront"
-                      >
-                        <Trash2 className="w-3.5 h-3.5 text-red-600" aria-hidden="true" />
-                        <span className="hidden sm:inline">Delete</span>
-                      </button>
-                    </>
-                  )}
-
-                  {/* Upper-Right Icon-Only Share Button */}
-                  <ShareStorefrontMenu
-                    slug={business.slug}
-                    businessName={business.name}
-                    logoUrl={business.image_url}
-                    isOwner={isOwnerOrFounder}
-                    iconOnly={true}
-                  />
                 </div>
               </div>
 
-              {/* Grouped Content: Description & Contact Alignment */}
-              {(business.description || business.address || business.phone || business.website) && (
-                <div className="space-y-2 pt-0.5">
-                  {business.description && (
-                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed whitespace-pre-wrap break-words">
-                      {business.description}
-                    </p>
-                  )}
-
-                  {(business.address || business.phone || business.website) && (
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-slate-600 pt-0.5">
-                      {business.address && (
-                        <div className="inline-flex items-center gap-1.5 min-w-0">
-                          <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" aria-hidden="true" />
-                          <span className="truncate">{business.address}</span>
-                        </div>
-                      )}
-
-                      {business.phone && (
-                        <a
-                          href={`tel:${business.phone}`}
-                          className="inline-flex items-center gap-1.5 min-w-0 text-slate-700 hover:text-teal-700 transition-colors focus:outline-none focus:underline"
-                        >
-                          <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" aria-hidden="true" />
-                          <span className="font-medium">{business.phone}</span>
-                        </a>
-                      )}
-
-                      {business.website && (
-                        <a
-                          href={business.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 text-teal-700 hover:text-teal-800 hover:underline min-w-0 truncate"
-                        >
-                          <Globe className="w-3.5 h-3.5 text-slate-400 shrink-0" aria-hidden="true" />
-                          <span className="truncate">{business.website.replace(/^https?:\/\//, "")}</span>
-                        </a>
-                      )}
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Primary Action: Write a Review Button */}
-              {isEligible && (
-                <div className="pt-1 border-t border-slate-100 flex items-center justify-between gap-3">
-                  <p className="text-xs text-slate-500 hidden sm:block">
-                    Have you visited this establishment? Share your experience with the community.
-                  </p>
+              {/* Right Action Buttons */}
+              <div className="flex items-center gap-2 shrink-0">
+                {isEligible && (
                   <button
                     type="button"
                     onClick={handleWriteReview}
-                    className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 py-1.5 px-4 rounded-lg font-semibold text-xs sm:text-sm text-white bg-teal-700 hover:bg-teal-800 active:bg-teal-900 transition-colors shadow-2xs min-h-[38px] cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-600 ml-auto"
+                    className="inline-flex items-center justify-center gap-1.5 py-1.5 px-3 sm:px-3.5 rounded-lg font-semibold text-xs sm:text-sm text-white bg-teal-700 hover:bg-teal-800 active:bg-teal-900 transition-colors shadow-2xs min-h-[36px] cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-600"
                   >
                     <PenSquare className="w-3.5 h-3.5" aria-hidden="true" />
                     <span>Write a Review</span>
                   </button>
-                </div>
-              )}
+                )}
+
+                {isOwnerOrFounder && (
+                  <>
+                    <Link
+                      to={manageLink}
+                      className="inline-flex items-center justify-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer min-h-[34px]"
+                      title="Edit Storefront Profile"
+                    >
+                      <Edit3 className="w-3.5 h-3.5 text-slate-600" aria-hidden="true" />
+                      <span className="hidden sm:inline">Edit</span>
+                    </Link>
+
+                    <button
+                      type="button"
+                      onClick={() => setIsDeleteModalOpen(true)}
+                      className="inline-flex items-center justify-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg border border-red-200 bg-red-50 text-red-700 hover:bg-red-100 transition-colors cursor-pointer min-h-[34px]"
+                      title="Delete Storefront"
+                    >
+                      <Trash2 className="w-3.5 h-3.5 text-red-600" aria-hidden="true" />
+                      <span className="hidden sm:inline">Delete</span>
+                    </button>
+                  </>
+                )}
+
+                {/* Share Button */}
+                <ShareStorefrontMenu
+                  slug={business.slug}
+                  businessName={business.name}
+                  logoUrl={business.image_url}
+                  isOwner={isOwnerOrFounder}
+                  iconOnly={true}
+                />
+              </div>
             </div>
 
-            {/* Desktop Ratings Breakdown (Always visible beside reviews on desktop) */}
-            <div className="hidden lg:block">
-              <BusinessRatingStatsCard
-                business={business}
-                showResponseMetrics={false}
-                title="Ratings Breakdown"
-              />
-            </div>
+            {/* Bottom Row: Description & Contact Information */}
+            {(business.description || business.address || business.phone || business.website) && (
+              <div className="pt-1.5 border-t border-slate-100/90 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-600">
+                {business.description && (
+                  <p className="line-clamp-1 flex-1 min-w-0 pr-2">
+                    {business.description}
+                  </p>
+                )}
+
+                {(business.address || business.phone || business.website) && (
+                  <div className="flex flex-wrap items-center gap-x-3.5 gap-y-1 shrink-0">
+                    {business.address && (
+                      <div className="inline-flex items-center gap-1 min-w-0">
+                        <MapPin className="w-3 h-3 text-slate-400 shrink-0" aria-hidden="true" />
+                        <span className="truncate max-w-[180px]">{business.address}</span>
+                      </div>
+                    )}
+
+                    {business.phone && (
+                      <a
+                        href={`tel:${business.phone}`}
+                        className="inline-flex items-center gap-1 min-w-0 text-slate-700 hover:text-teal-700 transition-colors focus:outline-none focus:underline"
+                      >
+                        <Phone className="w-3 h-3 text-slate-400 shrink-0" aria-hidden="true" />
+                        <span className="font-medium">{business.phone}</span>
+                      </a>
+                    )}
+
+                    {business.website && (
+                      <a
+                        href={business.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-teal-700 hover:text-teal-800 hover:underline min-w-0 truncate max-w-[160px]"
+                      >
+                        <Globe className="w-3 h-3 text-slate-400 shrink-0" aria-hidden="true" />
+                        <span className="truncate">{business.website.replace(/^https?:\/\//, "")}</span>
+                      </a>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* 3. Main Content: 2-Column Split (Ratings Breakdown | Feedback) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 items-start">
+          {/* Left Column: Ratings Breakdown (Desktop Sticky) */}
+          <div className="hidden lg:block lg:col-span-5 lg:sticky lg:top-[calc(4rem+5.5rem)]">
+            <BusinessRatingStatsCard
+              business={business}
+              showResponseMetrics={false}
+              title="Ratings Breakdown"
+            />
           </div>
 
           {/* Right Column: Mobile Tab Switcher, Mobile Ratings, and Reviews Feed */}
