@@ -232,40 +232,57 @@ export default function PublicBusinessProfilePage() {
         </div>
 
         {/* 2. Top Sticky Business Details Card */}
-        <div className="sticky top-14 sm:top-16 z-30 bg-slate-50/95 backdrop-blur-xs py-1">
-          <div className="bg-white rounded-xl border border-slate-200 p-3 sm:p-3.5 lg:p-4 shadow-xs space-y-2">
-            {/* Top Row: Logo, Name & Badges on Left; Primary Actions on Right */}
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2.5 sm:gap-3 flex-1 min-w-0">
-                {/* Storefront Logo */}
-                {business.image_url && !imageError && (
-                  <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-slate-100 border border-slate-200 overflow-hidden shrink-0 flex items-center justify-center">
+        <div className="sticky top-14 sm:top-16 z-30 bg-slate-50/95 backdrop-blur-xs py-1.5 transition-all">
+          <div className="bg-white rounded-xl border border-slate-200/90 p-3.5 sm:p-4 shadow-xs">
+            <div className="flex flex-col md:flex-row md:items-start justify-between gap-3.5">
+              
+              {/* Left Side: Logo + Identity + Ratings + Badges + Metadata */}
+              <div className="flex items-start gap-3 sm:gap-3.5 flex-1 min-w-0">
+                {/* Business Logo / Avatar */}
+                <div className="shrink-0">
+                  {business.image_url && !imageError ? (
                     <img
                       src={business.image_url}
                       alt={`Logo of ${business.name}`}
-                      className="w-full h-full object-cover"
+                      className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-cover border border-slate-200 shadow-2xs bg-slate-50"
                       onError={() => setImageError(true)}
                     />
-                  </div>
-                )}
+                  ) : (
+                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-teal-50 border border-teal-100/80 flex items-center justify-center font-bold text-teal-800 text-base sm:text-lg shadow-2xs">
+                      {business.name ? business.name.charAt(0).toUpperCase() : "B"}
+                    </div>
+                  )}
+                </div>
 
-                {/* Name and Metadata Chips */}
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 flex-wrap">
-                    <h1 className="text-base sm:text-lg lg:text-xl font-bold text-slate-900 tracking-tight truncate">
-                      {business.name}
-                    </h1>
+                {/* Identity & Details */}
+                <div className="flex-1 min-w-0 space-y-1.5">
+                  {/* Rating Stars & Trust Badges */}
+                  <div className="flex items-center gap-2 flex-wrap text-xs">
+                    {/* Star Rating snippet */}
+                    <div className="inline-flex items-center gap-1 bg-amber-50/80 px-2 py-0.5 rounded border border-amber-200/60 text-amber-900 font-bold">
+                      <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" aria-hidden="true" />
+                      <span>{Number(business.average_rating || 0).toFixed(1)}</span>
+                      <span className="text-slate-400 font-normal">
+                        ({rawReviews.length} {rawReviews.length === 1 ? "review" : "reviews"})
+                      </span>
+                    </div>
+
+                    {/* Verified Badge */}
                     {business.is_verified && (
                       <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-teal-800 bg-teal-50 px-2 py-0.5 rounded border border-teal-200/60">
                         <CheckCircle2 className="w-3 h-3 text-teal-700" aria-hidden="true" />
                         <span>Verified</span>
                       </span>
                     )}
+
+                    {/* Category Chip */}
                     {business.category && (
                       <span className="inline-flex items-center text-[11px] font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded border border-slate-200/60">
                         {business.category}
                       </span>
                     )}
+
+                    {/* User Cooldown / Status */}
                     {!isEligible && (
                       <span
                         className="inline-flex items-center gap-1 text-[11px] font-medium bg-slate-100 text-slate-600 px-2 py-0.5 rounded border border-slate-200/60"
@@ -276,16 +293,62 @@ export default function PublicBusinessProfilePage() {
                       </span>
                     )}
                   </div>
+
+                  {/* Establishment Name */}
+                  <h1 className="text-lg sm:text-xl lg:text-2xl font-extrabold text-slate-900 tracking-tight truncate">
+                    {business.name}
+                  </h1>
+
+                  {/* Business Description */}
+                  {business.description && (
+                    <p className="text-xs sm:text-sm text-slate-600 line-clamp-2 leading-relaxed max-w-3xl">
+                      {business.description}
+                    </p>
+                  )}
+
+                  {/* Contact & Location Metadata Bar */}
+                  {(business.address || business.phone || business.website) && (
+                    <div className="pt-1 flex flex-wrap items-center gap-x-3.5 gap-y-1.5 text-xs text-slate-600">
+                      {business.phone && (
+                        <a
+                          href={`tel:${business.phone}`}
+                          className="inline-flex items-center gap-1 text-slate-700 hover:text-teal-700 transition-colors font-medium focus:outline-none focus:underline"
+                        >
+                          <Phone className="w-3.5 h-3.5 text-teal-700 shrink-0" aria-hidden="true" />
+                          <span>{business.phone}</span>
+                        </a>
+                      )}
+
+                      {business.address && (
+                        <div className="inline-flex items-center gap-1 min-w-0">
+                          <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" aria-hidden="true" />
+                          <span className="truncate max-w-[240px] sm:max-w-[320px]">{business.address}</span>
+                        </div>
+                      )}
+
+                      {business.website && (
+                        <a
+                          href={business.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-teal-700 hover:text-teal-800 hover:underline min-w-0 truncate max-w-[200px]"
+                        >
+                          <Globe className="w-3.5 h-3.5 text-teal-700 shrink-0" aria-hidden="true" />
+                          <span className="truncate">{business.website.replace(/^https?:\/\//, "")}</span>
+                        </a>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
 
-              {/* Right Action Buttons */}
-              <div className="flex items-center gap-2 shrink-0">
+              {/* Right Side: Primary Actions */}
+              <div className="flex items-center gap-2 shrink-0 pt-1 md:pt-0 border-t md:border-t-0 border-slate-100 justify-end">
                 {isEligible && (
                   <button
                     type="button"
                     onClick={handleWriteReview}
-                    className="inline-flex items-center justify-center gap-1.5 py-1.5 px-3 sm:px-3.5 rounded-lg font-semibold text-xs sm:text-sm text-white bg-teal-700 hover:bg-teal-800 active:bg-teal-900 transition-colors shadow-2xs min-h-[36px] cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-600"
+                    className="inline-flex items-center justify-center gap-1.5 py-2 px-3.5 sm:px-4 rounded-lg font-semibold text-xs sm:text-sm text-white bg-teal-700 hover:bg-teal-800 active:bg-teal-900 transition-colors shadow-2xs min-h-[38px] cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-600"
                   >
                     <PenSquare className="w-3.5 h-3.5" aria-hidden="true" />
                     <span>Write a Review</span>
@@ -296,7 +359,7 @@ export default function PublicBusinessProfilePage() {
                   <>
                     <Link
                       to={manageLink}
-                      className="inline-flex items-center justify-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer min-h-[34px]"
+                      className="inline-flex items-center justify-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer min-h-[38px]"
                       title="Edit Storefront Profile"
                     >
                       <Edit3 className="w-3.5 h-3.5 text-slate-600" aria-hidden="true" />
@@ -306,7 +369,7 @@ export default function PublicBusinessProfilePage() {
                     <button
                       type="button"
                       onClick={() => setIsDeleteModalOpen(true)}
-                      className="inline-flex items-center justify-center gap-1 px-2.5 py-1 text-xs font-semibold rounded-lg border border-red-200 bg-red-50 text-red-700 hover:bg-red-100 transition-colors cursor-pointer min-h-[34px]"
+                      className="inline-flex items-center justify-center gap-1 px-3 py-1.5 text-xs font-semibold rounded-lg border border-red-200 bg-red-50 text-red-700 hover:bg-red-100 transition-colors cursor-pointer min-h-[38px]"
                       title="Delete Storefront"
                     >
                       <Trash2 className="w-3.5 h-3.5 text-red-600" aria-hidden="true" />
@@ -325,50 +388,6 @@ export default function PublicBusinessProfilePage() {
                 />
               </div>
             </div>
-
-            {/* Bottom Row: Description & Contact Information */}
-            {(business.description || business.address || business.phone || business.website) && (
-              <div className="pt-1.5 border-t border-slate-100/90 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-600">
-                {business.description && (
-                  <p className="line-clamp-1 flex-1 min-w-0 pr-2">
-                    {business.description}
-                  </p>
-                )}
-
-                {(business.address || business.phone || business.website) && (
-                  <div className="flex flex-wrap items-center gap-x-3.5 gap-y-1 shrink-0">
-                    {business.address && (
-                      <div className="inline-flex items-center gap-1 min-w-0">
-                        <MapPin className="w-3 h-3 text-slate-400 shrink-0" aria-hidden="true" />
-                        <span className="truncate max-w-[180px]">{business.address}</span>
-                      </div>
-                    )}
-
-                    {business.phone && (
-                      <a
-                        href={`tel:${business.phone}`}
-                        className="inline-flex items-center gap-1 min-w-0 text-slate-700 hover:text-teal-700 transition-colors focus:outline-none focus:underline"
-                      >
-                        <Phone className="w-3 h-3 text-slate-400 shrink-0" aria-hidden="true" />
-                        <span className="font-medium">{business.phone}</span>
-                      </a>
-                    )}
-
-                    {business.website && (
-                      <a
-                        href={business.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-teal-700 hover:text-teal-800 hover:underline min-w-0 truncate max-w-[160px]"
-                      >
-                        <Globe className="w-3 h-3 text-slate-400 shrink-0" aria-hidden="true" />
-                        <span className="truncate">{business.website.replace(/^https?:\/\//, "")}</span>
-                      </a>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
           </div>
         </div>
 
