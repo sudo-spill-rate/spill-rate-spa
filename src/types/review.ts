@@ -7,11 +7,20 @@ import { PaginationMeta } from './api';
 // 1. Star Rating Valid Range (1 to 5 stars)                                                     
 export type StarRating = 1 | 2 | 3 | 4 | 5;                                                      
                                                                                                     
-// 2. Main Review Model Entity                                                                   
+// 2. Reviewer Business Summary (Para sa B2B endorsement display)
+export interface ReviewerBusinessSummary {
+    id: string;
+    name: string;
+    slug: string;
+    image_url?: string | null;
+}
+
+// 2.1 Main Review Model Entity                                                                   
 export interface Review {                                                                        
     id: string; // UUID                                                                          
     business_id: string; // Business na tumanggap ng review                                      
     reviewer_business_id?: string | null; // Business UUID ng nag-review (kung B2B endorsement)  
+    reviewer_business?: ReviewerBusinessSummary | null; // Profile ng nag-endorse na negosyo
     name: string; // Pangalan ng reviewer o negosyo                                              
     rating: StarRating; // 1 hanggang 5                                                          
     comment: string; // Maximum 500 characters                                                   
