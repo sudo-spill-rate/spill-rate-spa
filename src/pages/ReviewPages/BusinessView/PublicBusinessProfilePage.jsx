@@ -294,10 +294,27 @@ export default function PublicBusinessProfilePage() {
                     )}
                   </div>
 
-                  {/* Establishment Name */}
-                  <h1 className="text-lg sm:text-xl lg:text-2xl font-extrabold text-slate-900 tracking-tight truncate">
-                    {business.name}
-                  </h1>
+                  {/* Establishment Name & Verified Shield Badge (e.g. SpillRate | Badge) */}
+                  <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap">
+                    <h1 className="text-lg sm:text-xl lg:text-2xl font-extrabold text-slate-900 tracking-tight truncate">
+                      {business.name}
+                    </h1>
+
+                    {business.is_verified && (
+                      <div className="flex items-center gap-1.5 shrink-0" title="Verified Merchant">
+                        <span className="text-slate-300 font-light text-base sm:text-lg" aria-hidden="true">|</span>
+                        <img
+                          src="https://res.cloudinary.com/qzludnat/image/upload/v1792131141/Verified_Merchant_Shield-removebg-preview_1.png"
+                          alt="Verified Merchant Shield"
+                          className="w-5 h-5 sm:w-6 sm:h-6 object-contain inline-block drop-shadow-2xs"
+                          loading="lazy"
+                        />
+                        <span className="text-xs sm:text-sm font-bold text-teal-800 hidden sm:inline">
+                          Verified Merchant
+                        </span>
+                      </div>
+                    )}
+                  </div>
 
                   {/* Business Description */}
                   {business.description && (
