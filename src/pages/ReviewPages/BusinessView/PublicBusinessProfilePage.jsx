@@ -263,31 +263,31 @@ export default function PublicBusinessProfilePage() {
                     <img
                       src={business.image_url}
                       alt={`Logo of ${business.name}`}
-                      className="w-16 h-16 sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-xl sm:rounded-2xl object-cover border-2 border-slate-100 shadow-sm bg-white ring-1 ring-slate-200/80"
+                      className="w-16 h-16 sm:w-22 sm:h-22 lg:w-26 lg:h-26 rounded-xl sm:rounded-2xl object-cover border border-slate-200/90 shadow-2xs bg-white ring-1 ring-slate-100"
                       onError={() => setImageError(true)}
                     />
                   ) : (
-                    <div className="w-16 h-16 sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-xl sm:rounded-2xl bg-teal-50 border-2 border-teal-100 flex items-center justify-center font-bold text-teal-800 text-xl sm:text-3xl lg:text-4xl shadow-sm ring-1 ring-teal-200/60">
+                    <div className="w-16 h-16 sm:w-22 sm:h-22 lg:w-26 lg:h-26 rounded-xl sm:rounded-2xl bg-teal-50 border border-teal-200/80 flex items-center justify-center font-bold text-teal-800 text-xl sm:text-2xl lg:text-3xl shadow-2xs ring-1 ring-teal-100">
                       {business.name ? business.name.charAt(0).toUpperCase() : "B"}
                     </div>
                   )}
                 </div>
 
                 {/* Identity & Details */}
-                <div className="flex-1 min-w-0 space-y-1 sm:space-y-1.5">
-                  {/* Establishment Name, Verified Shield Badge, Category Chip & Cooldown Status */}
-                  <div className="flex items-center gap-1.5 sm:gap-2.5 flex-wrap">
-                    <h1 className="text-base sm:text-xl lg:text-2xl font-extrabold text-slate-900 tracking-tight truncate max-w-[200px] sm:max-w-none">
+                <div className="flex-1 min-w-0 space-y-1.5 sm:space-y-2">
+                  {/* Establishment Name, Verified Shield Badge & Category Chip */}
+                  <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                    <h1 className="text-base sm:text-lg lg:text-xl font-extrabold text-slate-900 tracking-tight truncate max-w-[200px] sm:max-w-none">
                       {business.name}
                     </h1>
 
                     {business.is_verified && (
-                      <div className="flex items-center gap-1 shrink-0" title="Verified Establishment">
-                        <span className="text-slate-300 font-light text-sm sm:text-base" aria-hidden="true">|</span>
+                      <div className="inline-flex items-center gap-1 shrink-0" title="Verified Establishment">
+                        <span className="text-slate-300 font-light text-xs sm:text-sm" aria-hidden="true">|</span>
                         <img
                           src="https://res.cloudinary.com/qzludnat/image/upload/v1792131560/Teal_Verified_Shield_Icon-removebg-preview.png"
                           alt="Verified Establishment"
-                          className="w-4 h-4 sm:w-5 sm:h-5 object-contain inline-block drop-shadow-2xs"
+                          className="w-4 h-4 sm:w-4.5 sm:h-4.5 object-contain inline-block drop-shadow-2xs"
                           loading="lazy"
                         />
                       </div>
@@ -295,7 +295,7 @@ export default function PublicBusinessProfilePage() {
 
                     {/* Category Chip beside Name */}
                     {business.category && (
-                      <span className="inline-flex items-center text-[10px] sm:text-[11px] font-semibold bg-slate-100 text-slate-700 px-2 sm:px-2.5 py-0.5 rounded-full border border-slate-200/80 shrink-0">
+                      <span className="inline-flex items-center text-[10px] sm:text-[11px] font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md border border-slate-200/80 shrink-0">
                         {business.category}
                       </span>
                     )}
@@ -319,34 +319,34 @@ export default function PublicBusinessProfilePage() {
                     </p>
                   )}
 
-                  {/* Contact & Location Metadata Bar: Phone, Address, Website */}
-                  <div className="pt-0.5 sm:pt-1 flex flex-wrap items-center gap-x-3 sm:gap-x-4 gap-y-1 text-xs text-slate-600">
+                  {/* Contact & Location Metadata: Clean responsive grid on mobile, inline-flex on sm+ */}
+                  <div className="pt-0.5 grid grid-cols-1 sm:flex sm:flex-wrap sm:items-center gap-x-4 gap-y-1.5 text-xs text-slate-600">
                     {/* Phone */}
                     {business.phone ? (
                       <a
                         href={`tel:${business.phone}`}
-                        className="inline-flex items-center gap-1 text-slate-700 hover:text-teal-700 transition-colors font-medium focus:outline-none focus:underline"
+                        className="inline-flex items-center gap-1.5 text-slate-700 hover:text-teal-700 transition-colors font-medium focus:outline-none focus:underline min-h-[28px] sm:min-h-0"
                       >
-                        <Phone className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-teal-700 shrink-0" aria-hidden="true" />
-                        <span className="text-[11px] sm:text-xs">{business.phone}</span>
+                        <Phone className="w-3.5 h-3.5 text-teal-700 shrink-0" aria-hidden="true" />
+                        <span className="text-xs">{business.phone}</span>
                       </a>
                     ) : (
-                      <span className="inline-flex items-center gap-1 text-slate-400 min-w-0">
-                        <Phone className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-300 shrink-0" aria-hidden="true" />
-                        <span className="text-[11px] sm:text-xs">No phone</span>
+                      <span className="inline-flex items-center gap-1.5 text-slate-400 min-w-0 min-h-[24px] sm:min-h-0">
+                        <Phone className="w-3.5 h-3.5 text-slate-300 shrink-0" aria-hidden="true" />
+                        <span className="text-xs">No phone</span>
                       </span>
                     )}
 
                     {/* Address */}
                     {business.address ? (
-                      <div className="inline-flex items-center gap-1 min-w-0">
-                        <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-400 shrink-0" aria-hidden="true" />
-                        <span className="truncate max-w-[150px] sm:max-w-[280px] text-[11px] sm:text-xs">{business.address}</span>
+                      <div className="inline-flex items-center gap-1.5 min-w-0 min-h-[24px] sm:min-h-0">
+                        <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" aria-hidden="true" />
+                        <span className="truncate max-w-[260px] sm:max-w-[280px] text-xs">{business.address}</span>
                       </div>
                     ) : (
-                      <span className="inline-flex items-center gap-1 text-slate-400 min-w-0">
-                        <MapPin className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-300 shrink-0" aria-hidden="true" />
-                        <span className="text-[11px] sm:text-xs">No address</span>
+                      <span className="inline-flex items-center gap-1.5 text-slate-400 min-w-0 min-h-[24px] sm:min-h-0">
+                        <MapPin className="w-3.5 h-3.5 text-slate-300 shrink-0" aria-hidden="true" />
+                        <span className="text-xs">No address</span>
                       </span>
                     )}
 
@@ -356,30 +356,30 @@ export default function PublicBusinessProfilePage() {
                         href={business.website}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-teal-700 hover:text-teal-800 hover:underline min-w-0 truncate max-w-[140px] sm:max-w-[200px]"
+                        className="inline-flex items-center gap-1.5 text-teal-700 hover:text-teal-800 hover:underline min-w-0 truncate max-w-[220px] sm:max-w-[240px] min-h-[28px] sm:min-h-0"
                       >
-                        <Globe className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-teal-700 shrink-0" aria-hidden="true" />
-                        <span className="truncate text-[11px] sm:text-xs">{business.website.replace(/^https?:\/\//, "")}</span>
+                        <Globe className="w-3.5 h-3.5 text-teal-700 shrink-0" aria-hidden="true" />
+                        <span className="truncate text-xs">{business.website.replace(/^https?:\/\//, "")}</span>
                       </a>
                     ) : (
-                      <span className="inline-flex items-center gap-1 text-slate-400 min-w-0">
-                        <Globe className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-slate-300 shrink-0" aria-hidden="true" />
-                        <span className="text-[11px] sm:text-xs">No website</span>
+                      <span className="inline-flex items-center gap-1.5 text-slate-400 min-w-0 min-h-[24px] sm:min-h-0">
+                        <Globe className="w-3.5 h-3.5 text-slate-300 shrink-0" aria-hidden="true" />
+                        <span className="text-xs">No website</span>
                       </span>
                     )}
                   </div>
                 </div>
               </div>
 
-              {/* Right Side: Primary Actions */}
-              <div className="flex items-center gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 justify-end">
+              {/* Right Side: Primary Actions with standard 44px min-touch target on mobile */}
+              <div className="flex items-center gap-2 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 justify-end w-full sm:w-auto">
                 {isEligible && (
                   <button
                     type="button"
                     onClick={handleWriteReview}
-                    className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 py-1.5 sm:py-2 px-3 sm:px-4 rounded-lg font-semibold text-xs sm:text-sm text-white bg-teal-700 hover:bg-teal-800 active:bg-teal-900 transition-colors shadow-2xs min-h-[36px] sm:min-h-[38px] cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-600"
+                    className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-2 py-2 px-4 rounded-xl font-semibold text-xs sm:text-sm text-white bg-teal-700 hover:bg-teal-800 active:bg-teal-900 transition-colors shadow-2xs min-h-[44px] cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-600"
                   >
-                    <PenSquare className="w-3.5 h-3.5" aria-hidden="true" />
+                    <PenSquare className="w-4 h-4" aria-hidden="true" />
                     <span>Write a Review</span>
                   </button>
                 )}
@@ -388,7 +388,7 @@ export default function PublicBusinessProfilePage() {
                   <>
                     <Link
                       to={manageLink}
-                      className="inline-flex items-center justify-center gap-1 px-2.5 sm:px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer min-h-[36px] sm:min-h-[38px]"
+                      className="inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl border border-slate-200 bg-white text-slate-700 hover:bg-slate-50 transition-colors cursor-pointer min-h-[44px]"
                       title="Edit Storefront Profile"
                     >
                       <Edit3 className="w-3.5 h-3.5 text-slate-600" aria-hidden="true" />
@@ -398,7 +398,7 @@ export default function PublicBusinessProfilePage() {
                     <button
                       type="button"
                       onClick={() => setIsDeleteModalOpen(true)}
-                      className="inline-flex items-center justify-center gap-1 px-2.5 sm:px-3 py-1.5 text-xs font-semibold rounded-lg border border-red-200 bg-red-50 text-red-700 hover:bg-red-100 transition-colors cursor-pointer min-h-[36px] sm:min-h-[38px]"
+                      className="inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold rounded-xl border border-red-200 bg-red-50 text-red-700 hover:bg-red-100 transition-colors cursor-pointer min-h-[44px]"
                       title="Delete Storefront"
                     >
                       <Trash2 className="w-3.5 h-3.5 text-red-600" aria-hidden="true" />
@@ -407,7 +407,7 @@ export default function PublicBusinessProfilePage() {
                   </>
                 )}
 
-                {/* Share Button */}
+                {/* Share Button (44px min-h) */}
                 <ShareStorefrontMenu
                   slug={business.slug}
                   businessName={business.name}
