@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { Link } from "react-router";
 import { Compass, Home } from "lucide-react";
 
@@ -13,7 +13,7 @@ export default function PageNotFoundPage() {
         >
           <img
             src="/logo.png"
-            alt="TrustRate Logo"
+            alt="SpillRate Logo"
             className="w-8 h-8 object-contain shrink-0"
           />
           <span className="tracking-tight text-xl">
@@ -69,7 +69,7 @@ export default function PageNotFoundPage() {
 
       {/* Bottom Footer Note */}
       <footer className="max-w-7xl mx-auto w-full text-center text-xs text-slate-400">
-        <p>© {new Date().getFullYear()} TrustRate. Transparent community ratings & reviews.</p>
+        <p>© {new Date().getFullYear()} SpillRate. Transparent community ratings & reviews.</p>
       </footer>
     </div>
   );
