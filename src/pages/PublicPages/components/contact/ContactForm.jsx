@@ -1,16 +1,16 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 
 export default function ContactForm() {
   const [name, setName] = useState("");
   const [inquiryTopic, setInquiryTopic] = useState("General Question");
   const [error, setError] = useState("");
 
-  const supportEmail = "support@trustrate.local";
+  const supportEmail = "support@spillrate.local";
 
   const buildSubjectAndBody = () => {
     const trimmedName = name.trim();
-    const subject = `[TrustRate Support] ${inquiryTopic} - ${trimmedName}`;
-    const body = `Hi TrustRate Support,\n\nMy name is ${trimmedName}.\n\nInquiry Topic: ${inquiryTopic}\n\n[Please write your message here...]`;
+    const subject = `[SpillRate Support] ${inquiryTopic} - ${trimmedName}`;
+    const body = `Hi SpillRate Support,\n\nMy name is ${trimmedName}.\n\nInquiry Topic: ${inquiryTopic}\n\n[Please write your message here...]`;
     return { subject, body };
   };
 
@@ -100,7 +100,7 @@ export default function ContactForm() {
       </div>
 
       <p className="mt-3.5 text-[11px] text-slate-500 text-center leading-normal">
-        Opens Gmail with the subject and recipient (<code className="text-slate-700 font-mono">support@trustrate.local</code>) already filled in.
+        Opens Gmail with the subject and recipient (<code className="text-slate-700 font-mono">support@spillrate.local</code>) already filled in.
       </p>
     </form>
   );

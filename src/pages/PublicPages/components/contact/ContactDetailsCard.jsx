@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { Link } from "react-router";
 
 export default function ContactDetailsCard() {
@@ -18,10 +18,10 @@ export default function ContactDetailsCard() {
           <h3 className="font-semibold text-slate-900 text-xs uppercase tracking-wider">Email Support</h3>
           <p className="text-slate-600 mt-1 text-xs sm:text-sm">
             <a
-              href="mailto:support@trustrate.local"
+              href="mailto:support@spillrate.local"
               className="text-teal-700 hover:text-teal-800 font-medium underline focus:outline-none focus:ring-2 focus:ring-teal-600 rounded"
             >
-              support@trustrate.local
+              support@spillrate.local
             </a>
           </p>
         </div>
