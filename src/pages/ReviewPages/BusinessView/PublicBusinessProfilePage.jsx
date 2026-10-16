@@ -237,18 +237,18 @@ export default function PublicBusinessProfilePage() {
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-3.5">
               
               {/* Left Side: Logo + Identity + Ratings + Badges + Metadata */}
-              <div className="flex items-start gap-3 sm:gap-3.5 flex-1 min-w-0">
+              <div className="flex items-start gap-3.5 sm:gap-4.5 flex-1 min-w-0">
                 {/* Business Logo / Profile Avatar (Prominent Size) */}
                 <div className="shrink-0">
                   {business.image_url && !imageError ? (
                     <img
                       src={business.image_url}
                       alt={`Logo of ${business.name}`}
-                      className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-2xl object-cover border-2 border-slate-100 shadow-sm bg-white ring-1 ring-slate-200/80"
+                      className="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 rounded-2xl object-cover border-2 border-slate-100 shadow-sm bg-white ring-1 ring-slate-200/80"
                       onError={() => setImageError(true)}
                     />
                   ) : (
-                    <div className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-2xl bg-teal-50 border-2 border-teal-100 flex items-center justify-center font-bold text-teal-800 text-2xl sm:text-3xl lg:text-4xl shadow-sm ring-1 ring-teal-200/60">
+                    <div className="w-24 h-24 sm:w-28 sm:h-28 lg:w-32 lg:h-32 rounded-2xl bg-teal-50 border-2 border-teal-100 flex items-center justify-center font-bold text-teal-800 text-3xl sm:text-4xl lg:text-5xl shadow-sm ring-1 ring-teal-200/60">
                       {business.name ? business.name.charAt(0).toUpperCase() : "B"}
                     </div>
                   )}
