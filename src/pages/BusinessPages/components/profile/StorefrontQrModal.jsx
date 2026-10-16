@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+﻿import React, { useEffect, useRef, useState } from "react";
 import QRCode from "qrcode";
 import { Download, X, QrCode, Check } from "lucide-react";
 import { useBodyScrollLock } from "../../../../hooks/useBodyScrollLock";
 
 /**
- * QR Code Modal with embedded central logo (business logo or TrustRate fallback).
+ * QR Code Modal with embedded central logo (business logo or SpillRate fallback).
  * High-error correction (Level H) ensures reliable scannability even with center logo.
  */
 export default function StorefrontQrModal({
@@ -45,7 +45,7 @@ export default function StorefrontQrModal({
         const ctx = canvas.getContext("2d");
         if (!ctx) return;
 
-        // Determine image source: business logo or TrustRate fallback
+        // Determine image source: business logo or SpillRate fallback
         const targetLogoSrc = logoUrl || "/logo.png";
 
         // Load image to draw in the center
@@ -98,7 +98,7 @@ export default function StorefrontQrModal({
 
         img.onerror = () => {
           if (!isMounted) return;
-          // Fallback to TrustRate default logo if business logo failed to load
+          // Fallback to SpillRate default logo if business logo failed to load
           if (targetLogoSrc !== "/logo.png") {
             const fallbackImg = new Image();
             fallbackImg.crossOrigin = "anonymous";
@@ -185,7 +185,7 @@ export default function StorefrontQrModal({
         pCtx.fillStyle = "#0f172a";
         pCtx.font = "bold 20px Inter, system-ui, sans-serif";
         pCtx.textAlign = "center";
-        const displayName = businessName || "TrustRate Storefront";
+        const displayName = businessName || "SpillRate Storefront";
         pCtx.fillText(displayName, printCanvas.width / 2, padding + 24);
 
         // Header Subtitle
@@ -204,15 +204,15 @@ export default function StorefrontQrModal({
         pCtx.lineTo(printCanvas.width - padding, printCanvas.height - footerHeight);
         pCtx.stroke();
 
-        // Footer: TrustRate Verification branding
+        // Footer: SpillRate Verification branding
         pCtx.fillStyle = "#0f766e"; // teal-700
         pCtx.font = "bold 11px Inter, system-ui, sans-serif";
-        pCtx.fillText("Verified on TrustRate", printCanvas.width / 2, printCanvas.height - 18);
+        pCtx.fillText("Verified on SpillRate", printCanvas.width / 2, printCanvas.height - 18);
 
         const dataUrl = printCanvas.toDataURL("image/png");
         const link = document.createElement("a");
         const safeName = (businessName || "storefront").toLowerCase().replace(/[^a-z0-9]+/g, "-");
-        link.download = `${safeName}-trustrate-qr.png`;
+        link.download = `${safeName}-spillrate-qr.png`;
         link.href = dataUrl;
         link.click();
 

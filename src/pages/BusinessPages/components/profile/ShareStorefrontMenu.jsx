@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+﻿import React, { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "react-router";
 import { Share2, Copy, Check, ExternalLink, ChevronDown, X, QrCode } from "lucide-react";
 import { useBodyScrollLock } from "../../../../hooks/useBodyScrollLock";
@@ -77,7 +77,7 @@ export default function ShareStorefrontMenu({ slug, businessName, logoUrl, isOwn
 
   const handleShareX = () => {
     if (!publicUrl) return;
-    const text = `Check out ${businessName || "our storefront"} on TrustRate!`;
+    const text = `Check out ${businessName || "our storefront"} on SpillRate!`;
     const twitterUrl = `https://twitter.com/intent/tweet?url=${encodeURIComponent(publicUrl)}&text=${encodeURIComponent(text)}`;
     window.open(twitterUrl, "_blank", "width=600,height=400,noopener,noreferrer");
     setIsOpen(false);
