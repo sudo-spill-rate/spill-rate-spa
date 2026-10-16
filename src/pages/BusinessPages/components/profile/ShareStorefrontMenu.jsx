@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "react-router";
 import { Share2, Copy, Check, ExternalLink, ChevronDown, X, QrCode } from "lucide-react";
 import { useBodyScrollLock } from "../../../../hooks/useBodyScrollLock";
@@ -121,9 +121,9 @@ export default function ShareStorefrontMenu({ slug, businessName, logoUrl, isOwn
             onClick={handleTriggerClick}
             aria-haspopup="menu"
             aria-expanded={isOpen}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs sm:text-sm font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 hover:border-slate-400 rounded-xl transition-colors min-h-[40px] shadow-2xs focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 hover:border-slate-400 rounded-lg transition-colors min-h-[34px] sm:min-h-[36px] shadow-2xs focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer"
           >
-            <Share2 className="w-4 h-4 text-slate-600" aria-hidden="true" />
+            <Share2 className="w-3.5 h-3.5 text-slate-600" aria-hidden="true" />
             <span>Share</span>
             <ChevronDown
               className={`w-3.5 h-3.5 text-slate-400 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
