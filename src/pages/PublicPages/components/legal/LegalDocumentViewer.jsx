@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { Link } from "react-router";
 import PublicPageHeader from "../layout/PublicPageHeader";
 
@@ -72,7 +72,7 @@ export default function LegalDocumentViewer({
 
             {/* End-of-document footer note */}
             <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs text-slate-500">
-              <span>Terms apply to all users and visitors of TrustRate.</span>
+              <span>Terms apply to all users and visitors of SpillRate.</span>
               <Link
                 to="/contact"
                 className="font-medium text-teal-700 hover:text-teal-800 transition-colors inline-flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-teal-600 rounded"
