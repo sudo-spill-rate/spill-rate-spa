@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { Search, Star, Scale } from "lucide-react";
 
 export default function HowItWorks() {
@@ -32,7 +32,7 @@ export default function HowItWorks() {
         {/* Header matching PublicPageHeader style */}
         <div className="mb-5 sm:mb-8">
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-slate-900">
-            How TrustRate Works
+            How SpillRate Works
           </h2>
           <p className="mt-1 sm:mt-1.5 text-xs sm:text-sm text-slate-600 max-w-2xl leading-relaxed">
             A transparent review ecosystem designed to keep customer feedback honest and prevent rating manipulation.
