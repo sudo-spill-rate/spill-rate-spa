@@ -83,16 +83,20 @@ export default function PublicReviewFeed({
     );
   }
 
-  // Separate pinned review if present
-  const pinnedReview = reviews.find((r) => r.is_pinned);
+  // Separate pinned reviews if present (supports multiple pinned reviews)
+  const pinnedReviews = reviews.filter((r) => r.is_pinned);
   const regularReviews = reviews.filter((r) => !r.is_pinned);
 
   return (
     <div className="space-y-3">
-      {/* Pinned Review Header if exists */}
-      {pinnedReview && (
-        <PinnedReviewCard review={pinnedReview} onPhotoClick={onPhotoClick} />
-      )}
+      {/* Pinned Reviews */}
+      {pinnedReviews.map((review) => (
+        <PinnedReviewCard
+          key={review.id}
+          review={review}
+          onPhotoClick={onPhotoClick}
+        />
+      ))}
 
       {/* Regular Reviews */}
       {regularReviews.map((review) => (
