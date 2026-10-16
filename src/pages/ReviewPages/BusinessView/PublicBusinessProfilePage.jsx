@@ -84,11 +84,15 @@ export default function PublicBusinessProfilePage() {
 
   const rawReviews = reviewsResponse?.data || [];
   const reviews = React.useMemo(() => {
-    return [...rawReviews].sort(
-      (a, b) =>
+    return [...rawReviews].sort((a, b) => {
+      if (b.is_pinned !== a.is_pinned) {
+        return (b.is_pinned ? 1 : 0) - (a.is_pinned ? 1 : 0);
+      }
+      return (
         new Date(b.created_at || 0).getTime() -
         new Date(a.created_at || 0).getTime()
-    );
+      );
+    });
   }, [rawReviews]);
 
   // 3. Check Eligibility / Cooldown
