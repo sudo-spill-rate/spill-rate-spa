@@ -45,6 +45,7 @@ export default function PublicBusinessProfilePage() {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [isWriteReviewModalOpen, setIsWriteReviewModalOpen] = useState(false);
   const [mobileTab, setMobileTab] = useState("reviews"); // "reviews" | "analytics"
+  const [selectedRating, setSelectedRating] = useState(undefined);
 
   // Auto-open modal if ?writeReview=true is in URL
   useEffect(() => {
@@ -84,7 +85,11 @@ export default function PublicBusinessProfilePage() {
 
   const rawReviews = reviewsResponse?.data || [];
   const reviews = React.useMemo(() => {
-    return [...rawReviews].sort((a, b) => {
+    let filtered = [...rawReviews];
+    if (selectedRating !== undefined) {
+      filtered = filtered.filter((r) => r.rating === selectedRating);
+    }
+    return filtered.sort((a, b) => {
       if (b.is_pinned !== a.is_pinned) {
         return (b.is_pinned ? 1 : 0) - (a.is_pinned ? 1 : 0);
       }
@@ -93,7 +98,7 @@ export default function PublicBusinessProfilePage() {
         new Date(a.created_at || 0).getTime()
       );
     });
-  }, [rawReviews]);
+  }, [rawReviews, selectedRating]);
 
   // 3. Check Eligibility / Cooldown
   const { data: eligibilityResponse } = useQuery({
@@ -373,6 +378,8 @@ export default function PublicBusinessProfilePage() {
           <div className="hidden lg:block lg:col-span-5 lg:sticky lg:top-[calc(4rem+5.5rem)]">
             <BusinessRatingStatsCard
               business={business}
+              selectedRating={selectedRating}
+              onSelectRating={setSelectedRating}
               showResponseMetrics={false}
               title="Ratings Breakdown"
             />
@@ -412,6 +419,11 @@ export default function PublicBusinessProfilePage() {
             <div className={`lg:hidden ${mobileTab === "analytics" ? "block" : "hidden"}`}>
               <BusinessRatingStatsCard
                 business={business}
+                selectedRating={selectedRating}
+                onSelectRating={(star) => {
+                  setSelectedRating(star);
+                  if (star) setMobileTab("reviews");
+                }}
                 showResponseMetrics={false}
                 title="Ratings Breakdown"
               />
@@ -433,6 +445,8 @@ export default function PublicBusinessProfilePage() {
                     isLoading={isReviewsLoading}
                     isError={isReviewsError}
                     onRetry={refetchReviews}
+                    selectedRating={selectedRating}
+                    onClearFilter={() => setSelectedRating(undefined)}
                     onPhotoClick={(url) => setActivePhotoUrl(url)}
                   />
                 </div>
