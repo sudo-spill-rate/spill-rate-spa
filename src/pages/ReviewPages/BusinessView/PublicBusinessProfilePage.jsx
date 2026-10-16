@@ -339,56 +339,109 @@ export default function PublicBusinessProfilePage() {
                   </div>
                 )}
 
-                {/* Contact Info Lines: Number | Address, then Website */}
-                <div className="w-full pt-1.5 border-t border-slate-100/80 space-y-1 text-xs text-slate-600">
-                  {/* Row 1: Number | Address */}
-                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                    {/* Number */}
+                {/* Contact Info Lines: On mobile: Number | Address, then Website. On desktop (sm:): Single clean inline row */}
+                <div className="w-full pt-1.5 border-t border-slate-100/80 text-xs text-slate-600">
+                  {/* Mobile View: 2 rows */}
+                  <div className="sm:hidden space-y-1">
+                    {/* Row 1: Number | Address */}
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                      {/* Number */}
+                      {business.phone ? (
+                        <a
+                          href={`tel:${business.phone}`}
+                          className="inline-flex items-center gap-1.5 text-slate-700 hover:text-teal-700 transition-colors font-medium focus:outline-none focus:underline min-h-[26px]"
+                        >
+                          <Phone className="w-3.5 h-3.5 text-teal-700 shrink-0" aria-hidden="true" />
+                          <span className="text-xs">{business.phone}</span>
+                        </a>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 text-slate-400 min-w-0 min-h-[24px]">
+                          <Phone className="w-3.5 h-3.5 text-slate-300 shrink-0" aria-hidden="true" />
+                          <span className="text-xs">No phone</span>
+                        </span>
+                      )}
+
+                      <span className="text-slate-300 font-light text-xs" aria-hidden="true">|</span>
+
+                      {/* Address */}
+                      {business.address ? (
+                        <div className="inline-flex items-center gap-1.5 min-w-0 min-h-[24px]">
+                          <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" aria-hidden="true" />
+                          <span className="truncate max-w-[280px] text-xs">{business.address}</span>
+                        </div>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 text-slate-400 min-w-0 min-h-[24px]">
+                          <MapPin className="w-3.5 h-3.5 text-slate-300 shrink-0" aria-hidden="true" />
+                          <span className="text-xs">No address</span>
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Row 2: Website */}
+                    <div>
+                      {business.website ? (
+                        <a
+                          href={business.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 text-teal-700 hover:text-teal-800 hover:underline min-w-0 truncate max-w-[260px] min-h-[26px]"
+                        >
+                          <Globe className="w-3.5 h-3.5 text-teal-700 shrink-0" aria-hidden="true" />
+                          <span className="truncate text-xs">{business.website.replace(/^https?:\/\//, "")}</span>
+                        </a>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 text-slate-400 min-w-0 min-h-[24px]">
+                          <Globe className="w-3.5 h-3.5 text-slate-300 shrink-0" aria-hidden="true" />
+                          <span className="text-xs">No website</span>
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Desktop View (sm:): Single clean inline row */}
+                  <div className="hidden sm:flex sm:items-center sm:flex-wrap gap-x-5 gap-y-1.5">
+                    {/* Phone */}
                     {business.phone ? (
                       <a
                         href={`tel:${business.phone}`}
-                        className="inline-flex items-center gap-1.5 text-slate-700 hover:text-teal-700 transition-colors font-medium focus:outline-none focus:underline min-h-[26px]"
+                        className="inline-flex items-center gap-1.5 text-slate-700 hover:text-teal-700 transition-colors font-medium focus:outline-none focus:underline"
                       >
                         <Phone className="w-3.5 h-3.5 text-teal-700 shrink-0" aria-hidden="true" />
                         <span className="text-xs">{business.phone}</span>
                       </a>
                     ) : (
-                      <span className="inline-flex items-center gap-1.5 text-slate-400 min-w-0 min-h-[24px]">
+                      <span className="inline-flex items-center gap-1.5 text-slate-400 min-w-0">
                         <Phone className="w-3.5 h-3.5 text-slate-300 shrink-0" aria-hidden="true" />
                         <span className="text-xs">No phone</span>
                       </span>
                     )}
 
-                    <span className="text-slate-300 font-light text-xs" aria-hidden="true">|</span>
-
                     {/* Address */}
                     {business.address ? (
-                      <div className="inline-flex items-center gap-1.5 min-w-0 min-h-[24px]">
+                      <div className="inline-flex items-center gap-1.5 min-w-0">
                         <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" aria-hidden="true" />
-                        <span className="truncate max-w-[280px] sm:max-w-[360px] text-xs">{business.address}</span>
+                        <span className="truncate max-w-[340px] text-xs">{business.address}</span>
                       </div>
                     ) : (
-                      <span className="inline-flex items-center gap-1.5 text-slate-400 min-w-0 min-h-[24px]">
+                      <span className="inline-flex items-center gap-1.5 text-slate-400 min-w-0">
                         <MapPin className="w-3.5 h-3.5 text-slate-300 shrink-0" aria-hidden="true" />
                         <span className="text-xs">No address</span>
                       </span>
                     )}
-                  </div>
 
-                  {/* Row 2: Website */}
-                  <div>
+                    {/* Website */}
                     {business.website ? (
                       <a
                         href={business.website}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 text-teal-700 hover:text-teal-800 hover:underline min-w-0 truncate max-w-[260px] sm:max-w-[360px] min-h-[26px]"
+                        className="inline-flex items-center gap-1.5 text-teal-700 hover:text-teal-800 hover:underline min-w-0 truncate max-w-[280px]"
                       >
                         <Globe className="w-3.5 h-3.5 text-teal-700 shrink-0" aria-hidden="true" />
                         <span className="truncate text-xs">{business.website.replace(/^https?:\/\//, "")}</span>
                       </a>
                     ) : (
-                      <span className="inline-flex items-center gap-1.5 text-slate-400 min-w-0 min-h-[24px]">
+                      <span className="inline-flex items-center gap-1.5 text-slate-400 min-w-0">
                         <Globe className="w-3.5 h-3.5 text-slate-300 shrink-0" aria-hidden="true" />
                         <span className="text-xs">No website</span>
                       </span>

@@ -7,7 +7,7 @@ import ReportReviewModal from "./ReportReviewModal";
 function ReviewMediaGallery({ imageUrls, reviewerName, onPhotoClick }) {
   if (!imageUrls || imageUrls.length === 0) return null;
 
-  // Single photo: Full-width prominent Facebook post image banner
+  // Single photo: Full-width on mobile, balanced aspect/max-height on desktop
   if (imageUrls.length === 1) {
     return (
       <div className="pt-1.5 w-full">
@@ -15,7 +15,7 @@ function ReviewMediaGallery({ imageUrls, reviewerName, onPhotoClick }) {
           type="button"
           onClick={() => onPhotoClick && onPhotoClick(imageUrls[0])}
           aria-label={`View photo attached by ${reviewerName}`}
-          className="group relative w-full aspect-16/10 sm:aspect-16/9 rounded-xl overflow-hidden border border-slate-200 bg-slate-900/5 hover:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer transition-all shadow-xs block"
+          className="group relative w-full aspect-16/10 sm:aspect-16/9 sm:max-h-[340px] rounded-xl overflow-hidden border border-slate-200 bg-slate-900/5 hover:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer transition-all shadow-xs block"
         >
           <img
             src={imageUrls[0]}
