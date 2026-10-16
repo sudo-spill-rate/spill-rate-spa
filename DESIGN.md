@@ -1,7 +1,7 @@
-# Design Direction: TrustRate
+﻿# Design Direction: SpillRate
 
 ## Identity & Purpose
-TrustRate is an authentic community review and ratings directory for local businesses and SMEs. It emphasizes transparency, verified merchant interaction, and spam-free feedback protected by device cooldowns.
+SpillRate is an authentic community review and ratings directory for local businesses and SMEs. It emphasizes transparency, verified merchant interaction, and spam-free feedback protected by device cooldowns.
 
 ## Personality & Mood
 - **Character**: Trustworthy, civic-minded, human, grounded, and transparent.

@@ -1,4 +1,4 @@
-# Branding & AI Generation Guide: TrustRate
+﻿# Branding & AI Generation Guide: SpillRate
 
 This guide contains production-ready, anti-AI-slop image generation prompts and style presets tailored for ChatGPT Plus (DALL-E 3 / GPT-4o Image Generation). It focuses on the core brand assets: **Logo**, **Vector Illustrations**, **Character Mascot ("Bantay")**, and **Design Presets**.
 
@@ -6,7 +6,7 @@ This guide contains production-ready, anti-AI-slop image generation prompts and 
 
 ## 1. Brand Identity & Mascot Overview
 
-* **Brand Name:** TrustRate
+* **Brand Name:** SpillRate
 * **Core Value:** Authentic community ratings and verified reviews for local businesses and SMEs.
 * **Core Promise:** Spam-free, transparent customer feedback protected by device verification and merchant cooldowns.
 * **Brand Personality:** Grounded, trustworthy, civic-minded, loyal, and accessible.
@@ -31,7 +31,7 @@ This guide contains production-ready, anti-AI-slop image generation prompts and 
 Copy and paste this master preset into ChatGPT Plus before generating assets, or include it as the opening system context for your image generation thread:
 
 ```text
-[STYLE ANCHOR - TRUSTRATE BRANDING]
+[STYLE ANCHOR - SPILLRATE BRANDING]
 Visual Direction: High-craft modern editorial vector illustration and minimalist flat graphic design.
 Aesthetic Heritage: Clean Swiss graphic design, Monocle magazine editorial spot illustrations, thoughtful product branding.
 Color Palette: Restricted palette of Deep Slate (#0f172a), Forest Teal (#0d9488), Warm Amber (#d97706), Crisp White (#ffffff), and Warm Off-White (#f8fafc).
@@ -53,7 +53,7 @@ Composition: Clean, deliberate focal point on an off-white background (#f8fafc),
 
 ### Prompt 1A: Minimalist Vector Logo Mark (App Icon & Favicon)
 ```text
-A minimalist, high-craft vector logo mark for "TrustRate", an authentic business review platform.
+A minimalist, high-craft vector logo mark for "SpillRate", an authentic business review platform.
 Symbol Concept: A harmonious union of a clean speech bubble (representing community voice) seamlessly integrated with a subtle geometric trust shield and a stylized rating star.
 Style: Flat 2D vector, clean solid shapes, precise geometry, high contrast, pure negative space.
 Color: Dual-tone design using Deep Slate (#0f172a) and vibrant Forest Teal (#0d9488) on an isolated pure white background.
@@ -63,7 +63,7 @@ Format: Centered vector icon, high resolution, clean silhouette suitable for an 
 
 ### Prompt 1B: Character-Infused Vector Emblem (Bantay Silhouette + Shield)
 ```text
-A modern, minimalist circular vector emblem for "TrustRate".
+A modern, minimalist circular vector emblem for "SpillRate".
 Symbol Concept: A dignified silhouette profile of an alert guide dog ("Bantay") seamlessly enclosed inside a geometric protective shield in Forest Teal (#0d9488). Above the shield is a single, sharp 5-point star in Warm Amber (#d97706).
 Style: Flat 2D vector art, clean Swiss graphic design, bold solid shapes, zero drop shadows.
 Color: Deep Slate (#0f172a), Forest Teal (#0d9488), Warm Amber (#d97706) on a crisp white background.
@@ -72,9 +72,9 @@ Negative Constraints: No photorealism, no 3D fur textures, no gradients, no cart
 
 ### Prompt 1C: Full Horizontal Brandmark (Icon + Typography)
 ```text
-A professional horizontal brandmark lockup for "TrustRate".
+A professional horizontal brandmark lockup for "SpillRate".
 Left: The minimalist vector logo icon combining a geometric speech bubble and a trust shield in Forest Teal (#0d9488) and Deep Slate (#0f172a).
-Right: The brand name "TrustRate" set in a clean, modern, high-legibility geometric sans-serif typeface, solid Deep Slate (#0f172a), with perfect kerning and balanced proportions.
+Right: The brand name "SpillRate" set in a clean, modern, high-legibility geometric sans-serif typeface, solid Deep Slate (#0f172a), with perfect kerning and balanced proportions.
 Background: Solid clean off-white (#f8fafc).
 Style: Flat 2D vector graphic design, zero drop shadows, no 3D effects, no gradient fills.
 ```
@@ -83,7 +83,7 @@ Style: Flat 2D vector graphic design, zero drop shadows, no 3D effects, no gradi
 
 ## 4. Animal Mascot Prompts ("Bantay" The Community Guide Dog)
 
-Use these prompts to establish the character model sheet and brand illustrations for TrustRate:
+Use these prompts to establish the character model sheet and brand illustrations for SpillRate:
 
 ### Prompt 2A: Character Turnaround & Expression Sheet (Consistency Anchor)
 ```text
@@ -140,7 +140,7 @@ Use these prompts for website assets, spot graphics, empty states, and badges:
 
 ### Prompt 3A: Trust Shield & Star Verification Seal
 ```text
-A high-craft vector badge and verification seal for "TrustRate Verified Merchant".
+A high-craft vector badge and verification seal for "SpillRate Verified Merchant".
 Composition: A clean, geometric shield outline in Forest Teal (#0d9488) enclosing five crisp rating stars in Warm Amber (#d97706) and a bold checkmark.
 Style: Flat vector icon graphic, balanced symmetry, crisp outlines, suitable for website hero spotlight and merchant certificates.
 Color Palette: Deep Slate (#0f172a), Forest Teal (#0d9488), Warm Amber (#d97706), pure white background.
@@ -164,7 +164,7 @@ Copy this clean SVG directly into your React components or graphic designs:
 
 ```xml
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none" width="64" height="64">
-  <!-- TrustRate Brand Icon: Verified Shield & Star -->
+  <!-- SpillRate Brand Icon: Verified Shield & Star -->
   <rect width="64" height="64" rx="14" fill="#0f172a" />
   <path d="M32 10L47 16.5V29C47 38.6 40.6 47.4 32 50C23.4 47.4 17 38.6 17 29V16.5L32 10Z" fill="#0d9488" />
   <path d="M32 14L43 19V29C43 36.5 38.3 43.4 32 45.7C25.7 43.4 21 36.5 21 29V19L32 14Z" fill="#042f2e" />
