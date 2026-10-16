@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router";
 import {
   Building,
@@ -60,11 +60,11 @@ export default function DashboardNavbar() {
             >
               <img
                 src="/logo.png"
-                alt="TrustRate Logo"
+                alt="SpillRate Logo"
                 className="w-8 h-8 sm:w-9 sm:h-9 object-contain shrink-0"
               />
               <div className="flex items-baseline gap-1.5 sm:gap-2">
-                <span className="font-bold text-base sm:text-lg text-slate-900 tracking-tight">TrustRate</span>
+                <span className="font-bold text-base sm:text-lg text-slate-900 tracking-tight">SpillRate</span>
                 <span className="text-[10px] sm:text-xs font-medium text-teal-800 bg-teal-50 border border-teal-200 px-1.5 sm:px-2 py-0.5 rounded-full">
                   Owner Portal
                 </span>
@@ -91,7 +91,7 @@ export default function DashboardNavbar() {
                   {user?.name || "Business Owner"}
                 </p>
                 <p className="text-[11px] text-slate-500 truncate max-w-[160px]">
-                  {user?.email || "owner@trustrate.internal"}
+                  {user?.email || "owner@spillrate.internal"}
                 </p>
               </div>
             </div>
@@ -163,11 +163,11 @@ export default function DashboardNavbar() {
               >
                 <img
                   src="/logo.png"
-                  alt="TrustRate Logo"
+                  alt="SpillRate Logo"
                   className="w-8 h-8 object-contain shrink-0"
                 />
                 <div className="flex items-baseline gap-1.5 sm:gap-2">
-                  <span className="font-bold text-base sm:text-lg text-slate-900 tracking-tight">TrustRate</span>
+                  <span className="font-bold text-base sm:text-lg text-slate-900 tracking-tight">SpillRate</span>
                   <span className="text-[10px] sm:text-xs font-medium text-teal-800 bg-teal-50 border border-teal-200 px-1.5 sm:px-2 py-0.5 rounded-full">
                     Owner Portal
                   </span>
@@ -204,7 +204,7 @@ export default function DashboardNavbar() {
               )}
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-bold text-slate-900 truncate">{user?.name || "Business Owner"}</p>
-                <p className="text-xs text-slate-500 truncate">{user?.email || "owner@trustrate.internal"}</p>
+                <p className="text-xs text-slate-500 truncate">{user?.email || "owner@spillrate.internal"}</p>
               </div>
             </div>
 

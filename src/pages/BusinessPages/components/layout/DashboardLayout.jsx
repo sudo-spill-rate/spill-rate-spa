@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import DashboardNavbar from "./DashboardNavbar";
 import DashboardSidebar from "./DashboardSidebar";
 
@@ -58,7 +58,7 @@ export default function DashboardLayout({
       {/* Subtle Owner Portal Footer */}
       <footer className="mt-auto border-t border-slate-200 bg-white py-4">
         <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-xs text-slate-500 text-center sm:text-left">
-          <p>TrustRate Business Management. All customer reviews are cryptographically recorded.</p>
+          <p>SpillRate Business Management. All customer reviews are cryptographically recorded.</p>
           <div className="flex items-center gap-4">
             <a href="/faq" className="hover:text-slate-800 transition-colors py-1">Owner FAQ</a>
             <a href="/contact" className="hover:text-slate-800 transition-colors py-1">Support</a>
