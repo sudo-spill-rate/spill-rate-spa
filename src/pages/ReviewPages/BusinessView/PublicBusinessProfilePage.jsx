@@ -466,9 +466,9 @@ export default function PublicBusinessProfilePage() {
           </div>
 
           {/* Right Column: Mobile Tab Switcher, Mobile Ratings, and Reviews Feed */}
-          <div className="lg:col-span-7 space-y-3.5">
-            {/* Mobile Tab Switcher (Visible on mobile/tablet < lg) */}
-            <div className="lg:hidden flex items-center p-1 bg-slate-100 rounded-lg border border-slate-200">
+          <div className="lg:col-span-7 flex flex-col">
+            {/* Mobile Tab Switcher (Visible on mobile/tablet < lg only) */}
+            <div className="lg:hidden flex items-center p-1 bg-slate-100 rounded-lg border border-slate-200 mb-3">
               <button
                 type="button"
                 onClick={() => setMobileTab("reviews")}
