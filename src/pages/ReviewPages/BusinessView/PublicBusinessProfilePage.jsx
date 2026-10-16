@@ -256,37 +256,7 @@ export default function PublicBusinessProfilePage() {
 
                 {/* Identity & Details */}
                 <div className="flex-1 min-w-0 space-y-1.5">
-                  {/* Rating Stars, Category, & Status Chips */}
-                  <div className="flex items-center gap-2 flex-wrap text-xs">
-                    {/* Star Rating snippet */}
-                    <div className="inline-flex items-center gap-1 bg-amber-50/80 px-2 py-0.5 rounded border border-amber-200/60 text-amber-900 font-bold">
-                      <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" aria-hidden="true" />
-                      <span>{Number(business.average_rating || 0).toFixed(1)}</span>
-                      <span className="text-slate-400 font-normal">
-                        ({rawReviews.length} {rawReviews.length === 1 ? "review" : "reviews"})
-                      </span>
-                    </div>
-
-                    {/* Category Chip */}
-                    {business.category && (
-                      <span className="inline-flex items-center text-[11px] font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded border border-slate-200/60">
-                        {business.category}
-                      </span>
-                    )}
-
-                    {/* User Cooldown / Status */}
-                    {!isEligible && (
-                      <span
-                        className="inline-flex items-center gap-1 text-[11px] font-medium bg-slate-100 text-slate-600 px-2 py-0.5 rounded border border-slate-200/60"
-                        title={`You recently reviewed this business. You can submit another review in ${cooldownHours} hours.`}
-                      >
-                        <Clock className="w-3 h-3 text-slate-500 shrink-0" aria-hidden="true" />
-                        <span>Reviewed ({cooldownHours}h wait)</span>
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Establishment Name & Shield Icon Badge */}
+                  {/* Establishment Name, Verified Shield Badge, Category Chip & Cooldown Status */}
                   <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap">
                     <h1 className="text-lg sm:text-xl lg:text-2xl font-extrabold text-slate-900 tracking-tight truncate">
                       {business.name}
@@ -302,6 +272,24 @@ export default function PublicBusinessProfilePage() {
                           loading="lazy"
                         />
                       </div>
+                    )}
+
+                    {/* Category Chip beside Name */}
+                    {business.category && (
+                      <span className="inline-flex items-center text-[11px] font-semibold bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-full border border-slate-200/80 shrink-0">
+                        {business.category}
+                      </span>
+                    )}
+
+                    {/* User Cooldown / Status */}
+                    {!isEligible && (
+                      <span
+                        className="inline-flex items-center gap-1 text-[11px] font-medium bg-slate-100 text-slate-600 px-2 py-0.5 rounded border border-slate-200/60 shrink-0"
+                        title={`You recently reviewed this business. You can submit another review in ${cooldownHours} hours.`}
+                      >
+                        <Clock className="w-3 h-3 text-slate-500 shrink-0" aria-hidden="true" />
+                        <span>Reviewed ({cooldownHours}h wait)</span>
+                      </span>
                     )}
                   </div>
 
