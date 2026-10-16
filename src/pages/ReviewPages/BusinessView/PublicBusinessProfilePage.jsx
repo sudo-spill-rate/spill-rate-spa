@@ -320,17 +320,18 @@ export default function PublicBusinessProfilePage() {
                   </div>
                 </div>
 
-                {/* Description: Spans full width with 'See more' toggle if long */}
+                {/* Description: Spans full width; fully visible on desktop, clamped on mobile with 'See more' toggle if long */}
                 {business.description && (
                   <div className="w-full text-xs sm:text-sm text-slate-600">
-                    <p className={`${isDescriptionExpanded ? "" : "line-clamp-2"} leading-relaxed`}>
+                    <p className={`${isDescriptionExpanded ? "" : "line-clamp-2 sm:line-clamp-none"} leading-relaxed`}>
                       {business.description}
                     </p>
-                    {business.description.length > 90 && (
+                    {/* 'See more' button only needed on mobile (sm:hidden) when description exceeds 120 chars */}
+                    {business.description.length > 120 && (
                       <button
                         type="button"
                         onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
-                        className="text-teal-700 hover:text-teal-800 font-semibold text-xs mt-1 cursor-pointer focus:outline-none focus:underline min-h-[30px] inline-flex items-center"
+                        className="sm:hidden text-teal-700 hover:text-teal-800 font-semibold text-xs mt-1 cursor-pointer focus:outline-none focus:underline min-h-[30px] inline-flex items-center"
                       >
                         {isDescriptionExpanded ? "See less" : "See more"}
                       </button>
