@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router";
 import { Star, Building2, ThumbsUp, Flag, CornerDownRight } from "lucide-react";
 import { reviewService } from "../../../../services/reviewService";
 import ReportReviewModal from "./ReportReviewModal";
@@ -110,10 +111,21 @@ export default function CustomerReviewCard({ review, onPhotoClick }) {
 
         {/* B2B Endorsement Tag */}
         {review.reviewer_business_id && (
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-semibold bg-slate-100 text-slate-700 border border-slate-200 shrink-0 whitespace-nowrap">
-            <Building2 className="w-3 h-3 text-teal-700" />
-            <span>Endorsement</span>
-          </span>
+          review.reviewer_business?.slug ? (
+            <Link
+              to={`/business/${review.reviewer_business.slug}`}
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-semibold bg-teal-50 text-teal-800 border border-teal-200/80 shrink-0 whitespace-nowrap hover:bg-teal-100 transition-colors"
+              title={`Endorsed by ${review.reviewer_business.name}`}
+            >
+              <Building2 className="w-3 h-3 text-teal-700" />
+              <span>{review.reviewer_business.name || "Endorsement"}</span>
+            </Link>
+          ) : (
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] sm:text-[11px] font-semibold bg-slate-100 text-slate-700 border border-slate-200 shrink-0 whitespace-nowrap">
+              <Building2 className="w-3 h-3 text-teal-700" />
+              <span>Endorsement</span>
+            </span>
+          )
         )}
       </div>
 
