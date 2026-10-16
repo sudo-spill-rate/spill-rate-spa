@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import AdminNavbar from "./AdminNavbar";
 import AdminDashboardSidebar from "./AdminDashboardSidebar";
 
@@ -17,8 +17,8 @@ export default function AdminLayout({
       <AdminNavbar />
 
       {/* Main Body with Sidebar */}
-      <div className="flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-5 sm:py-8">
-        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
+      <div className="flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-3.5 sm:py-5">
+        <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 items-start">
           {/* Sidebar */}
           {activeSidebar}
 
@@ -26,7 +26,7 @@ export default function AdminLayout({
           <main className="flex-1 w-full min-w-0">
             {/* Header Banner */}
             {(title || actions) && (
-              <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4 pb-4 sm:pb-5 border-b border-slate-200">
+              <div className="mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2.5 sm:gap-3 pb-3 sm:pb-4 border-b border-slate-200">
                 <div>
                   {title && (
                     <h1 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
