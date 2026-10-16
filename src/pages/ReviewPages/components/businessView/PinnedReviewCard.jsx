@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router";
-import { Star, Pin, ThumbsUp, Flag, CornerDownRight, Building2 } from "lucide-react";
+import { Star, Pin, ThumbsUp, MoreHorizontal, Flag, MessageSquare, Share2, CornerDownRight, Building2 } from "lucide-react";
 import { reviewService } from "../../../../services/reviewService";
 import ReportReviewModal from "./ReportReviewModal";
 
-function PinnedPhotoThumbnail({ url, idx, onPhotoClick }) {
+function PinnedPhotoThumbnail({ url, idx, reviewerName, onPhotoClick }) {
   const [hasError, setHasError] = useState(false);
 
   if (hasError) return null;
@@ -14,11 +14,11 @@ function PinnedPhotoThumbnail({ url, idx, onPhotoClick }) {
       type="button"
       onClick={() => onPhotoClick && onPhotoClick(url)}
       aria-label={`View pinned photo ${idx + 1}`}
-      className="group relative w-14 h-14 sm:w-16 sm:h-16 shrink-0 rounded-lg overflow-hidden border border-slate-200 bg-white hover:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer transition-all"
+      className="group relative w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-lg overflow-hidden border border-slate-200 bg-white hover:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer transition-all shadow-2xs"
     >
       <img
         src={url}
-        alt={`Photo ${idx + 1} attached to pinned review`}
+        alt={`Photo ${idx + 1} attached to pinned review by ${reviewerName || "reviewer"}`}
         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
         loading="lazy"
         onError={() => setHasError(true)}
@@ -34,6 +34,23 @@ export default function PinnedReviewCard({ review, onPhotoClick }) {
   const [hasVoted, setHasVoted] = useState(false);
   const [isVoting, setIsVoting] = useState(false);
   const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [showCopied, setShowCopied] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setMenuOpen(false);
+      }
+    };
+    if (menuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuOpen]);
 
   const initials = review.name
     ? review.name
@@ -69,24 +86,67 @@ export default function PinnedReviewCard({ review, onPhotoClick }) {
     }
   };
 
+  const handleShare = async () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Featured Review by ${review.name}`,
+          text: review.comment,
+          url,
+        });
+        return;
+      } catch (err) {
+        if (err.name !== "AbortError") console.error("Share error:", err);
+      }
+    }
+    navigator.clipboard?.writeText(url);
+    setShowCopied(true);
+    setTimeout(() => setShowCopied(false), 2000);
+  };
+
   return (
-    <article className="bg-amber-50/30 p-3 sm:p-3.5 rounded-xl border border-amber-200/70 shadow-2xs space-y-2">
+    <article className="bg-amber-50/20 rounded-xl border border-amber-200/80 p-3.5 sm:p-4 shadow-2xs space-y-3">
       {/* Pinned Badge Header */}
-      <div className="flex items-center gap-1.5 text-xs font-semibold text-teal-800 pb-1.5 border-b border-teal-100">
+      <div className="flex items-center gap-1.5 text-xs font-semibold text-teal-800 pb-2 border-b border-amber-200/60">
         <Pin className="w-3.5 h-3.5 fill-teal-700 text-teal-700 shrink-0" aria-hidden="true" />
         <span className="truncate">Featured Review Pinned by Business Owner</span>
       </div>
 
-      {/* Reviewer Header */}
-      <div className="flex items-start justify-between gap-2.5">
-        <div className="flex items-center gap-2 min-w-0">
-          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white border border-teal-200 text-slate-800 font-bold text-xs flex items-center justify-center shrink-0">
+      {/* 1. Header: Circular Avatar, Bold Username on top, Star Rating + Date subline, 3-dots top right */}
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center gap-2.5 min-w-0">
+          <div className="w-10 h-10 rounded-full bg-white border border-teal-200 text-slate-800 font-bold text-xs sm:text-sm flex items-center justify-center shrink-0 shadow-2xs">
             {initials}
           </div>
+
           <div className="min-w-0 flex-1">
-            <h4 className="font-bold text-xs sm:text-sm text-slate-900 leading-tight truncate">
-              {review.name}
-            </h4>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <h4 className="font-bold text-sm sm:text-base text-slate-900 leading-tight truncate">
+                {review.name}
+              </h4>
+
+              {/* B2B Endorsement Badge */}
+              {review.reviewer_business_id && (
+                review.reviewer_business?.slug ? (
+                  <Link
+                    to={`/business/${review.reviewer_business.slug}`}
+                    className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-teal-50 text-teal-800 border border-teal-200/60 shrink-0 whitespace-nowrap hover:bg-teal-100 transition-colors"
+                    title={`Endorsed by ${review.reviewer_business.name}`}
+                  >
+                    <Building2 className="w-3 h-3 text-teal-700" />
+                    <span>{review.reviewer_business.name || "Endorsement"}</span>
+                  </Link>
+                ) : (
+                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-white text-slate-700 border border-slate-200 shrink-0 whitespace-nowrap">
+                    <Building2 className="w-3 h-3 text-teal-700" />
+                    <span>Endorsement</span>
+                  </span>
+                )
+              )}
+            </div>
+
+            {/* Sub-line: Star Rating • Date */}
             <div className="flex items-center gap-1.5 mt-0.5">
               <div
                 className="flex items-center gap-0.5 shrink-0"
@@ -105,7 +165,7 @@ export default function PinnedReviewCard({ review, onPhotoClick }) {
               </div>
               <span className="text-[10px] text-slate-400 shrink-0" aria-hidden="true">•</span>
               <time
-                className="text-[11px] sm:text-xs text-slate-500 whitespace-nowrap shrink-0"
+                className="text-xs text-slate-500 whitespace-nowrap shrink-0"
                 dateTime={review.created_at}
               >
                 {formattedDate}
@@ -114,48 +174,60 @@ export default function PinnedReviewCard({ review, onPhotoClick }) {
           </div>
         </div>
 
-        {/* B2B Endorsement Tag */}
-        {review.reviewer_business_id && (
-          review.reviewer_business?.slug ? (
-            <Link
-              to={`/business/${review.reviewer_business.slug}`}
-              className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] sm:text-[11px] font-semibold bg-teal-50 text-teal-800 border border-teal-200/60 shrink-0 whitespace-nowrap hover:bg-teal-100 transition-colors"
-              title={`Endorsed by ${review.reviewer_business.name}`}
-            >
-              <Building2 className="w-3 h-3 text-teal-700" />
-              <span>{review.reviewer_business.name || "Endorsement"}</span>
-            </Link>
-          ) : (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] sm:text-[11px] font-semibold bg-white text-slate-700 border border-slate-200 shrink-0 whitespace-nowrap">
-              <Building2 className="w-3 h-3 text-teal-700" />
-              <span>Endorsement</span>
-            </span>
-          )
+        {/* Top-Right: 3-Dots More Options Menu */}
+        <div className="relative shrink-0" ref={menuRef}>
+          <button
+            type="button"
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-white/80 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-600"
+            aria-label="More options"
+          >
+            <MoreHorizontal className="w-4 h-4" />
+          </button>
+
+          {menuOpen && (
+            <div className="absolute right-0 top-full mt-1 w-36 bg-white rounded-lg shadow-lg border border-slate-200 py-1 z-20">
+              <button
+                type="button"
+                onClick={() => {
+                  setMenuOpen(false);
+                  setReportModalOpen(true);
+                }}
+                className="w-full px-3 py-1.5 text-left text-xs font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer transition-colors"
+              >
+                <Flag className="w-3.5 h-3.5 text-slate-400" />
+                <span>Report Review</span>
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* 2. Body: Left-aligned text + attached media */}
+      <div className="space-y-2.5">
+        <p className="text-xs sm:text-sm text-slate-800 leading-relaxed whitespace-pre-line break-words">
+          {review.comment}
+        </p>
+
+        {/* Photos */}
+        {review.image_urls && review.image_urls.length > 0 && (
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 no-scrollbar">
+            {review.image_urls.map((url, idx) => (
+              <PinnedPhotoThumbnail
+                key={idx}
+                url={url}
+                idx={idx}
+                reviewerName={review.name}
+                onPhotoClick={onPhotoClick}
+              />
+            ))}
+          </div>
         )}
       </div>
 
-      {/* Review Content */}
-      <p className="text-xs sm:text-sm text-slate-800 leading-relaxed whitespace-pre-line break-words">
-        {review.comment}
-      </p>
-
-      {/* Photos */}
-      {review.image_urls && review.image_urls.length > 0 && (
-        <div className="pt-0.5 flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
-          {review.image_urls.map((url, idx) => (
-            <PinnedPhotoThumbnail
-              key={idx}
-              url={url}
-              idx={idx}
-              onPhotoClick={onPhotoClick}
-            />
-          ))}
-        </div>
-      )}
-
       {/* Official Business Owner Reply */}
       {review.reply_comment && (
-        <div className="mt-2 p-2.5 rounded-lg bg-white/90 border border-teal-200 text-xs text-teal-950 space-y-1">
+        <div className="p-2.5 sm:p-3 rounded-lg bg-white/90 border border-teal-200 text-xs text-teal-950 space-y-1">
           <div className="flex items-center justify-between font-semibold text-teal-900 text-[11px] gap-2 flex-wrap">
             <div className="flex items-center gap-1.5">
               <CornerDownRight className="w-3.5 h-3.5 text-teal-700 shrink-0" />
@@ -176,32 +248,41 @@ export default function PinnedReviewCard({ review, onPhotoClick }) {
         </div>
       )}
 
-      {/* Footer Actions: Helpful Vote & Report Review */}
-      <div className="pt-1.5 border-t border-teal-100 flex items-center justify-between gap-3 text-xs">
+      {/* 3. Footer / Actions: border-t divider with Facebook-style action buttons ('Helpful'/'Like', 'Comment', 'Share') */}
+      <div className="pt-2 border-t border-amber-200/50 flex items-center justify-between text-xs text-slate-600">
+        {/* Helpful / Like Action */}
         <button
           type="button"
           onClick={handleHelpfulClick}
           disabled={isVoting}
           aria-label={`Mark as helpful. Currently ${helpfulCount} helpful votes.`}
-          className={`inline-flex items-center justify-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-semibold transition-colors min-h-[32px] sm:min-h-[34px] cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-600 disabled:opacity-50 ${
+          className={`flex-1 inline-flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg font-semibold transition-colors min-h-[36px] cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-600 ${
             hasVoted
-              ? "bg-teal-100/80 text-teal-900 border-teal-300"
-              : "bg-white text-slate-700 border-slate-200 hover:bg-slate-50"
+              ? "text-teal-800 bg-teal-100/70"
+              : "hover:bg-amber-100/40 hover:text-slate-900 active:bg-amber-100/70"
           }`}
         >
-          <ThumbsUp className={`w-3.5 h-3.5 ${hasVoted ? "fill-teal-700 text-teal-700" : ""}`} />
+          <ThumbsUp className={`w-4 h-4 ${hasVoted ? "fill-teal-700 text-teal-700" : ""}`} />
           <span>{helpfulCount > 0 ? `Helpful (${helpfulCount})` : "Helpful"}</span>
         </button>
 
+        {/* Comment Action */}
+        <div
+          title={review.reply_comment ? "Storefront responded" : "Comments restricted to verified establishment"}
+          className="flex-1 inline-flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg font-semibold text-slate-500 hover:bg-amber-100/40 min-h-[36px] cursor-default select-none"
+        >
+          <MessageSquare className="w-4 h-4 text-slate-400" />
+          <span>{review.reply_comment ? "1 Response" : "Comment"}</span>
+        </div>
+
+        {/* Share Action */}
         <button
           type="button"
-          onClick={() => setReportModalOpen(true)}
-          title="Report this review"
-          aria-label="Report this review to moderators"
-          className="inline-flex items-center justify-center gap-1 text-slate-400 hover:text-red-600 text-xs transition-colors px-2 py-1 rounded min-h-[32px] sm:min-h-[34px] cursor-pointer focus:outline-none focus:ring-2 focus:ring-red-600"
+          onClick={handleShare}
+          className="flex-1 inline-flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg font-semibold text-slate-600 hover:bg-amber-100/40 hover:text-slate-900 active:bg-amber-100/70 transition-colors min-h-[36px] cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-600"
         >
-          <Flag className="w-3.5 h-3.5" />
-          <span>Report</span>
+          <Share2 className="w-4 h-4 text-slate-400" />
+          <span>{showCopied ? "Link Copied!" : "Share"}</span>
         </button>
       </div>
 

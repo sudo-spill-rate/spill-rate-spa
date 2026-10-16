@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Link } from "react-router";
-import { Star, Building2, ThumbsUp, Flag, CornerDownRight } from "lucide-react";
+import { Star, Building2, ThumbsUp, MoreHorizontal, Flag, MessageSquare, Share2, CornerDownRight } from "lucide-react";
 import { reviewService } from "../../../../services/reviewService";
 import ReportReviewModal from "./ReportReviewModal";
 
@@ -14,7 +14,7 @@ function PhotoThumbnail({ url, idx, reviewerName, onPhotoClick }) {
       type="button"
       onClick={() => onPhotoClick && onPhotoClick(url)}
       aria-label={`View attached photo ${idx + 1}`}
-      className="group relative w-14 h-14 sm:w-16 sm:h-16 shrink-0 rounded-lg overflow-hidden border border-slate-200 bg-slate-100 hover:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer transition-all"
+      className="group relative w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-lg overflow-hidden border border-slate-200 bg-slate-100 hover:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer transition-all shadow-2xs"
     >
       <img
         src={url}
@@ -34,6 +34,23 @@ export default function CustomerReviewCard({ review, onPhotoClick }) {
   const [hasVoted, setHasVoted] = useState(false);
   const [isVoting, setIsVoting] = useState(false);
   const [reportModalOpen, setReportModalOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [showCopied, setShowCopied] = useState(false);
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (menuRef.current && !menuRef.current.contains(e.target)) {
+        setMenuOpen(false);
+      }
+    };
+    if (menuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [menuOpen]);
 
   const initials = review.name
     ? review.name
@@ -69,20 +86,64 @@ export default function CustomerReviewCard({ review, onPhotoClick }) {
     }
   };
 
+  const handleShare = async () => {
+    const url = window.location.href;
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: `Review by ${review.name}`,
+          text: review.comment,
+          url,
+        });
+        return;
+      } catch (err) {
+        if (err.name !== "AbortError") console.error("Share error:", err);
+      }
+    }
+    navigator.clipboard?.writeText(url);
+    setShowCopied(true);
+    setTimeout(() => setShowCopied(false), 2000);
+  };
+
   return (
-    <article className="bg-white rounded-xl border border-slate-200 p-3 sm:p-3.5 shadow-2xs hover:border-slate-300 transition-all space-y-2">
-      {/* Reviewer Header */}
-      <div className="flex items-start justify-between gap-2.5">
-        <div className="flex items-center gap-2 min-w-0">
-          <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-slate-100 border border-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center shrink-0">
+    <article className="bg-white rounded-xl border border-slate-200/90 p-3.5 sm:p-4 shadow-2xs hover:border-slate-300 transition-all space-y-3">
+      {/* 1. Header: Circular Avatar, Bold Username on top, Star Rating + Date subline, 3-dots top right */}
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center gap-2.5 min-w-0">
+          {/* Circular Avatar */}
+          <div className="w-10 h-10 rounded-full bg-slate-100 border border-slate-200 text-slate-700 font-bold text-xs sm:text-sm flex items-center justify-center shrink-0 shadow-2xs">
             {initials}
           </div>
+
+          {/* User Name & Sub-line (Stars • Date) */}
           <div className="min-w-0 flex-1">
-            <h4 className="font-bold text-xs sm:text-sm text-slate-900 leading-tight truncate">
-              {review.name}
-            </h4>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <h4 className="font-bold text-sm sm:text-base text-slate-900 leading-tight truncate">
+                {review.name}
+              </h4>
+
+              {/* B2B Endorsement Badge */}
+              {review.reviewer_business_id && (
+                review.reviewer_business?.slug ? (
+                  <Link
+                    to={`/business/${review.reviewer_business.slug}`}
+                    className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-teal-50 text-teal-800 border border-teal-200/60 shrink-0 whitespace-nowrap hover:bg-teal-100 transition-colors"
+                    title={`Endorsed by ${review.reviewer_business.name}`}
+                  >
+                    <Building2 className="w-3 h-3 text-teal-700" />
+                    <span>{review.reviewer_business.name || "Endorsement"}</span>
+                  </Link>
+                ) : (
+                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-100 text-slate-700 border border-slate-200/60 shrink-0 whitespace-nowrap">
+                    <Building2 className="w-3 h-3 text-teal-700" />
+                    <span>Endorsement</span>
+                  </span>
+                )
+              )}
+            </div>
+
+            {/* Sub-line: Star Rating • Date */}
             <div className="flex items-center gap-1.5 mt-0.5">
-              {/* Star Rating */}
               <div
                 className="flex items-center gap-0.5 shrink-0"
                 aria-label={`Rating: ${review.rating} out of 5 stars`}
@@ -100,7 +161,7 @@ export default function CustomerReviewCard({ review, onPhotoClick }) {
               </div>
               <span className="text-[10px] text-slate-400 shrink-0" aria-hidden="true">•</span>
               <time
-                className="text-[11px] sm:text-xs text-slate-500 whitespace-nowrap shrink-0"
+                className="text-xs text-slate-500 whitespace-nowrap shrink-0"
                 dateTime={review.created_at}
               >
                 {formattedDate}
@@ -109,49 +170,60 @@ export default function CustomerReviewCard({ review, onPhotoClick }) {
           </div>
         </div>
 
-        {/* B2B Endorsement Tag */}
-        {review.reviewer_business_id && (
-          review.reviewer_business?.slug ? (
-            <Link
-              to={`/business/${review.reviewer_business.slug}`}
-              className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] sm:text-[11px] font-semibold bg-teal-50 text-teal-800 border border-teal-200/60 shrink-0 whitespace-nowrap hover:bg-teal-100 transition-colors"
-              title={`Endorsed by ${review.reviewer_business.name}`}
-            >
-              <Building2 className="w-3 h-3 text-teal-700" />
-              <span>{review.reviewer_business.name || "Endorsement"}</span>
-            </Link>
-          ) : (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] sm:text-[11px] font-semibold bg-slate-100 text-slate-700 border border-slate-200/60 shrink-0 whitespace-nowrap">
-              <Building2 className="w-3 h-3 text-teal-700" />
-              <span>Endorsement</span>
-            </span>
-          )
+        {/* Top-Right: 3-Dots More Options Menu */}
+        <div className="relative shrink-0" ref={menuRef}>
+          <button
+            type="button"
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-600"
+            aria-label="More options"
+          >
+            <MoreHorizontal className="w-4 h-4" />
+          </button>
+
+          {menuOpen && (
+            <div className="absolute right-0 top-full mt-1 w-36 bg-white rounded-lg shadow-lg border border-slate-200 py-1 z-20">
+              <button
+                type="button"
+                onClick={() => {
+                  setMenuOpen(false);
+                  setReportModalOpen(true);
+                }}
+                className="w-full px-3 py-1.5 text-left text-xs font-medium text-slate-700 hover:bg-slate-50 flex items-center gap-2 cursor-pointer transition-colors"
+              >
+                <Flag className="w-3.5 h-3.5 text-slate-400" />
+                <span>Report Review</span>
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* 2. Body: Left-aligned text + attached media */}
+      <div className="space-y-2.5">
+        <p className="text-xs sm:text-sm text-slate-800 leading-relaxed whitespace-pre-line break-words">
+          {review.comment}
+        </p>
+
+        {/* Media / Photo Thumbnails with rounded borders */}
+        {review.image_urls && review.image_urls.length > 0 && (
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 no-scrollbar">
+            {review.image_urls.map((url, idx) => (
+              <PhotoThumbnail
+                key={idx}
+                url={url}
+                idx={idx}
+                reviewerName={review.name}
+                onPhotoClick={onPhotoClick}
+              />
+            ))}
+          </div>
         )}
       </div>
 
-      {/* Review Content */}
-      <p className="text-xs sm:text-sm text-slate-700 leading-relaxed whitespace-pre-line break-words">
-        {review.comment}
-      </p>
-
-      {/* Photos Attachment Grid */}
-      {review.image_urls && review.image_urls.length > 0 && (
-        <div className="pt-0.5 flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
-          {review.image_urls.map((url, idx) => (
-            <PhotoThumbnail
-              key={idx}
-              url={url}
-              idx={idx}
-              reviewerName={review.name}
-              onPhotoClick={onPhotoClick}
-            />
-          ))}
-        </div>
-      )}
-
-      {/* Official Business Owner Reply */}
+      {/* Official Business Owner Reply if present */}
       {review.reply_comment && (
-        <div className="mt-2 p-2.5 rounded-lg bg-teal-50/70 border border-teal-200/90 text-xs text-teal-950 space-y-1">
+        <div className="p-2.5 sm:p-3 rounded-lg bg-teal-50/70 border border-teal-200/90 text-xs text-teal-950 space-y-1">
           <div className="flex items-center justify-between font-semibold text-teal-900 text-[11px] gap-2 flex-wrap">
             <div className="flex items-center gap-1.5">
               <CornerDownRight className="w-3.5 h-3.5 text-teal-700 shrink-0" />
@@ -172,32 +244,41 @@ export default function CustomerReviewCard({ review, onPhotoClick }) {
         </div>
       )}
 
-      {/* Footer Actions: Helpful Vote & Report Review */}
-      <div className="pt-1.5 border-t border-slate-100 flex items-center justify-between gap-3 text-xs">
+      {/* 3. Footer / Actions: border-t divider with Facebook-style action buttons ('Helpful'/'Like', 'Comment', 'Share') */}
+      <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-600">
+        {/* Helpful / Like Action */}
         <button
           type="button"
           onClick={handleHelpfulClick}
           disabled={isVoting}
           aria-label={`Mark as helpful. Currently ${helpfulCount} helpful votes.`}
-          className={`inline-flex items-center justify-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-semibold transition-colors min-h-[32px] sm:min-h-[34px] cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-600 disabled:opacity-50 ${
+          className={`flex-1 inline-flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg font-semibold transition-colors min-h-[36px] cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-600 ${
             hasVoted
-              ? "bg-teal-50 text-teal-800 border-teal-300"
-              : "bg-white text-slate-600 border-slate-200 hover:bg-slate-50 hover:text-slate-900 active:bg-slate-100"
+              ? "text-teal-700 bg-teal-50"
+              : "hover:bg-slate-50 hover:text-slate-900 active:bg-slate-100"
           }`}
         >
-          <ThumbsUp className={`w-3.5 h-3.5 ${hasVoted ? "fill-teal-700 text-teal-700" : ""}`} />
+          <ThumbsUp className={`w-4 h-4 ${hasVoted ? "fill-teal-700 text-teal-700" : ""}`} />
           <span>{helpfulCount > 0 ? `Helpful (${helpfulCount})` : "Helpful"}</span>
         </button>
 
+        {/* Comment Action */}
+        <div
+          title={review.reply_comment ? "Storefront responded" : "Comments restricted to verified establishment"}
+          className="flex-1 inline-flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg font-semibold text-slate-500 hover:bg-slate-50 min-h-[36px] cursor-default select-none"
+        >
+          <MessageSquare className="w-4 h-4 text-slate-400" />
+          <span>{review.reply_comment ? "1 Response" : "Comment"}</span>
+        </div>
+
+        {/* Share Action */}
         <button
           type="button"
-          onClick={() => setReportModalOpen(true)}
-          title="Report this review"
-          aria-label="Report this review to moderators"
-          className="inline-flex items-center justify-center gap-1 text-slate-400 hover:text-red-600 active:text-red-700 text-xs transition-colors px-2 py-1 rounded min-h-[32px] sm:min-h-[34px] cursor-pointer focus:outline-none focus:ring-2 focus:ring-red-600"
+          onClick={handleShare}
+          className="flex-1 inline-flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg font-semibold text-slate-600 hover:bg-slate-50 hover:text-slate-900 active:bg-slate-100 transition-colors min-h-[36px] cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-600"
         >
-          <Flag className="w-3.5 h-3.5" />
-          <span>Report</span>
+          <Share2 className="w-4 h-4 text-slate-400" />
+          <span>{showCopied ? "Link Copied!" : "Share"}</span>
         </button>
       </div>
 
