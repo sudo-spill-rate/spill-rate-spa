@@ -15,6 +15,8 @@ import {
   AlertCircle,
   Star,
   MessageSquare,
+  Camera,
+  ImageIcon,
 } from "lucide-react";
 import PublicNavbar from "../../PublicPages/components/layout/PublicNavbar";
 import PublicFooter from "../../PublicPages/components/layout/PublicFooter";
@@ -84,6 +86,23 @@ export default function PublicBusinessProfilePage() {
   });
 
   const rawReviews = reviewsResponse?.data || [];
+  
+  // Extract up to 3 customer uploaded review photos across all reviews
+  const customerPhotos = React.useMemo(() => {
+    const photos = [];
+    for (const rev of rawReviews) {
+      if (Array.isArray(rev.image_urls) && rev.image_urls.length > 0) {
+        for (const url of rev.image_urls) {
+          if (url && typeof url === "string" && !photos.includes(url)) {
+            photos.push(url);
+            if (photos.length >= 3) return photos;
+          }
+        }
+      }
+    }
+    return photos;
+  }, [rawReviews]);
+
   const reviews = React.useMemo(() => {
     let filtered = [...rawReviews];
     if (selectedRating !== undefined) {
@@ -403,8 +422,8 @@ export default function PublicBusinessProfilePage() {
 
         {/* 3. Main Content: 2-Column Split (Ratings Breakdown | Feedback) */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 items-start">
-          {/* Left Column: Ratings Breakdown (Desktop Sticky) */}
-          <div className="hidden lg:block lg:col-span-5 lg:sticky lg:top-[calc(4rem+5.5rem)]">
+          {/* Left Column: Ratings Breakdown & Customer Photos (Desktop Sticky) */}
+          <div className="hidden lg:block lg:col-span-5 lg:sticky lg:top-[calc(4rem+5.5rem)] space-y-3">
             <BusinessRatingStatsCard
               business={business}
               selectedRating={selectedRating}
@@ -412,6 +431,38 @@ export default function PublicBusinessProfilePage() {
               showResponseMetrics={false}
               title="Ratings Breakdown"
             />
+
+            {/* 3 Customer Photos Section */}
+            {customerPhotos.length > 0 && (
+              <div className="bg-white rounded-xl border border-slate-200/90 p-3.5 shadow-xs space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-700">
+                    <Camera className="w-3.5 h-3.5 text-teal-700" aria-hidden="true" />
+                    <span>Customer Photos ({customerPhotos.length})</span>
+                  </div>
+                </div>
+
+                {/* 3 Photos Grid */}
+                <div className="grid grid-cols-3 gap-2">
+                  {customerPhotos.slice(0, 3).map((url, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setActivePhotoUrl(url)}
+                      className="group relative aspect-square rounded-lg overflow-hidden border border-slate-200 bg-slate-100 hover:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer transition-all shadow-2xs"
+                      aria-label={`View photo ${idx + 1}`}
+                    >
+                      <img
+                        src={url}
+                        alt={`Customer upload ${idx + 1}`}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                        loading="lazy"
+                      />
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Right Column: Mobile Tab Switcher, Mobile Ratings, and Reviews Feed */}
@@ -444,8 +495,8 @@ export default function PublicBusinessProfilePage() {
               </button>
             </div>
 
-            {/* Mobile Ratings Breakdown (Only shown when mobileTab is 'analytics' on < lg screens) */}
-            <div className={`lg:hidden ${mobileTab === "analytics" ? "block" : "hidden"}`}>
+            {/* Mobile Ratings Breakdown & Photos (Only shown when mobileTab is 'analytics' on < lg screens) */}
+            <div className={`lg:hidden space-y-3 ${mobileTab === "analytics" ? "block" : "hidden"}`}>
               <BusinessRatingStatsCard
                 business={business}
                 selectedRating={selectedRating}
@@ -456,6 +507,34 @@ export default function PublicBusinessProfilePage() {
                 showResponseMetrics={false}
                 title="Ratings Breakdown"
               />
+
+              {/* 3 Photos Section in Mobile Analytics */}
+              {customerPhotos.length > 0 && (
+                <div className="bg-white rounded-xl border border-slate-200/90 p-3.5 shadow-xs space-y-2.5">
+                  <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-slate-700">
+                    <Camera className="w-3.5 h-3.5 text-teal-700" aria-hidden="true" />
+                    <span>Customer Photos ({customerPhotos.length})</span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    {customerPhotos.slice(0, 3).map((url, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setActivePhotoUrl(url)}
+                        className="group relative aspect-square rounded-lg overflow-hidden border border-slate-200 bg-slate-100 hover:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer transition-all shadow-2xs"
+                        aria-label={`View photo ${idx + 1}`}
+                      >
+                        <img
+                          src={url}
+                          alt={`Customer upload ${idx + 1}`}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                          loading="lazy"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Customer Reviews & Moderation Feed (Shown always on desktop lg+, and when mobileTab is 'reviews' on < lg) */}
