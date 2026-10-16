@@ -22,18 +22,18 @@ function BusinessCard({ biz }) {
     <article className="group flex flex-col bg-white rounded-xl border border-slate-200 hover:border-slate-300 shadow-xs transition-colors">
       <Link
         to={businessHref}
-        className="p-4 sm:p-5 flex-1 flex flex-col justify-between focus:outline-none focus:ring-2 focus:ring-teal-600 rounded-xl"
+        className="p-3.5 sm:p-4 flex-1 flex flex-col justify-between focus:outline-none focus:ring-2 focus:ring-teal-600 rounded-xl"
       >
         <div>
           {/* Top Row: Rating & Name on Left, Logo on Right */}
-          <div className="flex items-start justify-between gap-3 mb-2">
+          <div className="flex items-start justify-between gap-2.5 mb-1.5">
             <div className="flex-1 min-w-0">
               {/* Rating */}
-              <div className="flex items-center gap-1.5 mb-1.5">
+              <div className="flex items-center gap-1.5 mb-1">
                 {hasRating ? (
                   <>
                     <div className="flex items-center text-amber-600">
-                      <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-amber-500 text-amber-500" aria-hidden="true" />
+                      <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" aria-hidden="true" />
                       <span className="ml-1 text-xs sm:text-sm font-bold text-slate-900">
                         {Number(rawAvg).toFixed(1)}
                       </span>
@@ -61,12 +61,12 @@ function BusinessCard({ biz }) {
                 <img
                   src={biz.image_url}
                   alt={`${biz.name} logo`}
-                  className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-cover border border-slate-200/90 shadow-2xs"
+                  className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg object-cover border border-slate-200/90 shadow-2xs"
                   loading="lazy"
                   onError={() => setImgError(true)}
                 />
               ) : (
-                <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-teal-50 border border-teal-100 flex items-center justify-center font-bold text-teal-800 text-base sm:text-lg">
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-teal-50 border border-teal-100 flex items-center justify-center font-bold text-teal-800 text-sm sm:text-base">
                   {biz.name ? biz.name.charAt(0).toUpperCase() : "B"}
                 </div>
               )}
@@ -79,7 +79,7 @@ function BusinessCard({ biz }) {
           </p>
 
           {/* Category & Verified Row */}
-          <div className="mt-3 flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
+          <div className="mt-2.5 flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
             {biz.category && (
               <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-100 text-slate-700 border border-slate-200/60">
                 {biz.category}
@@ -104,7 +104,7 @@ function BusinessCard({ biz }) {
         </div>
 
         {/* Action indicator */}
-        <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-teal-700 group-hover:text-teal-800">
+        <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs font-semibold text-teal-700 group-hover:text-teal-800">
           <span>Read reviews and rate</span>
           <span aria-hidden="true" className="text-slate-400 group-hover:text-teal-700">Open →</span>
         </div>
@@ -154,22 +154,22 @@ export default function FeaturedSection() {
     <div className="w-full flex-1 flex flex-col">
       {/* Loading State */}
       {isLoading && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 flex-1" aria-busy="true">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4.5 flex-1" aria-busy="true">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
             <div
               key={i}
-              className="bg-white rounded-xl border border-slate-200 p-4 sm:p-5 shadow-xs animate-pulse space-y-3"
+              className="bg-white rounded-xl border border-slate-200 p-3.5 sm:p-4 shadow-xs animate-pulse space-y-2.5"
             >
-              <div className="flex justify-between items-start gap-3">
+              <div className="flex justify-between items-start gap-2.5">
                 <div className="space-y-2 flex-1">
                   <div className="h-4 w-20 bg-slate-200 rounded" />
-                  <div className="h-5 w-3/4 bg-slate-200 rounded" />
+                  <div className="h-4.5 w-3/4 bg-slate-200 rounded" />
                 </div>
-                <div className="w-12 h-12 rounded-xl bg-slate-200 shrink-0" />
+                <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-lg bg-slate-200 shrink-0" />
               </div>
-              <div className="h-3.5 w-full bg-slate-200 rounded" />
-              <div className="h-4 w-1/2 bg-slate-200 rounded" />
-              <div className="pt-2 border-t border-slate-100 h-8 bg-slate-50 rounded" />
+              <div className="h-3 w-full bg-slate-200 rounded" />
+              <div className="h-3.5 w-1/2 bg-slate-200 rounded" />
+              <div className="pt-2 border-t border-slate-100 h-7 bg-slate-50 rounded" />
             </div>
           ))}
         </div>
@@ -177,14 +177,14 @@ export default function FeaturedSection() {
 
       {/* Error State */}
       {isError && (
-        <div className="p-6 sm:p-8 text-center bg-white rounded-xl border border-slate-200 shadow-xs my-auto">
-          <AlertCircle className="w-7 h-7 text-amber-600 mx-auto mb-2" aria-hidden="true" />
-          <p className="text-sm sm:text-base font-semibold text-slate-900">Unable to load featured businesses</p>
-          <p className="text-xs sm:text-sm text-slate-600 mt-1 mb-4">Please verify your connection and try again.</p>
+        <div className="p-5 sm:p-6 text-center bg-white rounded-xl border border-slate-200 shadow-xs my-auto">
+          <AlertCircle className="w-6 h-6 text-amber-600 mx-auto mb-2" aria-hidden="true" />
+          <p className="text-sm font-semibold text-slate-900">Unable to load featured businesses</p>
+          <p className="text-xs text-slate-600 mt-1 mb-3.5">Please verify your connection and try again.</p>
           <button
             type="button"
             onClick={() => refetch()}
-            className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[44px]"
+            className="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs sm:text-sm font-medium focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[38px] cursor-pointer"
           >
             Retry Loading
           </button>
@@ -193,18 +193,18 @@ export default function FeaturedSection() {
 
       {/* Empty State */}
       {!isLoading && !isError && businesses.length === 0 && (
-        <div className="p-6 sm:p-10 text-center bg-white rounded-xl border border-slate-200 shadow-xs my-auto">
-          <CheckCircle2 className="w-10 h-10 text-slate-400 mx-auto mb-3" aria-hidden="true" />
+        <div className="p-6 sm:p-8 text-center bg-white rounded-xl border border-slate-200 shadow-xs my-auto">
+          <CheckCircle2 className="w-9 h-9 text-slate-400 mx-auto mb-2.5" aria-hidden="true" />
           <h3 className="text-sm sm:text-base font-bold text-slate-900">
             No businesses registered yet
           </h3>
           <p className="mt-1 text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
             Be the first local merchant to register your establishment and start collecting authentic community feedback.
           </p>
-          <div className="mt-4 sm:mt-5">
+          <div className="mt-3.5 sm:mt-4">
             <Link
               to="/dashboard/business/new"
-              className="inline-flex items-center justify-center px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs sm:text-sm font-semibold transition-colors min-h-[44px] focus:outline-none focus:ring-2 focus:ring-teal-600"
+              className="inline-flex items-center justify-center px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs sm:text-sm font-semibold transition-colors min-h-[38px] focus:outline-none focus:ring-2 focus:ring-teal-600"
             >
               Register Your Business
             </Link>
@@ -214,7 +214,7 @@ export default function FeaturedSection() {
 
       {/* Real Data Cards Grid */}
       {!isLoading && !isError && featuredTen.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 pb-6 sm:pb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4.5 pb-4 sm:pb-6">
           {featuredTen.map((biz) => (
             <BusinessCard key={biz.id} biz={biz} />
           ))}
