@@ -28,7 +28,7 @@ export default function CategoryFilters({
         <button
           type="button"
           onClick={() => onSelectCategory("")}
-          className={`px-3 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium text-left transition-colors whitespace-nowrap min-h-[38px] flex items-center justify-between shrink-0 lg:shrink focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer ${
+          className={`px-2.5 py-1.5 rounded-lg text-xs font-medium text-left transition-colors whitespace-nowrap min-h-[34px] sm:min-h-[36px] flex items-center justify-between shrink-0 lg:shrink focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer ${
             !selectedCategory
               ? "bg-slate-900 text-white font-semibold shadow-2xs"
               : "bg-white lg:bg-transparent text-slate-700 hover:bg-slate-100 border lg:border-0 border-slate-200"
@@ -50,7 +50,7 @@ export default function CategoryFilters({
               key={catKey}
               type="button"
               onClick={() => onSelectCategory(catName)}
-              className={`px-3 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm font-medium text-left transition-colors whitespace-nowrap min-h-[38px] flex items-center justify-between shrink-0 lg:shrink focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer ${
+              className={`px-2.5 py-1.5 rounded-lg text-xs font-medium text-left transition-colors whitespace-nowrap min-h-[34px] sm:min-h-[36px] flex items-center justify-between shrink-0 lg:shrink focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer ${
                 isSelected
                   ? "bg-slate-900 text-white font-semibold shadow-2xs"
                   : "bg-white lg:bg-transparent text-slate-700 hover:bg-slate-100 border lg:border-0 border-slate-200"
