@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import { Target, Compass, HeartHandshake, Shield } from "lucide-react";
 
 export default function MissionVision() {
@@ -40,7 +40,7 @@ export default function MissionVision() {
             Guiding Principles Behind Every Review
           </p>
           <p className="mt-2 text-sm sm:text-base text-slate-600 leading-relaxed">
-            TrustRate was built as an antidote to paywalled reputation platforms. We prioritize mathematical fairness, transparent ratings, and community accountability.
+            SpillRate was built as an antidote to paywalled reputation platforms. We prioritize mathematical fairness, transparent ratings, and community accountability.
           </p>
         </div>
 
