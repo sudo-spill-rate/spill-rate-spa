@@ -1,4 +1,4 @@
-import React from "react";
+﻿import React from "react";
 import AdminNavbar from "./AdminNavbar";
 import AdminDashboardSidebar from "./AdminDashboardSidebar";
 
@@ -50,7 +50,7 @@ export default function AdminLayout({
       </div>
 
       <footer className="mt-auto border-t border-slate-200 bg-white py-4 text-center text-xs text-slate-500">
-        TrustRate &bull; Platform Management & Moderation Environment
+        SpillRate &bull; Platform Management & Moderation Environment
       </footer>
     </div>
   );

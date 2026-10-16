@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { Settings, LogOut, Menu, X, Shield, User as UserIcon } from "lucide-react";
 import { useUserAuth } from "../../../../hooks/useUserAuth";
@@ -33,12 +33,12 @@ export default function AdminNavbar() {
             >
               <img
                 src="/logo.png"
-                alt="TrustRate Logo"
+                alt="SpillRate Logo"
                 className="w-8 h-8 object-contain shrink-0"
               />
               <div className="flex items-baseline gap-2">
                 <span className="font-bold text-base sm:text-lg tracking-tight text-slate-900">
-                  TrustRate
+                  SpillRate
                 </span>
                 <span className="text-xs font-semibold px-2 py-0.5 rounded border border-teal-200 bg-teal-50 text-teal-800">
                   Platform Admin
@@ -129,7 +129,7 @@ export default function AdminNavbar() {
                 {user?.name || "Admin"}
               </p>
               <p className="text-xs text-slate-500 truncate">
-                {user?.email || "founder@trustrate.internal"}
+                {user?.email || "founder@spillrate.internal"}
               </p>
               <span className="inline-block mt-1 text-[10px] font-bold px-1.5 py-0.5 rounded bg-teal-50 border border-teal-200 text-teal-800 capitalize">
                 {user?.role || "founder"}

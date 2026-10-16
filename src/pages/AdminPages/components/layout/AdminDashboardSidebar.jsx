@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { Link, useLocation } from "react-router";
 
 import { useUserAuth } from "../../../../hooks/useUserAuth";
@@ -50,7 +50,7 @@ export default function AdminDashboardSidebar({
                 Platform Admin
               </span>
               <span className="text-[10px] text-slate-500 font-medium block truncate">
-                TrustRate Governance
+                SpillRate Governance
               </span>
             </div>
 
