@@ -296,7 +296,7 @@ export default function PublicBusinessProfilePage() {
                       <div className="flex items-center gap-1.5 shrink-0" title="Verified Establishment">
                         <span className="text-slate-300 font-light text-base sm:text-lg" aria-hidden="true">|</span>
                         <img
-                          src="https://res.cloudinary.com/qzludnat/image/upload/v1792131141/Verified_Merchant_Shield-removebg-preview_1.png"
+                          src="https://res.cloudinary.com/qzludnat/image/upload/v1792131560/Teal_Verified_Shield_Icon-removebg-preview.png"
                           alt="Verified Establishment"
                           className="w-5 h-5 sm:w-6 sm:h-6 object-contain inline-block drop-shadow-2xs"
                           loading="lazy"
