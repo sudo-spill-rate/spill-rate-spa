@@ -270,15 +270,15 @@ export default function ReviewModerationHub({ businessId, businessSlug }) {
 
       {/* 2. Moderation Control Bar */}
       <div className="bg-white rounded-xl border border-slate-200 p-2 sm:p-2.5 shadow-2xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-2.5">
           {/* Status Tabs */}
           <div className="grid grid-cols-4 sm:flex items-center gap-1 p-0.5 bg-slate-100 rounded-lg overflow-x-auto w-full sm:w-auto">
             <button
               type="button"
               onClick={() => setStatusFilter("all")}
-              className={`px-2.5 py-1.5 text-[11px] sm:text-xs font-semibold rounded-md transition-colors text-center truncate min-h-[44px] ${
+              className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-colors text-center truncate min-h-[34px] sm:min-h-[36px] flex items-center justify-center cursor-pointer ${
                 statusFilter === "all"
-                  ? "bg-white text-slate-900 shadow-2xs"
+                  ? "bg-white text-slate-900 shadow-2xs font-bold"
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >
@@ -287,9 +287,9 @@ export default function ReviewModerationHub({ businessId, businessSlug }) {
             <button
               type="button"
               onClick={() => setStatusFilter("public")}
-              className={`px-2.5 py-1.5 text-[11px] sm:text-xs font-semibold rounded-md transition-colors text-center truncate min-h-[44px] ${
+              className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-colors text-center truncate min-h-[34px] sm:min-h-[36px] flex items-center justify-center cursor-pointer ${
                 statusFilter === "public"
-                  ? "bg-white text-slate-900 shadow-2xs"
+                  ? "bg-white text-slate-900 shadow-2xs font-bold"
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >
@@ -298,9 +298,9 @@ export default function ReviewModerationHub({ businessId, businessSlug }) {
             <button
               type="button"
               onClick={() => setStatusFilter("pinned")}
-              className={`px-2.5 py-1.5 text-[11px] sm:text-xs font-semibold rounded-md transition-colors text-center truncate min-h-[44px] ${
+              className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-colors text-center truncate min-h-[34px] sm:min-h-[36px] flex items-center justify-center cursor-pointer ${
                 statusFilter === "pinned"
-                  ? "bg-white text-slate-900 shadow-2xs"
+                  ? "bg-white text-slate-900 shadow-2xs font-bold"
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >
@@ -309,9 +309,9 @@ export default function ReviewModerationHub({ businessId, businessSlug }) {
             <button
               type="button"
               onClick={() => setStatusFilter("private")}
-              className={`px-2.5 py-1.5 text-[11px] sm:text-xs font-semibold rounded-md transition-colors text-center truncate min-h-[44px] ${
+              className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-colors text-center truncate min-h-[34px] sm:min-h-[36px] flex items-center justify-center cursor-pointer ${
                 statusFilter === "private"
-                  ? "bg-white text-slate-900 shadow-2xs"
+                  ? "bg-white text-slate-900 shadow-2xs font-bold"
                   : "text-slate-600 hover:text-slate-900"
               }`}
             >
@@ -320,18 +320,20 @@ export default function ReviewModerationHub({ businessId, businessSlug }) {
           </div>
 
           {/* Right Toolbar: Star Filter, Flagged Reports & Export CSV */}
-          <div className="flex items-center gap-2 w-full sm:w-auto justify-end flex-wrap">
+          <div className="flex items-center gap-1.5 sm:gap-2 w-full sm:w-auto justify-end flex-wrap">
             {/* Export CSV Button */}
             <button
               type="button"
               onClick={handleExportCsv}
               disabled={isExporting}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 transition-colors min-h-[44px] focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 transition-colors min-h-[34px] sm:min-h-[36px] focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer disabled:opacity-50"
               title="Export all reviews to CSV"
             >
               {isExporting ? (
                 <RotateCw className="w-3.5 h-3.5 text-teal-600 animate-spin" />
-              ) : null}
+              ) : (
+                <Download className="w-3.5 h-3.5 text-slate-500" />
+              )}
               <span>{isExporting ? "Exporting..." : "Export CSV"}</span>
             </button>
 
@@ -339,8 +341,9 @@ export default function ReviewModerationHub({ businessId, businessSlug }) {
             <button
               type="button"
               onClick={handleOpenReports}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 transition-colors min-h-[44px] focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 transition-colors min-h-[34px] sm:min-h-[36px] focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer"
             >
+              <ShieldAlert className="w-3.5 h-3.5 text-slate-500" />
               <span>Flagged Reports</span>
             </button>
 
@@ -353,7 +356,7 @@ export default function ReviewModerationHub({ businessId, businessSlug }) {
                 id="rating-filter"
                 value={ratingFilter}
                 onChange={(e) => setRatingFilter(e.target.value)}
-                className="w-full sm:w-auto px-2.5 py-1.5 text-xs font-medium rounded-lg border border-slate-300 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-teal-600 min-h-[44px] cursor-pointer"
+                className="w-full sm:w-auto px-2.5 py-1.5 text-xs font-medium rounded-lg border border-slate-300 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-teal-600 min-h-[34px] sm:min-h-[36px] cursor-pointer"
               >
                 <option value="all">All Stars</option>
                 <option value="5">5 Stars</option>
