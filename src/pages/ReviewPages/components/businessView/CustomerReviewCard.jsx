@@ -4,26 +4,74 @@ import { Star, Building2, ThumbsUp, MoreHorizontal, Flag, MessageSquare, Share2,
 import { reviewService } from "../../../../services/reviewService";
 import ReportReviewModal from "./ReportReviewModal";
 
-function PhotoThumbnail({ url, idx, reviewerName, onPhotoClick }) {
-  const [hasError, setHasError] = useState(false);
+function ReviewMediaGallery({ imageUrls, reviewerName, onPhotoClick }) {
+  if (!imageUrls || imageUrls.length === 0) return null;
 
-  if (hasError) return null;
+  // Single photo: Full-width prominent Facebook post image banner
+  if (imageUrls.length === 1) {
+    return (
+      <div className="pt-1.5 w-full">
+        <button
+          type="button"
+          onClick={() => onPhotoClick && onPhotoClick(imageUrls[0])}
+          aria-label={`View photo attached by ${reviewerName}`}
+          className="group relative w-full aspect-16/10 sm:aspect-16/9 rounded-xl overflow-hidden border border-slate-200 bg-slate-900/5 hover:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer transition-all shadow-xs block"
+        >
+          <img
+            src={imageUrls[0]}
+            alt={`Photo attached by ${reviewerName}`}
+            className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-300"
+            loading="lazy"
+          />
+        </button>
+      </div>
+    );
+  }
 
+  // 2 photos: Side-by-side 2-column grid
+  if (imageUrls.length === 2) {
+    return (
+      <div className="pt-1.5 grid grid-cols-2 gap-2 w-full">
+        {imageUrls.map((url, idx) => (
+          <button
+            key={idx}
+            type="button"
+            onClick={() => onPhotoClick && onPhotoClick(url)}
+            aria-label={`View attached photo ${idx + 1}`}
+            className="group relative aspect-4/3 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 hover:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer transition-all shadow-2xs"
+          >
+            <img
+              src={url}
+              alt={`Photo ${idx + 1} attached by ${reviewerName}`}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+              loading="lazy"
+            />
+          </button>
+        ))}
+      </div>
+    );
+  }
+
+  // 3+ photos: 3-column grid
   return (
-    <button
-      type="button"
-      onClick={() => onPhotoClick && onPhotoClick(url)}
-      aria-label={`View attached photo ${idx + 1}`}
-      className="group relative w-20 h-20 sm:w-24 sm:h-24 shrink-0 rounded-lg overflow-hidden border border-slate-200 bg-slate-100 hover:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer transition-all shadow-2xs"
-    >
-      <img
-        src={url}
-        alt={`Photo ${idx + 1} attached by ${reviewerName}`}
-        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-        loading="lazy"
-        onError={() => setHasError(true)}
-      />
-    </button>
+    <div className="pt-1.5 grid grid-cols-3 gap-2 w-full">
+      {imageUrls.map((url, idx) => (
+        <button
+          key={idx}
+          type="button"
+          onClick={() => onPhotoClick && onPhotoClick(url)}
+          aria-label={`View attached photo ${idx + 1}`}
+          className="group relative aspect-square rounded-xl overflow-hidden border border-slate-200 bg-slate-100 hover:border-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer transition-all shadow-2xs"
+        >
+          <img
+            src={url}
+            alt={`Photo ${idx + 1} attached by ${reviewerName}`}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+            loading="lazy"
+          />
+        </button>
+      ))}
+    </div>
   );
 }
 
@@ -205,20 +253,12 @@ export default function CustomerReviewCard({ review, onPhotoClick }) {
           {review.comment}
         </p>
 
-        {/* Media / Photo Thumbnails with rounded borders */}
-        {review.image_urls && review.image_urls.length > 0 && (
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 pt-1 no-scrollbar">
-            {review.image_urls.map((url, idx) => (
-              <PhotoThumbnail
-                key={idx}
-                url={url}
-                idx={idx}
-                reviewerName={review.name}
-                onPhotoClick={onPhotoClick}
-              />
-            ))}
-          </div>
-        )}
+        {/* Facebook-style large media container */}
+        <ReviewMediaGallery
+          imageUrls={review.image_urls}
+          reviewerName={review.name}
+          onPhotoClick={onPhotoClick}
+        />
       </div>
 
       {/* Official Business Owner Reply if present */}
