@@ -48,6 +48,7 @@ export default function PublicBusinessProfilePage() {
   const [isWriteReviewModalOpen, setIsWriteReviewModalOpen] = useState(false);
   const [mobileTab, setMobileTab] = useState("reviews"); // "reviews" | "analytics"
   const [selectedRating, setSelectedRating] = useState(undefined);
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
 
   // Auto-open modal if ?writeReview=true is in URL
   useEffect(() => {
@@ -258,26 +259,27 @@ export default function PublicBusinessProfilePage() {
               {/* Top Details Section: Full-width responsive container */}
               <div className="flex-1 min-w-0 w-full space-y-2.5 sm:space-y-3">
                 
-                {/* Identity Header: Logo + Name + Verified Badge + Category Tag */}
-                <div className="flex items-center gap-3 sm:gap-3.5">
-                  {/* Business Logo / Profile Avatar: 48px-52px on mobile to avoid squeezing header rightwards */}
-                  <div className="shrink-0">
+                {/* Identity Header: Logo on left, Name + Badge (Row 1) & Category (Row 2) on right */}
+                <div className="flex items-start gap-3 sm:gap-3.5">
+                  {/* Business Logo / Profile Avatar: 48px-52px on mobile to align nicely with the 2 rows */}
+                  <div className="shrink-0 pt-0.5">
                     {business.image_url && !imageError ? (
                       <img
                         src={business.image_url}
                         alt={`Logo of ${business.name}`}
-                        className="w-12 h-12 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-xl sm:rounded-2xl object-cover border border-slate-200/90 shadow-2xs bg-white ring-1 ring-slate-100"
+                        className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-xl sm:rounded-2xl object-cover border border-slate-200/90 shadow-2xs bg-white ring-1 ring-slate-100"
                         onError={() => setImageError(true)}
                       />
                     ) : (
-                      <div className="w-12 h-12 sm:w-20 sm:h-20 lg:w-24 lg:h-24 rounded-xl sm:rounded-2xl bg-teal-50 border border-teal-200/80 flex items-center justify-center font-bold text-teal-800 text-lg sm:text-2xl lg:text-3xl shadow-2xs ring-1 ring-teal-100">
+                      <div className="w-12 h-12 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-xl sm:rounded-2xl bg-teal-50 border border-teal-200/80 flex items-center justify-center font-bold text-teal-800 text-lg sm:text-2xl shadow-2xs ring-1 ring-teal-100">
                         {business.name ? business.name.charAt(0).toUpperCase() : "B"}
                       </div>
                     )}
                   </div>
 
-                  {/* Title & Badges */}
+                  {/* Right side of Logo: Row 1 = Business Name + Badge | Row 2 = Category */}
                   <div className="flex-1 min-w-0 space-y-1">
+                    {/* Row 1: Logo | Business Name | Badge */}
                     <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
                       <h1 className="text-base sm:text-lg lg:text-xl font-extrabold text-slate-900 tracking-tight truncate">
                         {business.name}
@@ -295,13 +297,6 @@ export default function PublicBusinessProfilePage() {
                         </div>
                       )}
 
-                      {/* Category Tag Badge: cleanly aligned */}
-                      {business.category && (
-                        <span className="inline-flex items-center text-[10px] sm:text-[11px] font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md border border-slate-200/80 shrink-0">
-                          {business.category}
-                        </span>
-                      )}
-
                       {/* User Cooldown / Status */}
                       {!isEligible && (
                         <span
@@ -313,64 +308,91 @@ export default function PublicBusinessProfilePage() {
                         </span>
                       )}
                     </div>
+
+                    {/* Row 2: Category under Name */}
+                    {business.category && (
+                      <div className="flex items-center">
+                        <span className="inline-flex items-center text-[10px] sm:text-[11px] font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md border border-slate-200/80">
+                          {business.category}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
 
-                {/* Business Description: Spans full width */}
+                {/* Description: Spans full width with 'See more' toggle if long */}
                 {business.description && (
-                  <p className="text-xs sm:text-sm text-slate-600 line-clamp-2 leading-relaxed w-full">
-                    {business.description}
-                  </p>
+                  <div className="w-full text-xs sm:text-sm text-slate-600">
+                    <p className={`${isDescriptionExpanded ? "" : "line-clamp-2"} leading-relaxed`}>
+                      {business.description}
+                    </p>
+                    {business.description.length > 90 && (
+                      <button
+                        type="button"
+                        onClick={() => setIsDescriptionExpanded(!isDescriptionExpanded)}
+                        className="text-teal-700 hover:text-teal-800 font-semibold text-xs mt-1 cursor-pointer focus:outline-none focus:underline min-h-[30px] inline-flex items-center"
+                      >
+                        {isDescriptionExpanded ? "See less" : "See more"}
+                      </button>
+                    )}
+                  </div>
                 )}
 
-                {/* Contact & Location Metadata: Spans full width underneath description, aligned left with uniform vertical gap */}
-                <div className="w-full pt-1 border-t border-slate-100/80 grid grid-cols-1 sm:flex sm:flex-wrap sm:items-center gap-x-5 gap-y-1.5 text-xs text-slate-600">
-                  {/* Phone */}
-                  {business.phone ? (
-                    <a
-                      href={`tel:${business.phone}`}
-                      className="inline-flex items-center gap-1.5 text-slate-700 hover:text-teal-700 transition-colors font-medium focus:outline-none focus:underline min-h-[26px] sm:min-h-0"
-                    >
-                      <Phone className="w-3.5 h-3.5 text-teal-700 shrink-0" aria-hidden="true" />
-                      <span className="text-xs">{business.phone}</span>
-                    </a>
-                  ) : (
-                    <span className="inline-flex items-center gap-1.5 text-slate-400 min-w-0 min-h-[24px] sm:min-h-0">
-                      <Phone className="w-3.5 h-3.5 text-slate-300 shrink-0" aria-hidden="true" />
-                      <span className="text-xs">No phone</span>
-                    </span>
-                  )}
+                {/* Contact Info Lines: Number | Address, then Website */}
+                <div className="w-full pt-1.5 border-t border-slate-100/80 space-y-1 text-xs text-slate-600">
+                  {/* Row 1: Number | Address */}
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                    {/* Number */}
+                    {business.phone ? (
+                      <a
+                        href={`tel:${business.phone}`}
+                        className="inline-flex items-center gap-1.5 text-slate-700 hover:text-teal-700 transition-colors font-medium focus:outline-none focus:underline min-h-[26px]"
+                      >
+                        <Phone className="w-3.5 h-3.5 text-teal-700 shrink-0" aria-hidden="true" />
+                        <span className="text-xs">{business.phone}</span>
+                      </a>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 text-slate-400 min-w-0 min-h-[24px]">
+                        <Phone className="w-3.5 h-3.5 text-slate-300 shrink-0" aria-hidden="true" />
+                        <span className="text-xs">No phone</span>
+                      </span>
+                    )}
 
-                  {/* Address */}
-                  {business.address ? (
-                    <div className="inline-flex items-center gap-1.5 min-w-0 min-h-[24px] sm:min-h-0">
-                      <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" aria-hidden="true" />
-                      <span className="truncate max-w-[280px] sm:max-w-[320px] text-xs">{business.address}</span>
-                    </div>
-                  ) : (
-                    <span className="inline-flex items-center gap-1.5 text-slate-400 min-w-0 min-h-[24px] sm:min-h-0">
-                      <MapPin className="w-3.5 h-3.5 text-slate-300 shrink-0" aria-hidden="true" />
-                      <span className="text-xs">No address</span>
-                    </span>
-                  )}
+                    <span className="text-slate-300 font-light text-xs" aria-hidden="true">|</span>
 
-                  {/* Website */}
-                  {business.website ? (
-                    <a
-                      href={business.website}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 text-teal-700 hover:text-teal-800 hover:underline min-w-0 truncate max-w-[240px] sm:max-w-[280px] min-h-[26px] sm:min-h-0"
-                    >
-                      <Globe className="w-3.5 h-3.5 text-teal-700 shrink-0" aria-hidden="true" />
-                      <span className="truncate text-xs">{business.website.replace(/^https?:\/\//, "")}</span>
-                    </a>
-                  ) : (
-                    <span className="inline-flex items-center gap-1.5 text-slate-400 min-w-0 min-h-[24px] sm:min-h-0">
-                      <Globe className="w-3.5 h-3.5 text-slate-300 shrink-0" aria-hidden="true" />
-                      <span className="text-xs">No website</span>
-                    </span>
-                  )}
+                    {/* Address */}
+                    {business.address ? (
+                      <div className="inline-flex items-center gap-1.5 min-w-0 min-h-[24px]">
+                        <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" aria-hidden="true" />
+                        <span className="truncate max-w-[280px] sm:max-w-[360px] text-xs">{business.address}</span>
+                      </div>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 text-slate-400 min-w-0 min-h-[24px]">
+                        <MapPin className="w-3.5 h-3.5 text-slate-300 shrink-0" aria-hidden="true" />
+                        <span className="text-xs">No address</span>
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Row 2: Website */}
+                  <div>
+                    {business.website ? (
+                      <a
+                        href={business.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-teal-700 hover:text-teal-800 hover:underline min-w-0 truncate max-w-[260px] sm:max-w-[360px] min-h-[26px]"
+                      >
+                        <Globe className="w-3.5 h-3.5 text-teal-700 shrink-0" aria-hidden="true" />
+                        <span className="truncate text-xs">{business.website.replace(/^https?:\/\//, "")}</span>
+                      </a>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 text-slate-400 min-w-0 min-h-[24px]">
+                        <Globe className="w-3.5 h-3.5 text-slate-300 shrink-0" aria-hidden="true" />
+                        <span className="text-xs">No website</span>
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
 
