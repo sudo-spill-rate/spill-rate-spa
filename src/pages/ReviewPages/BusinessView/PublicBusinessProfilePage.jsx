@@ -260,38 +260,38 @@ export default function PublicBusinessProfilePage() {
               <div className="flex-1 min-w-0 w-full space-y-2.5 sm:space-y-3">
                 
                 {/* Identity Header: Logo on left, Name + Badge (Row 1) & Category (Row 2) on right */}
-                <div className="w-full flex items-center gap-4 sm:gap-5">
-                  {/* Business Logo / Profile Avatar: Scaled up to 80px–112px (w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28) */}
+                <div className="w-full flex items-center gap-3.5 sm:gap-3.5">
+                  {/* Business Logo / Profile Avatar: Mobile enlarged (w-20 h-20), Desktop preserved to original size (sm:w-16 lg:w-20) */}
                   <div className="shrink-0">
                     {business.image_url && !imageError ? (
                       <img
                         src={business.image_url}
                         alt={`Logo of ${business.name}`}
-                        className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-2xl object-cover border border-slate-200/90 shadow-xs bg-white ring-1 ring-slate-100"
+                        className="w-20 h-20 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-xl sm:rounded-2xl object-cover border border-slate-200/90 shadow-2xs bg-white ring-1 ring-slate-100"
                         onError={() => setImageError(true)}
                       />
                     ) : (
-                      <div className="w-20 h-20 sm:w-24 sm:h-24 lg:w-28 lg:h-28 rounded-2xl bg-teal-50 border border-teal-200/80 flex items-center justify-center font-bold text-teal-800 text-2xl sm:text-3xl lg:text-4xl shadow-xs ring-1 ring-teal-100">
+                      <div className="w-20 h-20 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-xl sm:rounded-2xl bg-teal-50 border border-teal-200/80 flex items-center justify-center font-bold text-teal-800 text-2xl sm:text-2xl lg:text-3xl shadow-2xs ring-1 ring-teal-100">
                         {business.name ? business.name.charAt(0).toUpperCase() : "B"}
                       </div>
                     )}
                   </div>
 
                   {/* Right side of Logo: Row 1 = Business Name + Badge | Row 2 = Category */}
-                  <div className="flex-1 min-w-0 space-y-1.5 sm:space-y-2">
+                  <div className="flex-1 min-w-0 space-y-1">
                     {/* Row 1: Logo | Business Name | Badge */}
-                    <div className="flex items-center gap-2 sm:gap-2.5 flex-wrap">
-                      <h1 className="text-xl sm:text-2xl lg:text-3xl font-black text-slate-900 tracking-tight truncate">
+                    <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+                      <h1 className="text-xl sm:text-lg lg:text-xl font-extrabold text-slate-900 tracking-tight truncate">
                         {business.name}
                       </h1>
 
                       {business.is_verified && (
-                        <div className="inline-flex items-center gap-1.5 shrink-0" title="Verified Establishment">
-                          <span className="text-slate-300 font-light text-sm sm:text-base" aria-hidden="true">|</span>
+                        <div className="inline-flex items-center gap-1 shrink-0" title="Verified Establishment">
+                          <span className="text-slate-300 font-light text-xs sm:text-sm" aria-hidden="true">|</span>
                           <img
                             src="https://res.cloudinary.com/qzludnat/image/upload/v1792131560/Teal_Verified_Shield_Icon-removebg-preview.png"
                             alt="Verified Establishment"
-                            className="w-5 h-5 sm:w-6 sm:h-6 object-contain inline-block drop-shadow-2xs"
+                            className="w-5 h-5 sm:w-4.5 sm:h-4.5 object-contain inline-block drop-shadow-2xs"
                             loading="lazy"
                           />
                         </div>
@@ -300,10 +300,10 @@ export default function PublicBusinessProfilePage() {
                       {/* User Cooldown / Status */}
                       {!isEligible && (
                         <span
-                          className="inline-flex items-center gap-1 text-[11px] sm:text-xs font-medium bg-slate-100 text-slate-600 px-2 py-0.5 rounded border border-slate-200/60 shrink-0"
+                          className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-medium bg-slate-100 text-slate-600 px-2 py-0.5 rounded border border-slate-200/60 shrink-0"
                           title={`You recently reviewed this business. You can submit another review in ${cooldownHours} hours.`}
                         >
-                          <Clock className="w-3.5 h-3.5 text-slate-500 shrink-0" aria-hidden="true" />
+                          <Clock className="w-3 h-3 text-slate-500 shrink-0" aria-hidden="true" />
                           <span>Reviewed ({cooldownHours}h wait)</span>
                         </span>
                       )}
@@ -312,7 +312,7 @@ export default function PublicBusinessProfilePage() {
                     {/* Row 2: Category under Name */}
                     {business.category && (
                       <div className="flex items-center">
-                        <span className="inline-flex items-center text-xs sm:text-sm font-semibold bg-slate-100 text-slate-700 px-2.5 py-1 rounded-md border border-slate-200/80">
+                        <span className="inline-flex items-center text-[11px] sm:text-[11px] font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md border border-slate-200/80">
                           {business.category}
                         </span>
                       </div>
