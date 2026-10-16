@@ -14,7 +14,7 @@ export default function SignInCard({
     <div className="bg-white rounded-2xl border border-slate-200/90 p-6 sm:p-8 shadow-xs space-y-6">
       <div className="text-center space-y-1.5">
         <h1 className="text-2xl font-bold tracking-tight text-slate-900">
-          Sign In to TrustRate
+          Sign In to SpillRate
         </h1>
         <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-sm mx-auto">
           Authenticate using your Google account to submit verified community reviews or manage your business profile.

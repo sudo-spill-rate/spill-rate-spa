@@ -79,12 +79,12 @@ export default function SignInModal({ isOpen, onClose, redirectPath = "/dashboar
           <div className="flex justify-center mb-2">
             <img
               src="/logo.png"
-              alt="TrustRate Logo"
+              alt="SpillRate Logo"
               className="w-10 h-10 object-contain"
             />
           </div>
           <h2 id="sign-in-modal-title" className="text-xl font-bold tracking-tight text-slate-900">
-            Sign In to TrustRate
+            Sign In to SpillRate
           </h2>
           <p className="text-xs text-slate-500 max-w-xs mx-auto">
             Manage your business listings and community endorsements.
