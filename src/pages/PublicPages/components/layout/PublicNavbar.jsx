@@ -55,11 +55,11 @@ export default function PublicNavbar() {
             >
               <img
                 src="/logo.png"
-                alt="TrustRate Logo"
+                alt="SpillRate Logo"
                 className="w-8 h-8 object-contain shrink-0"
               />
               <span className="tracking-tight text-xl font-bold">
-                Trust<span className="text-teal-700">Rate</span>
+                Spill<span className="text-teal-700">Rate</span>
               </span>
             </Link>
 
@@ -159,11 +159,11 @@ export default function PublicNavbar() {
               >
                 <img
                   src="/logo.png"
-                  alt="TrustRate Logo"
+                  alt="SpillRate Logo"
                   className="w-8 h-8 object-contain shrink-0"
                 />
                 <span className="tracking-tight text-xl font-bold">
-                  Trust<span className="text-teal-700">Rate</span>
+                  Spill<span className="text-teal-700">Rate</span>
                 </span>
               </Link>
 
