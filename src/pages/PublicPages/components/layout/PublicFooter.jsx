@@ -34,11 +34,11 @@ export default function PublicFooter() {
             >
               <img
                 src="/logo.png"
-                alt="TrustRate Logo"
+                alt="SpillRate Logo"
                 className="w-5 h-5 sm:w-6 sm:h-6 object-contain shrink-0"
               />
               <span className="tracking-tight text-base font-bold">
-                Trust<span className="text-teal-700">Rate</span>
+                Spill<span className="text-teal-700">Rate</span>
               </span>
             </Link>
             <span className="text-xs text-slate-300 hidden sm:inline" aria-hidden="true">|</span>
@@ -90,7 +90,7 @@ export default function PublicFooter() {
 
         {/* Minimized Copyright & Metadata Row */}
         <div className="pt-3 pb-4 border-t border-slate-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 text-xs text-slate-500">
-          <p>© {currentYear} TrustRate. Community ratings protected by device cooldowns.</p>
+          <p>© {currentYear} SpillRate. Community ratings protected by device cooldowns.</p>
           <p className="text-slate-400">Philippines</p>
         </div>
       </div>
