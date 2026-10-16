@@ -17,7 +17,7 @@ function SearchResultCard({ biz }) {
   const businessHref = `/business/${biz.slug || biz.id}`;
 
   return (
-    <article className="group flex flex-col bg-white rounded-xl border border-slate-200/90 hover:border-slate-300 shadow-xs transition-colors">
+    <article className="group flex flex-col bg-white rounded-xl border border-slate-200 hover:border-slate-300 shadow-xs transition-colors">
       <Link
         to={businessHref}
         className="p-3.5 sm:p-4 flex-1 flex flex-col justify-between focus:outline-none focus:ring-2 focus:ring-teal-600 rounded-xl"
@@ -32,7 +32,7 @@ function SearchResultCard({ biz }) {
                   <>
                     <div className="flex items-center text-amber-600">
                       <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500" aria-hidden="true" />
-                      <span className="ml-1 text-xs sm:text-sm font-bold text-slate-900 tabular-nums">
+                      <span className="ml-1 text-xs sm:text-sm font-bold text-slate-900">
                         {Number(rawAvg).toFixed(1)}
                       </span>
                     </div>
@@ -41,7 +41,7 @@ function SearchResultCard({ biz }) {
                     </span>
                   </>
                 ) : (
-                  <span className="text-[11px] sm:text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200/70">
+                  <span className="text-[11px] sm:text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
                     No reviews yet
                   </span>
                 )}
@@ -79,14 +79,14 @@ function SearchResultCard({ biz }) {
           {/* Category & Verified Row */}
           <div className="mt-2.5 flex flex-wrap items-center gap-1.5 text-xs text-slate-500">
             {biz.category && (
-              <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-100 text-slate-700 border border-slate-200/80">
+              <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-slate-100 text-slate-700 border border-slate-200/60">
                 {biz.category}
               </span>
             )}
             {biz.is_verified && (
               <span
                 title="Verified Establishment"
-                className="rounded bg-teal-50 text-teal-800 border border-teal-200/80 flex items-center gap-1 text-[11px] px-2 py-0.5 font-semibold"
+                className="rounded bg-teal-50 text-teal-800 border border-teal-200/60 flex items-center gap-1 text-[11px] px-2 py-0.5 font-semibold"
               >
                 <CheckCircle2 className="w-3 h-3 text-teal-700" aria-hidden="true" />
                 <span>Verified</span>
@@ -121,11 +121,11 @@ export default function DirectorySearchResults({
 }) {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4.5" aria-busy="true">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4.5" aria-busy="true">
         {[1, 2, 3, 4, 5, 6].map((i) => (
           <div
             key={i}
-            className="bg-white rounded-xl border border-slate-200/90 p-3.5 sm:p-4 shadow-xs animate-pulse space-y-2.5"
+            className="bg-white rounded-xl border border-slate-200 p-3.5 sm:p-4 shadow-xs animate-pulse space-y-2.5"
           >
             <div className="flex justify-between items-start gap-2.5">
               <div className="space-y-2 flex-1">
@@ -188,7 +188,7 @@ export default function DirectorySearchResults({
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4.5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4.5">
       {businesses.map((biz) => (
         <SearchResultCard key={biz.id} biz={biz} />
       ))}
