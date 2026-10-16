@@ -306,39 +306,55 @@ export default function PublicBusinessProfilePage() {
                     </p>
                   )}
 
-                  {/* Contact & Location Metadata Bar */}
-                  {(business.address || business.phone || business.website) && (
-                    <div className="pt-1 flex flex-wrap items-center gap-x-3.5 gap-y-1.5 text-xs text-slate-600">
-                      {business.phone && (
-                        <a
-                          href={`tel:${business.phone}`}
-                          className="inline-flex items-center gap-1 text-slate-700 hover:text-teal-700 transition-colors font-medium focus:outline-none focus:underline"
-                        >
-                          <Phone className="w-3.5 h-3.5 text-teal-700 shrink-0" aria-hidden="true" />
-                          <span>{business.phone}</span>
-                        </a>
-                      )}
+                  {/* Contact & Location Metadata Bar with fallbacks for null fields */}
+                  <div className="pt-1 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-slate-600">
+                    {/* Phone */}
+                    {business.phone ? (
+                      <a
+                        href={`tel:${business.phone}`}
+                        className="inline-flex items-center gap-1.5 text-slate-700 hover:text-teal-700 transition-colors font-medium focus:outline-none focus:underline"
+                      >
+                        <Phone className="w-3.5 h-3.5 text-teal-700 shrink-0" aria-hidden="true" />
+                        <span>{business.phone}</span>
+                      </a>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 text-slate-400 min-w-0">
+                        <Phone className="w-3.5 h-3.5 text-slate-300 shrink-0" aria-hidden="true" />
+                        <span>No phone</span>
+                      </span>
+                    )}
 
-                      {business.address && (
-                        <div className="inline-flex items-center gap-1 min-w-0">
-                          <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" aria-hidden="true" />
-                          <span className="truncate max-w-[240px] sm:max-w-[320px]">{business.address}</span>
-                        </div>
-                      )}
+                    {/* Address */}
+                    {business.address ? (
+                      <div className="inline-flex items-center gap-1.5 min-w-0">
+                        <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" aria-hidden="true" />
+                        <span className="truncate max-w-[240px] sm:max-w-[320px]">{business.address}</span>
+                      </div>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 text-slate-400 min-w-0">
+                        <MapPin className="w-3.5 h-3.5 text-slate-300 shrink-0" aria-hidden="true" />
+                        <span>No address</span>
+                      </span>
+                    )}
 
-                      {business.website && (
-                        <a
-                          href={business.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-teal-700 hover:text-teal-800 hover:underline min-w-0 truncate max-w-[200px]"
-                        >
-                          <Globe className="w-3.5 h-3.5 text-teal-700 shrink-0" aria-hidden="true" />
-                          <span className="truncate">{business.website.replace(/^https?:\/\//, "")}</span>
-                        </a>
-                      )}
-                    </div>
-                  )}
+                    {/* Website */}
+                    {business.website ? (
+                      <a
+                        href={business.website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-teal-700 hover:text-teal-800 hover:underline min-w-0 truncate max-w-[200px]"
+                      >
+                        <Globe className="w-3.5 h-3.5 text-teal-700 shrink-0" aria-hidden="true" />
+                        <span className="truncate">{business.website.replace(/^https?:\/\//, "")}</span>
+                      </a>
+                    ) : (
+                      <span className="inline-flex items-center gap-1.5 text-slate-400 min-w-0">
+                        <Globe className="w-3.5 h-3.5 text-slate-300 shrink-0" aria-hidden="true" />
+                        <span>No website</span>
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
 
