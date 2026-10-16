@@ -238,17 +238,17 @@ export default function PublicBusinessProfilePage() {
               
               {/* Left Side: Logo + Identity + Ratings + Badges + Metadata */}
               <div className="flex items-start gap-3 sm:gap-3.5 flex-1 min-w-0">
-                {/* Business Logo / Avatar */}
+                {/* Business Logo / Profile Avatar */}
                 <div className="shrink-0">
                   {business.image_url && !imageError ? (
                     <img
                       src={business.image_url}
                       alt={`Logo of ${business.name}`}
-                      className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl object-cover border border-slate-200 shadow-2xs bg-slate-50"
+                      className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl object-cover border-2 border-slate-100 shadow-xs bg-white ring-1 ring-slate-200/80"
                       onError={() => setImageError(true)}
                     />
                   ) : (
-                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl bg-teal-50 border border-teal-100/80 flex items-center justify-center font-bold text-teal-800 text-base sm:text-lg shadow-2xs">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-teal-50 border-2 border-teal-100 flex items-center justify-center font-bold text-teal-800 text-xl sm:text-2xl shadow-xs ring-1 ring-teal-200/60">
                       {business.name ? business.name.charAt(0).toUpperCase() : "B"}
                     </div>
                   )}
