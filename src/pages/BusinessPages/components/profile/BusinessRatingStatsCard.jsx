@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Star, StarHalf, ShieldCheck, MessageSquare, TrendingUp, CheckCircle, Clock } from "lucide-react";
 import { useCustomerReviews } from "../../../../hooks/useCustomerReviews";
 import { useBusinessProfile } from "../../../../hooks/useBusinessProfile";
+import { useUserAuth } from "../../../../hooks/useUserAuth";
 
 /**
  * Helper to render 5 stars supporting full, half, and empty star fills.
@@ -55,12 +56,16 @@ export default function BusinessRatingStatsCard({
 }) {
   const { reviews = [] } = useCustomerReviews();
   const { getAnalytics } = useBusinessProfile();
+  const { isAuthenticated } = useUserAuth();
 
   const [analytics, setAnalytics] = useState(null);
   const [isLoadingAnalytics, setIsLoadingAnalytics] = useState(false);
 
   useEffect(() => {
-    if (!business?.id) return;
+    // Analytics endpoint (/api/business/:id/analytics) requires authentication
+    // On public customer view, skip fetching analytics to prevent 401 Unauthorized errors
+    if (!business?.id || !isAuthenticated) return;
+
     let isMounted = true;
     const fetchStats = async () => {
       setIsLoadingAnalytics(true);
@@ -70,7 +75,7 @@ export default function BusinessRatingStatsCard({
           setAnalytics(res.data);
         }
       } catch (err) {
-        console.error("Failed to load business analytics:", err);
+        // Silently catch 401 or network errors for non-owners
       } finally {
         if (isMounted) setIsLoadingAnalytics(false);
       }
@@ -79,7 +84,7 @@ export default function BusinessRatingStatsCard({
     return () => {
       isMounted = false;
     };
-  }, [business?.id, getAnalytics]);
+  }, [business?.id, isAuthenticated, getAnalytics]);
 
   if (!business) return null;
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, useSearchParams, Link } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -49,28 +49,6 @@ export default function PublicBusinessProfilePage() {
   const [mobileTab, setMobileTab] = useState("reviews"); // "reviews" | "analytics"
   const [selectedRating, setSelectedRating] = useState(undefined);
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
-  const [showStickyBar, setShowStickyBar] = useState(false);
-  const mainCardRef = useRef(null);
-
-  // Scroll observer: show compact sticky bar when main business card scrolls past viewport
-  useEffect(() => {
-    const cardEl = mainCardRef.current;
-    if (!cardEl) return;
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        // When card is NOT intersecting (scrolled out above viewport), show sticky bar
-        setShowStickyBar(!entry.isIntersecting && entry.boundingClientRect.top < 0);
-      },
-      {
-        threshold: 0,
-        rootMargin: "-64px 0px 0px 0px", // Trigger right when top edge passes navbar
-      }
-    );
-
-    observer.observe(cardEl);
-    return () => observer.disconnect();
-  }, [business]);
 
   // Auto-open modal if ?writeReview=true is in URL
   useEffect(() => {
@@ -274,7 +252,7 @@ export default function PublicBusinessProfilePage() {
         </div>
 
         {/* 2. Main Business Details Card */}
-        <div ref={mainCardRef} className="bg-white rounded-xl border border-slate-200/90 p-3 sm:p-4 shadow-xs">
+        <div className="bg-white rounded-xl border border-slate-200/90 p-3 sm:p-4 shadow-xs">
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-4">
               
               {/* Top Details Section: Full-width responsive container */}
@@ -313,7 +291,7 @@ export default function PublicBusinessProfilePage() {
                             src="https://res.cloudinary.com/qzludnat/image/upload/v1792131560/Teal_Verified_Shield_Icon-removebg-preview.png"
                             alt="Verified Establishment"
                             className="w-5 h-5 sm:w-4.5 sm:h-4.5 object-contain inline-block drop-shadow-2xs"
-                            loading="lazy"
+                            decoding="async"
                           />
                         </div>
                       )}
@@ -517,85 +495,6 @@ export default function PublicBusinessProfilePage() {
                 />
               </div>
             </div>
-        </div>
-
-        {/* Sticky Scroll-Triggered Header Bar (appears smoothly when scrolling past main card) */}
-        <div
-          className={`fixed top-14 sm:top-16 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/90 shadow-sm transition-all duration-300 transform ${
-            showStickyBar
-              ? "opacity-100 translate-y-0 pointer-events-auto"
-              : "opacity-0 -translate-y-2 pointer-events-none"
-          }`}
-          aria-hidden={!showStickyBar}
-        >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-3">
-            {/* Left: Compact Logo + Business Name + Verified Badge + Category */}
-            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 flex-1">
-              {/* Compact Logo */}
-              <div className="shrink-0">
-                {business.image_url && !imageError ? (
-                  <img
-                    src={business.image_url}
-                    alt={`Logo of ${business.name}`}
-                    className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl object-cover border border-slate-200/90 shadow-2xs bg-white"
-                    onError={() => setImageError(true)}
-                  />
-                ) : (
-                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-teal-50 border border-teal-200/80 flex items-center justify-center font-bold text-teal-800 text-sm sm:text-base shadow-2xs">
-                    {business.name ? business.name.charAt(0).toUpperCase() : "B"}
-                  </div>
-                )}
-              </div>
-
-              {/* Name, Verified Badge, and Category in compact row */}
-              <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-wrap">
-                <h2 className="font-extrabold text-sm sm:text-base text-slate-900 tracking-tight truncate max-w-[150px] sm:max-w-[280px] lg:max-w-md">
-                  {business.name}
-                </h2>
-
-                {business.is_verified && (
-                  <div className="inline-flex items-center gap-1 shrink-0" title="Verified Establishment">
-                    <span className="text-slate-300 font-light text-xs" aria-hidden="true">|</span>
-                    <img
-                      src="https://res.cloudinary.com/qzludnat/image/upload/v1792131560/Teal_Verified_Shield_Icon-removebg-preview.png"
-                      alt="Verified Establishment"
-                      className="w-4 h-4 object-contain inline-block drop-shadow-2xs"
-                      loading="lazy"
-                    />
-                  </div>
-                )}
-
-                {business.category && (
-                  <span className="hidden sm:inline-flex items-center text-[10px] sm:text-[11px] font-semibold bg-slate-100 text-slate-700 px-2 py-0.5 rounded-md border border-slate-200/80 shrink-0">
-                    {business.category}
-                  </span>
-                )}
-              </div>
-            </div>
-
-            {/* Right: CTA and Share side-by-side */}
-            <div className="flex items-center gap-2 shrink-0">
-              {isEligible && (
-                <button
-                  type="button"
-                  onClick={handleWriteReview}
-                  className="inline-flex items-center justify-center gap-1.5 py-1.5 px-3 rounded-xl font-semibold text-xs sm:text-sm text-white bg-teal-700 hover:bg-teal-800 active:bg-teal-900 transition-colors shadow-2xs min-h-[38px] sm:min-h-[40px] cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-600"
-                >
-                  <PenSquare className="w-3.5 h-3.5" aria-hidden="true" />
-                  <span>Write a Review</span>
-                </button>
-              )}
-
-              {/* Compact Share Button */}
-              <ShareStorefrontMenu
-                slug={business.slug}
-                businessName={business.name}
-                logoUrl={business.image_url}
-                isOwner={isOwnerOrFounder}
-                iconOnly={true}
-              />
-            </div>
-          </div>
         </div>
 
         {/* 3. Main Content: 2-Column Split (Ratings Breakdown | Feedback) */}
