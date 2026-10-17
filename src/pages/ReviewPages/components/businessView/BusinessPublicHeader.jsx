@@ -70,14 +70,14 @@ export default function BusinessPublicHeader({
 
   return (
     <div className="bg-white border-b border-slate-200">
-      {/* Top Sticky Breadcrumb Navigation */}
+      {/* Top Storefront Navigation (Mobile view only) */}
       <nav
         aria-label="Storefront navigation"
-        className={`sticky top-0 z-40 bg-white/95 backdrop-blur-sm transition-shadow duration-150 ${
-          isStickyActive ? "shadow-xs border-b border-slate-200/80" : "border-b border-slate-200/80"
+        className={`sm:hidden sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-slate-200/80 transition-shadow duration-150 ${
+          isStickyActive ? "shadow-sm" : ""
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-2">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
           <button
             type="button"
             onClick={handleBack}

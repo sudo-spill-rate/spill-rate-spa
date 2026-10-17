@@ -3,7 +3,6 @@ import { useSearchParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Search, X } from "lucide-react";
 import PublicPageHeader from "../components/layout/PublicPageHeader";
-import CategoryFilters from "../components/explore/CategoryFilters";
 import DirectorySearchResults from "../components/explore/DirectorySearchResults";
 import { businessService } from "../../../services/businessService";
 import { useCategories } from "../../../hooks/useCategories";
@@ -88,12 +87,13 @@ export default function ExploreDirectoryPage() {
       />
 
       <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 py-2.5 sm:py-5 w-full">
-        {/* Search & Filter Controls */}
-        <div className="mb-3 sm:mb-4">
+        {/* Search & Category Filter Command Bar */}
+        <div className="mb-4 sm:mb-5">
           <form
             onSubmit={handleSearchSubmit}
-            className="flex items-center gap-2 max-w-2xl"
+            className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-2.5 max-w-4xl"
           >
+            {/* Search Input with Integrated Clear Icon */}
             <div className="relative flex-1 flex items-center">
               <Search className="absolute left-3.5 w-4 h-4 text-slate-400 pointer-events-none" aria-hidden="true" />
               <label htmlFor="directory-search" className="sr-only">
@@ -105,7 +105,7 @@ export default function ExploreDirectoryPage() {
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="Search by business name or keyword..."
-                className="w-full pl-9 sm:pl-10 pr-9 py-1.5 sm:py-2 text-slate-900 placeholder-slate-400 bg-white border border-slate-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20 transition-colors min-h-[38px]"
+                className="w-full pl-9 sm:pl-10 pr-9 py-2 text-slate-900 placeholder-slate-400 bg-white border border-slate-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20 transition-colors min-h-[40px]"
               />
               {searchInput && (
                 <button
@@ -118,32 +118,63 @@ export default function ExploreDirectoryPage() {
                 </button>
               )}
             </div>
-            <button
-              type="submit"
-              className="px-3.5 sm:px-4 py-1.5 sm:py-2 bg-slate-900 hover:bg-slate-800 active:bg-slate-950 text-white font-semibold text-xs sm:text-sm rounded-lg transition-colors min-h-[38px] shrink-0 focus:outline-none focus:ring-2 focus:ring-teal-600 inline-flex items-center justify-center cursor-pointer"
-            >
-              Search
-            </button>
-            {hasActiveFilters && (
-              <button
-                type="button"
-                onClick={handleClearAllFilters}
-                className="px-3 py-1.5 sm:py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-medium rounded-lg transition-colors min-h-[38px] shrink-0 focus:outline-none focus:ring-2 focus:ring-teal-600 inline-flex items-center justify-center cursor-pointer"
+
+            {/* Category Dropdown */}
+            <div className="relative sm:w-56 shrink-0">
+              <label htmlFor="directory-category-select" className="sr-only">
+                Filter by Category
+              </label>
+              <select
+                id="directory-category-select"
+                value={categoryParam}
+                onChange={(e) => handleSelectCategory(e.target.value)}
+                className="w-full px-3 py-2 text-xs sm:text-sm font-medium bg-white text-slate-800 border border-slate-300 rounded-lg focus:outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20 transition-colors min-h-[40px] cursor-pointer appearance-none pr-8 truncate"
               >
-                Reset
+                <option value="">All Categories</option>
+                {fetchedCategories.map((cat) => {
+                  const catName = typeof cat === "string" ? cat : cat.name;
+                  const catKey = typeof cat === "string" ? cat : cat.id || cat.slug || cat.name;
+                  return (
+                    <option key={catKey} value={catName}>
+                      {catName}
+                    </option>
+                  );
+                })}
+              </select>
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 text-xs">
+                ▼
+              </div>
+            </div>
+
+            {/* Action Buttons: Search + Reset */}
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="submit"
+                className="flex-1 sm:flex-initial px-4 py-2 bg-slate-900 hover:bg-slate-800 active:bg-slate-950 text-white font-semibold text-xs sm:text-sm rounded-lg transition-colors min-h-[40px] focus:outline-none focus:ring-2 focus:ring-teal-600 inline-flex items-center justify-center cursor-pointer shadow-2xs"
+              >
+                Search
               </button>
-            )}
+              {hasActiveFilters && (
+                <button
+                  type="button"
+                  onClick={handleClearAllFilters}
+                  className="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs sm:text-sm font-medium rounded-lg transition-colors min-h-[40px] focus:outline-none focus:ring-2 focus:ring-teal-600 inline-flex items-center justify-center cursor-pointer border border-slate-200/80"
+                >
+                  Reset
+                </button>
+              )}
+            </div>
           </form>
 
           {/* Active Filter Badges */}
           {hasActiveFilters && (
-            <div className="mt-2 flex items-center gap-1.5 flex-wrap text-xs">
+            <div className="mt-2.5 flex items-center gap-1.5 flex-wrap text-xs">
               <span className="text-slate-500 font-medium">Active filters:</span>
               {categoryParam && (
                 <button
                   type="button"
                   onClick={() => handleSelectCategory("")}
-                  className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-teal-50 border border-teal-200 text-teal-800 font-medium hover:bg-teal-100 transition-colors cursor-pointer text-[11px]"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-teal-50 border border-teal-200 text-teal-800 font-medium hover:bg-teal-100 transition-colors cursor-pointer text-[11px]"
                 >
                   <span>Category: {categoryParam}</span>
                   <X className="w-3 h-3 text-teal-700" />
@@ -153,7 +184,7 @@ export default function ExploreDirectoryPage() {
                 <button
                   type="button"
                   onClick={handleClearSearch}
-                  className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-slate-700 font-medium hover:bg-slate-200 transition-colors cursor-pointer text-[11px]"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-700 font-medium hover:bg-slate-200 transition-colors cursor-pointer text-[11px]"
                 >
                   <span>Search: "{searchParam}"</span>
                   <X className="w-3 h-3 text-slate-500" />
@@ -163,39 +194,25 @@ export default function ExploreDirectoryPage() {
           )}
         </div>
 
-        {/* Directory Layout: Sidebar/Horizontal Filters + Main Results */}
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-3.5 sm:gap-5 lg:gap-6 items-start">
-          {/* Category Filter */}
-          <aside className="lg:col-span-1">
-            <div className="bg-slate-50/80 lg:bg-white p-2.5 sm:p-3 lg:p-3.5 rounded-xl border border-slate-200/90 shadow-2xs lg:sticky lg:top-20">
-              <CategoryFilters
-                categories={fetchedCategories}
-                selectedCategory={categoryParam}
-                onSelectCategory={handleSelectCategory}
-              />
-            </div>
-          </aside>
+        {/* Search Results Area */}
+        <main className="space-y-3 sm:space-y-4">
+          <div className="flex items-center justify-between">
+            <p className="text-xs sm:text-sm font-medium text-slate-600">
+              {displayBusinesses.length} {displayBusinesses.length === 1 ? "establishment" : "establishments"} found
+              {categoryParam && ` in ${categoryParam}`}
+              {searchParam && ` matching "${searchParam}"`}
+            </p>
+          </div>
 
-          {/* Search Results Area */}
-          <main className="lg:col-span-3">
-            <div className="flex items-center justify-between mb-3 sm:mb-4">
-              <p className="text-xs sm:text-sm font-medium text-slate-600">
-                {displayBusinesses.length} {displayBusinesses.length === 1 ? "establishment" : "establishments"} found
-                {categoryParam && ` in ${categoryParam}`}
-                {searchParam && ` matching "${searchParam}"`}
-              </p>
-            </div>
-
-            <DirectorySearchResults
-              businesses={displayBusinesses}
-              isLoading={isLoading}
-              isError={isError}
-              onRetry={refetch}
-              onClearFilters={handleClearAllFilters}
-              hasActiveFilters={hasActiveFilters}
-            />
-          </main>
-        </div>
+          <DirectorySearchResults
+            businesses={displayBusinesses}
+            isLoading={isLoading}
+            isError={isError}
+            onRetry={refetch}
+            onClearFilters={handleClearAllFilters}
+            hasActiveFilters={hasActiveFilters}
+          />
+        </main>
       </div>
     </div>
   );

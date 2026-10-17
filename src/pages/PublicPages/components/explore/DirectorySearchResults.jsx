@@ -193,7 +193,7 @@ export default function DirectorySearchResults({
 }) {
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4.5" aria-busy="true">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4.5" aria-busy="true">
         {[1, 2, 3, 4, 5, 6].map((i) => (
           <div
             key={i}
@@ -266,7 +266,7 @@ export default function DirectorySearchResults({
   }
 
   return (
-    <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4.5">
+    <div className="w-full grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4.5">
       {businesses.map((biz) => (
         <SearchResultCard key={biz.id} biz={biz} />
       ))}

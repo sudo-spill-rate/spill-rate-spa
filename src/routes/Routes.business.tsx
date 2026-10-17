@@ -5,10 +5,12 @@ import BusinessDashboardPage from "../pages/BusinessPages/Dashboard/BusinessDash
 import BusinessManageProfilePage from "../pages/BusinessPages/Profile/BusinessManageProfilePage";
 import CreateBusinessPage from "../pages/BusinessPages/CreateBusiness/CreateBusinessPage";
 import BusinessExplorePage from "../pages/BusinessPages/Explore/BusinessExplorePage";
+import DashboardExploreBusinessViewPage from "../pages/BusinessPages/Explore/DashboardExploreBusinessViewPage";
 
 // Providers para sa Business Owner
 import { BusinessProvider } from "../context/business/businessContextProvider";
 import { ManageReviewProvider } from "../context/manageReview/manageReviewContextProvider";
+import { ReviewProvider } from "../context/review/reviewContextProvider";
 
 export const BusinessRoutes = [
     {
@@ -46,6 +48,17 @@ export const BusinessRoutes = [
         element: (
             <BusinessProvider>
                 <BusinessExplorePage />
+            </BusinessProvider>
+        ),
+    },
+    {
+        key: "owner-explore-business-view",
+        path: "/dashboard/explore/business/:slug",
+        element: (
+            <BusinessProvider>
+                <ReviewProvider>
+                    <DashboardExploreBusinessViewPage />
+                </ReviewProvider>
             </BusinessProvider>
         ),
     },
