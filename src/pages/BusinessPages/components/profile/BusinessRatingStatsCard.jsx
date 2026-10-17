@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { Star, StarHalf, ShieldCheck, MessageSquare, TrendingUp, CheckCircle, Clock } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Star, StarHalf } from "lucide-react";
 import { useCustomerReviews } from "../../../../hooks/useCustomerReviews";
 import { useBusinessProfile } from "../../../../hooks/useBusinessProfile";
 import { useUserAuth } from "../../../../hooks/useUserAuth";
@@ -49,17 +49,18 @@ function StarRatingDisplay({ rating, className = "w-4 h-4" }) {
 
 export default function BusinessRatingStatsCard({
   business,
+  reviews: propReviews,
   selectedRating,
   onSelectRating,
   showResponseMetrics = false,
   title = "Ratings Breakdown",
 }) {
-  const { reviews = [] } = useCustomerReviews();
+  const { reviews: contextReviews = [] } = useCustomerReviews();
+  const reviews = propReviews ?? contextReviews;
   const { getAnalytics } = useBusinessProfile();
   const { isAuthenticated } = useUserAuth();
 
   const [analytics, setAnalytics] = useState(null);
-  const [isLoadingAnalytics, setIsLoadingAnalytics] = useState(false);
 
   useEffect(() => {
     // Analytics endpoint (/api/business/:id/analytics) requires authentication
@@ -68,16 +69,13 @@ export default function BusinessRatingStatsCard({
 
     let isMounted = true;
     const fetchStats = async () => {
-      setIsLoadingAnalytics(true);
       try {
         const res = await getAnalytics(business.id);
         if (isMounted && res.success && res.data) {
           setAnalytics(res.data);
         }
-      } catch (err) {
+      } catch {
         // Silently catch 401 or network errors for non-owners
-      } finally {
-        if (isMounted) setIsLoadingAnalytics(false);
       }
     };
     fetchStats();
@@ -128,55 +126,59 @@ export default function BusinessRatingStatsCard({
   return (
     <section
       aria-labelledby="rating-stats-title"
-      className="bg-white rounded-xl border border-slate-200 p-3.5 sm:p-4 shadow-xs space-y-3"
+      className="bg-white rounded-xl border border-slate-200/90 p-3.5 sm:p-4 shadow-xs space-y-3"
     >
-      {/* Header: Title and Monthly Trend badge (if any) */}
-      <div className="flex items-center justify-between pb-2 border-b border-slate-100 flex-wrap gap-2">
-        <h2
-          id="rating-stats-title"
-          className="text-xs font-bold uppercase tracking-wider text-slate-700"
-        >
-          {title}
-        </h2>
-        {recentCount > 0 && (
-          <span className="text-teal-800 font-semibold bg-teal-50 px-2 py-0.5 rounded border border-teal-200/60 text-[10px] sm:text-[11px]">
-            +{recentCount} new this month
+      {/* Header Row: Title on Left | Review Count or Active Filter Pill on Right */}
+      <div className="flex items-center justify-between pb-2.5 border-b border-slate-200/80 gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <h2
+            id="rating-stats-title"
+            className="text-sm font-bold text-slate-900 tracking-tight truncate"
+          >
+            {title}
+          </h2>
+          {recentCount > 0 && (
+            <span className="text-teal-800 font-semibold bg-teal-50 px-2 py-0.5 rounded border border-teal-200/60 text-[11px] shrink-0">
+              +{recentCount} new
+            </span>
+          )}
+        </div>
+
+        {selectedRating ? (
+          <button
+            type="button"
+            onClick={() => onSelectRating && onSelectRating(undefined)}
+            className="inline-flex items-center gap-1 text-xs font-semibold text-teal-800 hover:text-teal-900 bg-teal-50 hover:bg-teal-100 px-2.5 py-1 rounded-md border border-teal-200/80 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-600 shrink-0"
+          >
+            <span>{selectedRating}★ only</span>
+            <span className="text-teal-700 font-bold ml-0.5" aria-hidden="true">✕</span>
+          </button>
+        ) : (
+          <span className="text-xs text-slate-600 font-medium tabular-nums shrink-0">
+            {totalReviews > 0
+              ? `Based on ${totalReviews} ${totalReviews === 1 ? "review" : "reviews"}`
+              : "No reviews yet"}
           </span>
         )}
       </div>
 
-      {/* Main Container: Score Overview + 5-Star Breakdown Bars */}
-      <div className="space-y-3">
-        {/* Top Score Summary */}
-        <div className="flex items-center justify-between pb-2.5 border-b border-slate-100">
-          <div className="flex items-center gap-3">
-            <span className="text-3xl font-extrabold text-slate-900 tracking-tight leading-none tabular-nums">
-              {avgRating}
-            </span>
-            <div className="space-y-0.5">
-              <StarRatingDisplay rating={numAvg} className="w-3.5 h-3.5" />
-              <p className="text-xs text-slate-500 font-medium">
-                {totalReviews > 0
-                  ? `Based on ${totalReviews} ${totalReviews === 1 ? "review" : "reviews"}`
-                  : "No reviews yet"}
-              </p>
-            </div>
+      {/* Main Body: Side-by-Side Score Tile (Left) & 5-Star Breakdown Bars (Right) — Zero Wasted Whitespace */}
+      <div className="flex items-stretch gap-3 sm:gap-4">
+        {/* Left Column: Overall Rating Score Box */}
+        <div className="w-24 sm:w-28 shrink-0 flex flex-col items-center justify-center rounded-xl bg-slate-50/90 border border-slate-200/80 p-2.5 text-center">
+          <span className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-none tabular-nums">
+            {avgRating}
+          </span>
+          <div className="mt-1.5">
+            <StarRatingDisplay rating={numAvg} className="w-3.5 h-3.5" />
           </div>
-
-          {selectedRating && (
-            <button
-              type="button"
-              onClick={() => onSelectRating && onSelectRating(undefined)}
-              className="inline-flex items-center gap-1 text-[11px] font-semibold text-teal-800 hover:text-teal-900 bg-teal-50 hover:bg-teal-100 px-2 py-0.5 rounded border border-teal-200/60 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-600"
-            >
-              <span>{selectedRating}★ only</span>
-              <span className="text-teal-700 font-bold ml-0.5">✕</span>
-            </button>
-          )}
+          <span className="mt-1 text-[11px] font-semibold text-slate-600 tabular-nums">
+            out of 5.0
+          </span>
         </div>
 
-        {/* 1-5 Star Breakdown Bars (Always inline, clean, and interactive) */}
-        <div className="space-y-1.5">
+        {/* Right Column: 1-5 Star Breakdown Bars */}
+        <div className="flex-1 min-w-0 flex flex-col justify-between gap-1">
           {stars.map((star) => {
             const count = breakdown[star] || 0;
             const percentage =
@@ -187,7 +189,6 @@ export default function BusinessRatingStatsCard({
                 : 0;
 
             const isSelected = selectedRating === star;
-            const isEmpty = count === 0;
 
             return (
               <button
@@ -195,16 +196,14 @@ export default function BusinessRatingStatsCard({
                 type="button"
                 onClick={() => onSelectRating && onSelectRating(isSelected ? undefined : star)}
                 aria-pressed={isSelected}
-                className={`w-full flex items-center gap-2 text-xs transition-colors rounded-lg px-2 py-1 min-h-[30px] text-left focus:outline-none focus:ring-2 focus:ring-teal-600 ${
+                className={`w-full flex items-center gap-2 text-xs transition-colors rounded-lg px-2 py-1 min-h-[28px] text-left focus:outline-none focus:ring-2 focus:ring-teal-600 ${
                   onSelectRating ? "cursor-pointer hover:bg-slate-50 active:bg-slate-100" : ""
-                } ${isSelected ? "bg-amber-50 ring-1 ring-amber-300 font-semibold" : ""} ${
-                  isEmpty ? "opacity-60" : "opacity-100"
-                }`}
+                } ${isSelected ? "bg-amber-50/90 ring-1 ring-amber-300 font-semibold" : ""}`}
               >
                 {/* Left: Star number + star icon */}
-                <div className="flex items-center gap-1 w-7 shrink-0 font-medium text-slate-700 text-xs">
+                <div className="flex items-center gap-1 w-6 shrink-0 font-medium text-slate-800 text-xs">
                   <span className="tabular-nums font-semibold">{star}</span>
-                  <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500 shrink-0" aria-hidden="true" />
+                  <Star className="w-3 h-3 fill-amber-500 text-amber-600 shrink-0" aria-hidden="true" />
                 </div>
 
                 {/* Center: Progress Bar Track */}
@@ -221,11 +220,11 @@ export default function BusinessRatingStatsCard({
                 </div>
 
                 {/* Right: Count and Percentage */}
-                <div className="text-right shrink-0 text-xs text-slate-500 tabular-nums min-w-[58px]">
-                  <span className="font-semibold text-slate-800">
+                <div className="text-right shrink-0 text-xs text-slate-600 tabular-nums min-w-[54px]">
+                  <span className="font-semibold text-slate-900">
                     {count}
                   </span>{" "}
-                  <span className="text-slate-400 text-[11px]">({percentage}%)</span>
+                  <span className="text-slate-600 text-[11px]">({percentage}%)</span>
                 </div>
               </button>
             );
