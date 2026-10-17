@@ -1,4 +1,3 @@
-import React from "react";
 import PublicPageHeader from "../components/layout/PublicPageHeader";
 import FeaturedSection from "../components/landing/FeaturedSection";
 
@@ -15,7 +14,7 @@ export default function LandingPage() {
         compact={true}
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 sm:py-5 w-full flex-1 flex flex-col">
+      <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 py-2.5 sm:py-5 w-full flex-1 flex flex-col">
         <FeaturedSection />
       </div>
     </div>
