@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router";
 import {
   Star,
@@ -9,10 +9,10 @@ import {
   Building,
   PenSquare,
   Clock,
-  ChevronLeft,
+  ChevronRight,
+  ArrowUp,
   Briefcase,
   Settings,
-  Share2,
 } from "lucide-react";
 import { useUserAuth } from "../../../../hooks/useUserAuth";
 import { useBusiness } from "../../../../context/business/useBusiness";
@@ -25,8 +25,17 @@ export default function BusinessPublicHeader({
 }) {
   const navigate = useNavigate();
   const [coverError, setCoverError] = useState(false);
+  const [isStickyActive, setIsStickyActive] = useState(false);
   const { user, isAuthenticated } = useUserAuth();
   const { businesses: ownerBusinesses } = useBusiness();
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsStickyActive(window.scrollY > 8);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   const isOwnerOrFounder =
     (ownerBusinesses || []).some((b) => b.id === business?.id || b.slug === business?.slug) ||
@@ -55,20 +64,41 @@ export default function BusinessPublicHeader({
     navigate(-1);
   };
 
+  const handleScrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <div className="bg-white border-b border-slate-200">
-      {/* Top Breadcrumb Navigation */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-5">
-        <button
-          type="button"
-          onClick={handleBack}
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600 rounded p-1 cursor-pointer min-h-[36px]"
-          aria-label="Back to previous page"
-        >
-          <ChevronLeft className="w-4 h-4" aria-hidden="true" />
-          <span>Back to Directory</span>
-        </button>
-      </div>
+      {/* Top Sticky Breadcrumb Navigation */}
+      <nav
+        aria-label="Storefront navigation"
+        className={`sticky top-0 z-40 bg-white/95 backdrop-blur-sm transition-shadow duration-150 ${
+          isStickyActive ? "shadow-xs border-b border-slate-200/80" : "border-b border-slate-200/80"
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-2">
+          <button
+            type="button"
+            onClick={handleBack}
+            className="inline-flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-900 active:text-slate-950 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600 rounded py-1 -my-1 cursor-pointer"
+            aria-label="Back to Directory"
+          >
+            <span className="font-medium text-slate-600 hover:text-slate-900">Back to Directory</span>
+            <ChevronRight className="w-3.5 h-3.5 text-slate-400 shrink-0" aria-hidden="true" />
+          </button>
+
+          <button
+            type="button"
+            onClick={handleScrollToTop}
+            className="inline-flex items-center gap-1 text-xs font-medium text-slate-900 hover:text-teal-700 active:text-teal-800 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600 rounded py-1 -my-1 cursor-pointer"
+            aria-label="Scroll to top"
+          >
+            <ArrowUp className="w-3.5 h-3.5 text-slate-400 shrink-0" aria-hidden="true" />
+            <span>Top</span>
+          </button>
+        </div>
+      </nav>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 sm:py-8">
         <div className="flex flex-col md:flex-row md:items-start justify-between gap-6 lg:gap-8">
