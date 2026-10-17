@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import { useState } from "react";
 import { useSearchParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Search, X, Filter } from "lucide-react";
+import { Search, X } from "lucide-react";
 import PublicPageHeader from "../components/layout/PublicPageHeader";
 import CategoryFilters from "../components/explore/CategoryFilters";
 import DirectorySearchResults from "../components/explore/DirectorySearchResults";
@@ -14,12 +14,14 @@ export default function ExploreDirectoryPage() {
   const categoryParam = searchParams.get("category") || "";
 
   const [searchInput, setSearchInput] = useState(searchParam);
+  const [prevSearchParam, setPrevSearchParam] = useState(searchParam);
   const { categories: fetchedCategories } = useCategories();
 
   // Sync state with URL params
-  useEffect(() => {
+  if (searchParam !== prevSearchParam) {
+    setPrevSearchParam(searchParam);
     setSearchInput(searchParam);
-  }, [searchParam]);
+  }
 
   const { data: response, isLoading, isError, refetch } = useQuery({
     queryKey: ["businesses-directory", searchParam, categoryParam],
@@ -85,7 +87,7 @@ export default function ExploreDirectoryPage() {
         compact={true}
       />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3.5 sm:py-5">
+      <div className="max-w-7xl mx-auto px-2.5 sm:px-6 lg:px-8 py-2.5 sm:py-5 w-full">
         {/* Search & Filter Controls */}
         <div className="mb-3 sm:mb-4">
           <form
