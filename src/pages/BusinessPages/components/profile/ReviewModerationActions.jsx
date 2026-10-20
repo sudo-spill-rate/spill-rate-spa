@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { toast } from "react-toastify";
 import {
   Pin,
   PinOff,
@@ -68,11 +69,15 @@ export default function ReviewModerationActions({
       const res = await unpinReview(review.id);
       if (res.success && onActionComplete) {
         onActionComplete("Review unpinned from top of public feed.");
+      } else if (!res.success) {
+        toast.error(res.message || "Failed to unpin review.");
       }
     } else {
       const res = await pinReview(review.id);
       if (res.success && onActionComplete) {
         onActionComplete("Review pinned to top of public feed.");
+      } else if (!res.success) {
+        toast.error(res.message || "Failed to pin review.");
       }
     }
   };
@@ -88,6 +93,8 @@ export default function ReviewModerationActions({
           ? "Review hidden from public feed."
           : "Review restored to public feed."
       );
+    } else if (!res.success) {
+      toast.error(res.message || "Failed to update review visibility.");
     }
   };
 

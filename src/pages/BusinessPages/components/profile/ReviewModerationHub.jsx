@@ -1,4 +1,6 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
+import { createPortal } from "react-dom";
+import { toast } from "react-toastify";
 import {
   MessageSquare,
   Star,
@@ -14,15 +16,20 @@ import {
   ShieldAlert,
   Send,
   Trash2,
-  Download,
 } from "lucide-react";
 import { manageReviewService } from "../../../../services/manageReviewService";
 import { useManageReview } from "../../../../hooks/useManageReview";
 import { useBusinessProfile } from "../../../../hooks/useBusinessProfile";
 import { useBodyScrollLock } from "../../../../hooks/useBodyScrollLock";
 import ReviewModerationActions from "./ReviewModerationActions";
+import BaseModal from "../../../../components/common/BaseModal";
 
-export default function ReviewModerationHub({ businessId, businessSlug }) {
+export default function ReviewModerationHub({
+  businessId,
+  businessSlug,
+  selectedRating,
+  onClearRatingFilter,
+}) {
   const targetId = businessId || businessSlug;
 
   const {
@@ -44,7 +51,6 @@ export default function ReviewModerationHub({ businessId, businessSlug }) {
 
   // Status Filter ("all" | "public" | "private" | "pinned")
   const [statusFilter, setStatusFilter] = useState("all");
-  const [ratingFilter, setRatingFilter] = useState("all");
   const [notification, setNotification] = useState(null);
 
   // Modals state
@@ -79,8 +85,8 @@ export default function ReviewModerationHub({ businessId, businessSlug }) {
 
       if (res.success) {
         let data = res.data;
-        if (ratingFilter !== "all") {
-          data = data.filter((r) => r.rating === Number(ratingFilter));
+        if (selectedRating !== undefined && selectedRating !== null) {
+          data = data.filter((r) => r.rating === Number(selectedRating));
         }
         setReviews(data);
         setPagination(res.pagination);
@@ -92,7 +98,7 @@ export default function ReviewModerationHub({ businessId, businessSlug }) {
     } finally {
       setIsLoadingReviews(false);
     }
-  }, [targetId, statusFilter, ratingFilter]);
+  }, [targetId, statusFilter, selectedRating]);
 
   useEffect(() => {
     reloadReviews();
@@ -112,8 +118,8 @@ export default function ReviewModerationHub({ businessId, businessSlug }) {
 
       if (res.success) {
         let newData = res.data;
-        if (ratingFilter !== "all") {
-          newData = newData.filter((r) => r.rating === Number(ratingFilter));
+        if (selectedRating !== undefined && selectedRating !== null) {
+          newData = newData.filter((r) => r.rating === Number(selectedRating));
         }
         setReviews((prev) => [...prev, ...newData]);
         setPagination(res.pagination);
@@ -126,6 +132,7 @@ export default function ReviewModerationHub({ businessId, businessSlug }) {
   };
 
   const handleActionComplete = (message) => {
+    toast.success(message);
     setNotification(message);
     reloadReviews();
     setTimeout(() => {
@@ -140,7 +147,9 @@ export default function ReviewModerationHub({ businessId, businessSlug }) {
       handleActionComplete("Review permanently removed.");
       setReviewToDelete(null);
     } else {
-      setNotification(res.message || "Failed to delete review.");
+      const errMsg = res.message || "Failed to delete review.";
+      setNotification(errMsg);
+      toast.error(errMsg);
     }
   };
 
@@ -162,7 +171,9 @@ export default function ReviewModerationHub({ businessId, businessSlug }) {
         setReplyModalReview(null);
         setReplyText("");
       } else {
-        setNotification(res.message || "Failed to publish response.");
+        const errMsg = res.message || "Failed to publish response.";
+        setNotification(errMsg);
+        toast.error(errMsg);
       }
     } finally {
       setIsSubmittingReply(false);
@@ -180,7 +191,9 @@ export default function ReviewModerationHub({ businessId, businessSlug }) {
         setReplyModalReview(null);
         setReplyText("");
       } else {
-        setNotification(res.message || "Failed to remove response.");
+        const errMsg = res.message || "Failed to remove response.";
+        setNotification(errMsg);
+        toast.error(errMsg);
       }
     } finally {
       setIsSubmittingReply(false);
@@ -212,7 +225,9 @@ export default function ReviewModerationHub({ businessId, businessSlug }) {
       );
       handleActionComplete(`Report marked as ${nextStatus}.`);
     } else {
-      setNotification(res.message || "Failed to update report status.");
+      const errMsg = res.message || "Failed to update report status.";
+      setNotification(errMsg);
+      toast.error(errMsg);
     }
   };
 
@@ -224,7 +239,9 @@ export default function ReviewModerationHub({ businessId, businessSlug }) {
       if (res.success) {
         handleActionComplete("Review export CSV downloaded.");
       } else {
-        setNotification(res.message || "Failed to export reviews.");
+        const errMsg = res.message || "Failed to export reviews.";
+        setNotification(errMsg);
+        toast.error(errMsg);
       }
     } finally {
       setIsExporting(false);
@@ -268,107 +285,23 @@ export default function ReviewModerationHub({ businessId, businessSlug }) {
         </div>
       )}
 
-      {/* 2. Moderation Control Bar */}
-      <div className="bg-white rounded-xl border border-slate-200 p-2 sm:p-2.5 shadow-2xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 sm:gap-2.5">
-          {/* Status Tabs */}
-          <div className="grid grid-cols-4 sm:flex items-center gap-1 p-0.5 bg-slate-100 rounded-lg overflow-x-auto w-full sm:w-auto">
-            <button
-              type="button"
-              onClick={() => setStatusFilter("all")}
-              className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-colors text-center truncate min-h-[34px] sm:min-h-[36px] flex items-center justify-center cursor-pointer ${
-                statusFilter === "all"
-                  ? "bg-white text-slate-900 shadow-2xs font-bold"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              All
-            </button>
-            <button
-              type="button"
-              onClick={() => setStatusFilter("public")}
-              className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-colors text-center truncate min-h-[34px] sm:min-h-[36px] flex items-center justify-center cursor-pointer ${
-                statusFilter === "public"
-                  ? "bg-white text-slate-900 shadow-2xs font-bold"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              Public
-            </button>
-            <button
-              type="button"
-              onClick={() => setStatusFilter("pinned")}
-              className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-colors text-center truncate min-h-[34px] sm:min-h-[36px] flex items-center justify-center cursor-pointer ${
-                statusFilter === "pinned"
-                  ? "bg-white text-slate-900 shadow-2xs font-bold"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              Pinned
-            </button>
-            <button
-              type="button"
-              onClick={() => setStatusFilter("private")}
-              className={`px-2.5 py-1 text-xs font-semibold rounded-md transition-colors text-center truncate min-h-[34px] sm:min-h-[36px] flex items-center justify-center cursor-pointer ${
-                statusFilter === "private"
-                  ? "bg-white text-slate-900 shadow-2xs font-bold"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              Hidden
-            </button>
+      {/* 2. Active Star Rating Filter Tag (if filtered from ratings breakdown) */}
+      {selectedRating && (
+        <div className="flex items-center justify-between p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-xs shadow-2xs">
+          <div className="flex items-center gap-1.5 font-semibold text-amber-900">
+            <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500 shrink-0" aria-hidden="true" />
+            <span>Showing {selectedRating}★ reviews only</span>
           </div>
-
-          {/* Right Toolbar: Star Filter, Flagged Reports & Export CSV */}
-          <div className="flex items-center gap-1.5 sm:gap-2 w-full sm:w-auto justify-end flex-wrap">
-            {/* Export CSV Button */}
-            <button
-              type="button"
-              onClick={handleExportCsv}
-              disabled={isExporting}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 transition-colors min-h-[34px] sm:min-h-[36px] focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer disabled:opacity-50"
-              title="Export all reviews to CSV"
-            >
-              {isExporting ? (
-                <RotateCw className="w-3.5 h-3.5 text-teal-600 animate-spin" />
-              ) : (
-                <Download className="w-3.5 h-3.5 text-slate-500" />
-              )}
-              <span>{isExporting ? "Exporting..." : "Export CSV"}</span>
-            </button>
-
-            {/* Flagged Reports Button */}
-            <button
-              type="button"
-              onClick={handleOpenReports}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 transition-colors min-h-[34px] sm:min-h-[36px] focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer"
-            >
-              <ShieldAlert className="w-3.5 h-3.5 text-slate-500" />
-              <span>Flagged Reports</span>
-            </button>
-
-            {/* Star Filter Dropdown */}
-            <div className="flex items-center gap-1.5">
-              <label htmlFor="rating-filter" className="sr-only">
-                Filter by star rating
-              </label>
-              <select
-                id="rating-filter"
-                value={ratingFilter}
-                onChange={(e) => setRatingFilter(e.target.value)}
-                className="w-full sm:w-auto px-2.5 py-1.5 text-xs font-medium rounded-lg border border-slate-300 bg-white text-slate-700 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-teal-600 min-h-[34px] sm:min-h-[36px] cursor-pointer"
-              >
-                <option value="all">All Stars</option>
-                <option value="5">5 Stars</option>
-                <option value="4">4 Stars</option>
-                <option value="3">3 Stars</option>
-                <option value="2">2 Stars</option>
-                <option value="1">1 Star</option>
-              </select>
-            </div>
-          </div>
+          <button
+            type="button"
+            onClick={onClearRatingFilter}
+            className="inline-flex items-center gap-1 text-xs font-semibold text-amber-800 hover:text-amber-950 px-2 py-0.5 rounded bg-amber-100 hover:bg-amber-200 transition-colors cursor-pointer"
+          >
+            <span>Show all</span>
+            <span aria-hidden="true">✕</span>
+          </button>
         </div>
-      </div>
+      )}
 
       {/* 3. Loading Skeleton */}
       {isLoadingReviews && (!reviews || reviews.length === 0) && (
@@ -423,16 +356,16 @@ export default function ReviewModerationHub({ businessId, businessSlug }) {
             No customer reviews found
           </h3>
           <p className="mt-1 text-xs text-slate-500 max-w-sm mx-auto leading-relaxed">
-            {statusFilter !== "all" || ratingFilter !== "all"
+            {statusFilter !== "all" || Boolean(selectedRating)
               ? "No reviews match your selected filter criteria. Try resetting the filters."
               : "Share your public link with patrons to start collecting verified ratings."}
           </p>
-          {(statusFilter !== "all" || ratingFilter !== "all") && (
+          {(statusFilter !== "all" || Boolean(selectedRating)) && (
             <button
               type="button"
               onClick={() => {
                 setStatusFilter("all");
-                setRatingFilter("all");
+                if (onClearRatingFilter) onClearRatingFilter();
               }}
               className="mt-4 text-xs font-semibold text-teal-700 hover:text-teal-800 underline"
             >
@@ -628,37 +561,20 @@ export default function ReviewModerationHub({ businessId, businessSlug }) {
 
       {/* 7. Owner Reply Modal */}
       {replyModalReview && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="reply-dialog-title"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto"
-          onClick={() => setReplyModalReview(null)}
+        <BaseModal
+          isOpen={Boolean(replyModalReview)}
+          onClose={() => setReplyModalReview(null)}
+          title={replyModalReview.reply_comment ? "Edit Official Response" : "Respond to Customer Review"}
+          description={
+            <span>
+              Replying to review by <strong className="text-slate-800">{replyModalReview.name}</strong>
+            </span>
+          }
+          titleId="reply-dialog-title"
+          maxWidth="max-w-lg"
+          isProcessing={isSubmittingReply}
         >
-          <div
-            ref={replyModalRef}
-            onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-xl border border-slate-200 shadow-xl max-w-lg w-full p-5 sm:p-6 my-auto space-y-4"
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <h3 id="reply-dialog-title" className="text-base font-bold text-slate-900">
-                  {replyModalReview.reply_comment ? "Edit Official Response" : "Respond to Customer Review"}
-                </h3>
-                <p className="text-xs text-slate-500 mt-0.5">
-                  Replying to review by <strong className="text-slate-800">{replyModalReview.name}</strong>
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setReplyModalReview(null)}
-                className="p-1 text-slate-400 hover:text-slate-700 rounded"
-                aria-label="Close dialog"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
+          <div className="space-y-4">
             <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-700 italic line-clamp-3">
               &ldquo;{replyModalReview.comment}&rdquo;
             </div>
@@ -670,11 +586,13 @@ export default function ReviewModerationHub({ businessId, businessSlug }) {
                 </label>
                 <textarea
                   id="reply-textarea"
+                  name="replyText"
+                  autoComplete="off"
                   rows={4}
                   value={replyText}
                   onChange={(e) => setReplyText(e.target.value)}
                   placeholder="Thank the customer for visiting, address their concern, or share an update..."
-                  className="w-full px-3 py-2 text-xs sm:text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-teal-600 text-slate-800"
+                  className="w-full px-3 py-2 text-base sm:text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 focus:border-teal-600 text-slate-800 leading-relaxed"
                   required
                 />
               </div>
@@ -685,7 +603,7 @@ export default function ReviewModerationHub({ businessId, businessSlug }) {
                     type="button"
                     onClick={handleDeleteReply}
                     disabled={isSubmittingReply}
-                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 rounded-lg transition-colors min-h-[40px] cursor-pointer"
+                    className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 rounded-lg transition-colors min-h-[44px] sm:min-h-[40px] cursor-pointer"
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                     <span>Delete Response</span>
@@ -697,14 +615,14 @@ export default function ReviewModerationHub({ businessId, businessSlug }) {
                     type="button"
                     onClick={() => setReplyModalReview(null)}
                     disabled={isSubmittingReply}
-                    className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg min-h-[40px]"
+                    className="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-lg min-h-[44px] sm:min-h-[40px] cursor-pointer flex items-center justify-center"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={isSubmittingReply || !replyText.trim()}
-                    className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-teal-700 hover:bg-teal-800 rounded-lg shadow-xs min-h-[40px] disabled:opacity-50 cursor-pointer"
+                    className="inline-flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-teal-700 hover:bg-teal-800 rounded-lg shadow-xs min-h-[44px] sm:min-h-[40px] disabled:opacity-50 cursor-pointer"
                   >
                     {isSubmittingReply ? (
                       <RotateCw className="w-3.5 h-3.5 animate-spin" />
@@ -717,155 +635,126 @@ export default function ReviewModerationHub({ businessId, businessSlug }) {
               </div>
             </form>
           </div>
-        </div>
+        </BaseModal>
       )}
 
       {/* 8. Flagged Reports Modal */}
       {reportsModalOpen && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="reports-dialog-title"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto"
-          onClick={() => setReportsModalOpen(false)}
+        <BaseModal
+          isOpen={reportsModalOpen}
+          onClose={() => setReportsModalOpen(false)}
+          title="Flagged Review Reports"
+          titleId="reports-dialog-title"
+          maxWidth="max-w-2xl"
+          icon={<ShieldAlert className="w-5 h-5 text-amber-600" />}
+          className="max-h-[85vh] flex flex-col p-4 sm:p-6"
         >
-          <div
-            ref={reportsModalRef}
-            onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-xl border border-slate-200 shadow-xl max-w-2xl w-full p-5 sm:p-6 space-y-4 max-h-[85vh] my-auto flex flex-col"
-          >
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <div className="flex items-center gap-2">
-                <ShieldAlert className="w-5 h-5 text-amber-600" />
-                <h3 id="reports-dialog-title" className="text-base font-bold text-slate-900">
-                  Flagged Review Reports
-                </h3>
+          <div className="overflow-y-auto space-y-3 flex-1 pr-1">
+            {isLoadingReports && (
+              <div className="py-8 text-center text-xs text-slate-500">
+                <RotateCw className="w-5 h-5 animate-spin mx-auto text-teal-600 mb-2" />
+                <span>Loading flagged reports...</span>
               </div>
-              <button
-                type="button"
-                onClick={() => setReportsModalOpen(false)}
-                className="p-1 text-slate-400 hover:text-slate-700 rounded"
-                aria-label="Close dialog"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+            )}
 
-            <div className="overflow-y-auto space-y-3 flex-1 pr-1">
-              {isLoadingReports && (
-                <div className="py-8 text-center text-xs text-slate-500">
-                  <RotateCw className="w-5 h-5 animate-spin mx-auto text-teal-600 mb-2" />
-                  <span>Loading flagged reports...</span>
-                </div>
-              )}
+            {!isLoadingReports && flaggedReports.length === 0 && (
+              <div className="py-8 text-center text-xs text-slate-500">
+                No flagged reports recorded for this business.
+              </div>
+            )}
 
-              {!isLoadingReports && flaggedReports.length === 0 && (
-                <div className="py-8 text-center text-xs text-slate-500">
-                  No flagged reports recorded for this business.
-                </div>
-              )}
+            {!isLoadingReports &&
+              flaggedReports.map((report) => (
+                <div
+                  key={report.id}
+                  className="p-3.5 rounded-lg border border-slate-200 bg-slate-50 space-y-2 text-xs"
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-slate-900 uppercase text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded">
+                      Reason: {report.reason.replace(/_/g, " ")}
+                    </span>
+                    <span
+                      className={`font-semibold text-[11px] px-2 py-0.5 rounded ${
+                        report.status === "resolved"
+                          ? "bg-teal-100 text-teal-800"
+                          : report.status === "dismissed"
+                          ? "bg-slate-200 text-slate-700"
+                          : "bg-amber-50 text-amber-900"
+                      }`}
+                    >
+                      {report.status}
+                    </span>
+                  </div>
 
-              {!isLoadingReports &&
-                flaggedReports.map((report) => (
-                  <div
-                    key={report.id}
-                    className="p-3.5 rounded-lg border border-slate-200 bg-slate-50 space-y-2 text-xs"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-slate-900 uppercase text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded">
-                        Reason: {report.reason.replace(/_/g, " ")}
-                      </span>
-                      <span
-                        className={`font-semibold text-[11px] px-2 py-0.5 rounded ${
-                          report.status === "resolved"
-                            ? "bg-teal-100 text-teal-800"
-                            : report.status === "dismissed"
-                            ? "bg-slate-200 text-slate-700"
-                            : "bg-amber-50 text-amber-900"
-                        }`}
-                      >
-                        {report.status}
-                      </span>
-                    </div>
+                  {report.details && (
+                    <p className="text-slate-700 italic">
+                      &ldquo;{report.details}&rdquo;
+                    </p>
+                  )}
 
-                    {report.details && (
-                      <p className="text-slate-700 italic">
-                        &ldquo;{report.details}&rdquo;
-                      </p>
-                    )}
-
-                    <div className="flex items-center justify-between pt-2 border-t border-slate-200/60 text-[11px]">
-                      <span className="text-slate-400 font-mono">
-                        Review ID: {report.review_id}
-                      </span>
-                      <div className="flex items-center gap-1.5">
-                        {report.status !== "resolved" && (
-                          <button
-                            type="button"
-                            onClick={() => handleUpdateReport(report.id, "resolved")}
-                            className="px-2.5 py-1 text-[11px] font-semibold text-teal-800 bg-teal-50 hover:bg-teal-100 rounded border border-teal-200 min-h-[32px] cursor-pointer"
-                          >
-                            Mark Resolved
-                          </button>
-                        )}
-                        {report.status !== "dismissed" && (
-                          <button
-                            type="button"
-                            onClick={() => handleUpdateReport(report.id, "dismissed")}
-                            className="px-2.5 py-1 text-[11px] font-semibold text-slate-700 bg-white hover:bg-slate-100 rounded border border-slate-300 min-h-[32px] cursor-pointer"
-                          >
-                            Dismiss
-                          </button>
-                        )}
-                      </div>
+                  <div className="flex items-center justify-between pt-2 border-t border-slate-200/60 text-[11px]">
+                    <span className="text-slate-400 font-mono">
+                      Review ID: {report.review_id}
+                    </span>
+                    <div className="flex items-center gap-1.5">
+                      {report.status !== "resolved" && (
+                        <button
+                          type="button"
+                          onClick={() => handleUpdateReport(report.id, "resolved")}
+                          className="px-2.5 py-1 text-[11px] font-semibold text-teal-800 bg-teal-50 hover:bg-teal-100 rounded border border-teal-200 min-h-[32px] cursor-pointer"
+                        >
+                          Mark Resolved
+                        </button>
+                      )}
+                      {report.status !== "dismissed" && (
+                        <button
+                          type="button"
+                          onClick={() => handleUpdateReport(report.id, "dismissed")}
+                          className="px-2.5 py-1 text-[11px] font-semibold text-slate-700 bg-white hover:bg-slate-100 rounded border border-slate-300 min-h-[32px] cursor-pointer"
+                        >
+                          Dismiss
+                        </button>
+                      )}
                     </div>
                   </div>
-                ))}
-            </div>
+                </div>
+              ))}
           </div>
-        </div>
+        </BaseModal>
       )}
 
       {/* 9. Delete Confirmation Modal */}
       {reviewToDelete && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="delete-dialog-title"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto"
-          onClick={() => setReviewToDelete(null)}
-        >
-          <div
-            ref={deleteModalRef}
-            onClick={(e) => e.stopPropagation()}
-            className="bg-white rounded-xl border border-slate-200 shadow-xl max-w-md w-full p-6 my-auto space-y-4"
-          >
-            <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-full bg-red-50 border border-red-200 text-red-600 flex items-center justify-center shrink-0">
-                <AlertTriangle className="w-5 h-5" />
-              </div>
-              <div className="flex-1">
-                <h3 id="delete-dialog-title" className="text-base font-bold text-slate-900">
-                  Permanently delete this review?
-                </h3>
-                <p className="mt-1 text-xs text-slate-600 leading-relaxed">
-                  This action removes the review by{" "}
-                  <span className="font-semibold text-slate-800">{reviewToDelete.name}</span>{" "}
-                  from both public records and your rating breakdown.
-                </p>
-              </div>
+        <BaseModal
+          isOpen={Boolean(reviewToDelete)}
+          onClose={() => setReviewToDelete(null)}
+          title="Permanently delete this review?"
+          titleId="delete-dialog-title"
+          maxWidth="max-w-md"
+          isProcessing={isActionLoading}
+          icon={
+            <div className="w-8 h-8 rounded-full bg-red-50 border border-red-200 text-red-600 flex items-center justify-center shrink-0">
+              <AlertTriangle className="w-4 h-4" />
             </div>
+          }
+        >
+          <div className="space-y-4">
+            <p className="text-xs text-slate-600 leading-relaxed">
+              This action removes the review by{" "}
+              <span className="font-semibold text-slate-800">{reviewToDelete.name}</span>{" "}
+              from both public records and your rating breakdown.
+            </p>
 
             <div className="p-3 bg-slate-50 rounded-lg border border-slate-200 text-xs text-slate-700 italic line-clamp-3">
               &ldquo;{reviewToDelete.comment}&rdquo;
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-2">
+            <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-100">
               <button
                 type="button"
                 onClick={() => setReviewToDelete(null)}
                 disabled={isActionLoading}
-                className="px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 rounded-lg transition-colors min-h-[44px]"
+                className="px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 rounded-lg transition-colors min-h-[44px] cursor-pointer"
               >
                 Cancel
               </button>
@@ -886,38 +775,46 @@ export default function ReviewModerationHub({ businessId, businessSlug }) {
               </button>
             </div>
           </div>
-        </div>
+        </BaseModal>
       )}
 
       {/* 10. Photo Lightbox Modal */}
-      {activePhoto && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label="Attached review photo enlarged view"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-xs"
-          onClick={() => setActivePhoto(null)}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="relative max-w-2xl w-full bg-white rounded-xl overflow-hidden shadow-2xl"
-          >
-            <button
-              type="button"
-              onClick={() => setActivePhoto(null)}
-              className="absolute top-3 right-3 p-2 bg-slate-900/60 hover:bg-slate-900 text-white rounded-full transition-colors z-10 min-h-[44px] min-w-[44px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer"
-              aria-label="Close enlarged photo"
-            >
-              <X className="w-5 h-5" />
-            </button>
-            <img
-              src={activePhoto}
-              alt="Enlarged customer submission"
-              className="w-full max-h-[80vh] object-contain bg-slate-950"
-            />
-          </div>
-        </div>
-      )}
+      {activePhoto &&
+        (typeof document !== "undefined"
+          ? createPortal(
+              <div
+                role="dialog"
+                aria-modal="true"
+                aria-label="Attached review photo enlarged view"
+                className="fixed inset-0 z-[100] isolate flex items-center justify-center p-4"
+              >
+                <div
+                  className="fixed inset-0 bg-black/75 backdrop-blur-xs transition-opacity duration-150"
+                  aria-hidden="true"
+                  onClick={() => setActivePhoto(null)}
+                />
+                <div
+                  onClick={(e) => e.stopPropagation()}
+                  className="relative z-10 max-w-2xl w-full bg-white rounded-xl overflow-hidden shadow-2xl"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setActivePhoto(null)}
+                    className="absolute top-3 right-3 p-2 bg-slate-900/60 hover:bg-slate-900 text-white rounded-full transition-colors z-10 min-h-[44px] min-w-[44px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer"
+                    aria-label="Close enlarged photo"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                  <img
+                    src={activePhoto}
+                    alt="Enlarged customer submission"
+                    className="w-full max-h-[80vh] object-contain bg-slate-950"
+                  />
+                </div>
+              </div>,
+              document.body
+            )
+          : null)}
     </div>
   );
 }

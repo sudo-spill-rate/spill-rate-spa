@@ -1,11 +1,11 @@
 import React, { useState } from "react";
-import { X, Trash2, RotateCw } from "lucide-react";
+import { Trash2, RotateCw } from "lucide-react";
+import { toast } from "react-toastify";
 import { useUserAuth } from "../../../../hooks/useUserAuth";
-import { useBodyScrollLock } from "../../../../hooks/useBodyScrollLock";
 import { useNavigate } from "react-router";
+import BaseModal from "../../../../components/common/BaseModal";
 
 export default function AccountSettingsModal({ isOpen, onClose }) {
-  useBodyScrollLock(isOpen);
   const { user, updateProfile, deleteAccount } = useUserAuth();
   const navigate = useNavigate();
 
@@ -15,6 +15,7 @@ export default function AccountSettingsModal({ isOpen, onClose }) {
   const [isDeleting, setIsDeleting] = useState(false);
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
+  const [nameError, setNameError] = useState(null);
 
   // Danger zone confirmation
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -26,9 +27,13 @@ export default function AccountSettingsModal({ isOpen, onClose }) {
     e.preventDefault();
     setError(null);
     setMessage(null);
+    setNameError(null);
 
     if (!name.trim()) {
-      setError("Name cannot be empty.");
+      const msg = "Name cannot be empty.";
+      setNameError(msg);
+      setError(msg);
+      toast.error(msg);
       return;
     }
 
@@ -40,10 +45,13 @@ export default function AccountSettingsModal({ isOpen, onClose }) {
       });
 
       if (res.success) {
+        toast.success("Profile updated successfully.");
         setMessage("Profile updated successfully.");
         setTimeout(() => setMessage(null), 3000);
       } else {
-        setError(res.message || "Failed to update profile.");
+        const errMsg = res.message || "Failed to update profile.";
+        setError(errMsg);
+        toast.error(errMsg);
       }
     } finally {
       setIsUpdating(false);
@@ -53,6 +61,7 @@ export default function AccountSettingsModal({ isOpen, onClose }) {
   const handleDeleteAccount = async () => {
     if (confirmEmail.trim().toLowerCase() !== user.email.toLowerCase()) {
       setError("Email address does not match.");
+      toast.error("Email address does not match.");
       return;
     }
 
@@ -61,10 +70,13 @@ export default function AccountSettingsModal({ isOpen, onClose }) {
       setError(null);
       const res = await deleteAccount();
       if (res.success) {
+        toast.success("Account permanently deleted.");
         onClose();
         navigate("/", { replace: true });
       } else {
-        setError(res.message || "Failed to delete account.");
+        const errMsg = res.message || "Failed to delete account.";
+        setError(errMsg);
+        toast.error(errMsg);
       }
     } finally {
       setIsDeleting(false);
@@ -72,39 +84,15 @@ export default function AccountSettingsModal({ isOpen, onClose }) {
   };
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="account-settings-title"
-      onClick={(e) => {
-        if (e.target === e.currentTarget && !isUpdating && !isDeleting) onClose();
-      }}
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto"
+    <BaseModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Account Settings"
+      description="Manage your personal credentials and contact info."
+      titleId="account-settings-title"
+      maxWidth="max-w-md"
+      isProcessing={isUpdating || isDeleting}
     >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-xl border border-slate-200 shadow-xl w-full max-w-md p-5 sm:p-6 my-auto space-y-4"
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-          <div>
-            <h2 id="account-settings-title" className="text-sm font-bold text-slate-900">
-              Account Settings
-            </h2>
-            <p className="text-[11px] text-slate-500 mt-0.5">
-              Manage your personal credentials and contact info.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-1 text-slate-400 hover:text-slate-600 rounded cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
-            aria-label="Close modal"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-
         {/* Status Alerts */}
         {message && (
           <div className="p-3 bg-teal-50 border border-teal-200 text-teal-800 rounded-lg text-xs">
@@ -136,54 +124,84 @@ export default function AccountSettingsModal({ isOpen, onClose }) {
         {/* Edit Form */}
         <form onSubmit={handleUpdate} className="space-y-3 text-xs">
           <div>
-            <label className="block font-semibold text-slate-700 mb-1">
+            <label htmlFor="settings-email" className="block font-semibold text-slate-700 mb-1">
               Email Address
             </label>
             <input
+              id="settings-email"
+              name="email"
               type="email"
+              autoComplete="email"
               disabled
               value={user.email}
-              className="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-100 text-slate-500 cursor-not-allowed min-h-[38px]"
+              aria-describedby="settings-email-desc"
+              className="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-100 text-slate-500 cursor-not-allowed min-h-[44px] sm:min-h-[38px] text-base sm:text-xs"
             />
-            <p className="mt-1 text-[11px] text-slate-400">
+            <p id="settings-email-desc" className="mt-1 text-[11px] text-slate-400">
               Linked to your Google OAuth sign-in.
             </p>
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-700 mb-1">
+            <label htmlFor="settings-name" className="block font-semibold text-slate-700 mb-1">
               Full Name <span className="text-red-500">*</span>
             </label>
             <input
+              id="settings-name"
+              name="name"
               type="text"
+              autoComplete="name"
               required
               value={name}
-              onChange={(e) => setName(e.target.value)}
+              onChange={(e) => {
+                setName(e.target.value);
+                if (nameError) setNameError(null);
+                if (error) setError(null);
+              }}
               disabled={isUpdating}
               placeholder="Your full name"
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[38px]"
+              aria-required="true"
+              aria-invalid={Boolean(nameError)}
+              aria-describedby={nameError ? "settings-name-error" : undefined}
+              className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 min-h-[44px] sm:min-h-[38px] text-base sm:text-xs text-slate-900 ${
+                nameError
+                  ? "border-red-400 focus:ring-red-600 bg-red-50/20"
+                  : "border-slate-300 focus:ring-teal-600"
+              }`}
             />
+            {nameError && (
+              <p id="settings-name-error" role="alert" className="mt-1 text-[11px] text-red-600 font-medium">
+                {nameError}
+              </p>
+            )}
           </div>
 
           <div>
-            <label className="block font-semibold text-slate-700 mb-1">
+            <label htmlFor="settings-phone" className="block font-semibold text-slate-700 mb-1">
               Phone Number
             </label>
             <input
+              id="settings-phone"
+              name="phone"
               type="tel"
+              autoComplete="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               disabled={isUpdating}
               placeholder="+63 9..."
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[38px]"
+              aria-describedby="settings-phone-desc"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[44px] sm:min-h-[38px] text-base sm:text-xs text-slate-900"
             />
+            <p id="settings-phone-desc" className="mt-1 text-[11px] text-slate-400">
+              Optional contact number for business inquiries.
+            </p>
           </div>
 
           <div className="pt-2 flex justify-end">
             <button
               type="submit"
               disabled={isUpdating}
-              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-teal-700 hover:bg-teal-800 text-white font-semibold cursor-pointer disabled:opacity-50 min-h-[38px] transition-colors focus:outline-none focus:ring-2 focus:ring-teal-700"
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-teal-700 hover:bg-teal-800 text-white font-semibold cursor-pointer disabled:opacity-50 min-h-[44px] sm:min-h-[38px] transition-colors focus:outline-none focus:ring-2 focus:ring-teal-700 w-full sm:w-auto"
             >
               <span>{isUpdating ? "Saving..." : "Save Profile"}</span>
             </button>
@@ -203,7 +221,7 @@ export default function AccountSettingsModal({ isOpen, onClose }) {
               <button
                 type="button"
                 onClick={() => setShowDeleteConfirm(true)}
-                className="px-3 py-1.5 text-xs font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg border border-red-200 transition-colors cursor-pointer"
+                className="px-3 py-2 text-xs font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg border border-red-200 transition-colors cursor-pointer min-h-[44px] sm:min-h-[36px] flex items-center"
               >
                 Delete Account
               </button>
@@ -218,17 +236,29 @@ export default function AccountSettingsModal({ isOpen, onClose }) {
               </div>
 
               <div>
-                <label className="block text-slate-700 font-medium mb-1">
+                <label htmlFor="settings-delete-confirm" className="block text-slate-700 font-medium mb-1">
                   Type <strong className="font-mono text-slate-900">{user.email}</strong> to confirm:
                 </label>
                 <input
+                  id="settings-delete-confirm"
+                  name="confirmEmail"
                   type="text"
+                  autoComplete="off"
                   value={confirmEmail}
                   onChange={(e) => setConfirmEmail(e.target.value)}
                   placeholder={user.email}
                   disabled={isDeleting}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-red-600 min-h-[38px]"
+                  aria-invalid={Boolean(confirmEmail && confirmEmail.trim().toLowerCase() !== user.email.toLowerCase())}
+                  aria-describedby="settings-delete-desc"
+                  className={`w-full px-3 py-2 border rounded-lg bg-white focus:outline-none focus:ring-2 min-h-[44px] sm:min-h-[38px] text-base sm:text-xs text-slate-900 ${
+                    confirmEmail && confirmEmail.trim().toLowerCase() !== user.email.toLowerCase()
+                      ? "border-red-400 focus:ring-red-600 bg-red-50/20"
+                      : "border-slate-300 focus:ring-red-600"
+                  }`}
                 />
+                <p id="settings-delete-desc" className="mt-1 text-[11px] text-slate-500">
+                  Case-insensitive. Must match your account email exactly to confirm.
+                </p>
               </div>
 
               <div className="flex items-center justify-end gap-2 pt-1">
@@ -236,7 +266,7 @@ export default function AccountSettingsModal({ isOpen, onClose }) {
                   type="button"
                   onClick={() => setShowDeleteConfirm(false)}
                   disabled={isDeleting}
-                  className="px-3 py-1.5 rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 font-semibold cursor-pointer"
+                  className="px-3.5 py-2 rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 font-semibold cursor-pointer min-h-[44px] sm:min-h-[38px]"
                 >
                   Cancel
                 </button>
@@ -244,7 +274,7 @@ export default function AccountSettingsModal({ isOpen, onClose }) {
                   type="button"
                   onClick={handleDeleteAccount}
                   disabled={confirmEmail.trim().toLowerCase() !== user.email.toLowerCase() || isDeleting}
-                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold cursor-pointer disabled:opacity-40"
+                  className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-semibold cursor-pointer disabled:opacity-40 min-h-[44px] sm:min-h-[38px]"
                 >
                   {isDeleting ? (
                     <>
@@ -259,7 +289,6 @@ export default function AccountSettingsModal({ isOpen, onClose }) {
             </div>
           )}
         </div>
-      </div>
-    </div>
+    </BaseModal>
   );
 }

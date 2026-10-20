@@ -1,51 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { Star, StarHalf } from "lucide-react";
-import { useCustomerReviews } from "../../../../hooks/useCustomerReviews";
+import { ReviewContext } from "../../../../context/review/reviewContext";
 import { useBusinessProfile } from "../../../../hooks/useBusinessProfile";
 import { useUserAuth } from "../../../../hooks/useUserAuth";
-
-/**
- * Helper to render 5 stars supporting full, half, and empty star fills.
- */
-function StarRatingDisplay({ rating, className = "w-4 h-4" }) {
-  const stars = [1, 2, 3, 4, 5];
-
-  return (
-    <div className="flex items-center gap-0.5" aria-hidden="true">
-      {stars.map((pos) => {
-        const diff = rating - (pos - 1);
-
-        if (diff >= 0.75) {
-          // Full star
-          return (
-            <Star
-              key={pos}
-              className={`${className} fill-amber-500 text-amber-500`}
-            />
-          );
-        } else if (diff >= 0.25) {
-          // Half star: layer half-filled star over empty star background
-          return (
-            <div key={pos} className="relative inline-flex items-center justify-center">
-              <Star className={`${className} fill-slate-100 text-slate-300`} />
-              <div className="absolute inset-0 overflow-hidden">
-                <StarHalf className={`${className} fill-amber-500 text-amber-500`} />
-              </div>
-            </div>
-          );
-        } else {
-          // Empty star
-          return (
-            <Star
-              key={pos}
-              className={`${className} fill-slate-100 text-slate-300`}
-            />
-          );
-        }
-      })}
-    </div>
-  );
-}
+import StarRating, { StarRatingDisplay } from "../../../../components/common/StarRating";
 
 export default function BusinessRatingStatsCard({
   business,
@@ -55,7 +13,8 @@ export default function BusinessRatingStatsCard({
   showResponseMetrics = false,
   title = "Ratings Breakdown",
 }) {
-  const { reviews: contextReviews = [] } = useCustomerReviews();
+  const reviewContext = useContext(ReviewContext);
+  const contextReviews = reviewContext?.reviews || [];
   const reviews = propReviews ?? contextReviews;
   const { getAnalytics } = useBusinessProfile();
   const { isAuthenticated } = useUserAuth();
@@ -165,12 +124,16 @@ export default function BusinessRatingStatsCard({
       {/* Main Body: Side-by-Side Score Tile (Left) & 5-Star Breakdown Bars (Right) — Zero Wasted Whitespace */}
       <div className="flex items-stretch gap-3 sm:gap-4">
         {/* Left Column: Overall Rating Score Box */}
-        <div className="w-24 sm:w-28 shrink-0 flex flex-col items-center justify-center rounded-xl bg-slate-50/90 border border-slate-200/80 p-2.5 text-center">
+        <div className="w-28 sm:w-32 shrink-0 flex flex-col items-center justify-center rounded-xl bg-slate-50/90 border border-slate-200/80 p-2.5 text-center">
           <span className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-none tabular-nums">
             {avgRating}
           </span>
-          <div className="mt-1.5">
-            <StarRatingDisplay rating={numAvg} className="w-3.5 h-3.5" />
+          <div className="mt-1.5 flex items-center justify-center w-full">
+            <StarRatingDisplay
+              rating={numAvg}
+              size="xs"
+              starClassName="w-3 h-3 sm:w-3.5 sm:h-3.5"
+            />
           </div>
           <span className="mt-1 text-[11px] font-semibold text-slate-600 tabular-nums">
             out of 5.0
@@ -201,7 +164,7 @@ export default function BusinessRatingStatsCard({
                 } ${isSelected ? "bg-amber-50/90 ring-1 ring-amber-300 font-semibold" : ""}`}
               >
                 {/* Left: Star number + star icon */}
-                <div className="flex items-center gap-1 w-6 shrink-0 font-medium text-slate-800 text-xs">
+                <div className="flex items-center gap-1 w-7 min-w-[28px] shrink-0 font-medium text-slate-800 text-xs">
                   <span className="tabular-nums font-semibold">{star}</span>
                   <Star className="w-3 h-3 fill-amber-500 text-amber-600 shrink-0" aria-hidden="true" />
                 </div>

@@ -20,7 +20,15 @@ function XIcon({ className = "w-4 h-4" }) {
   );
 }
 
-export default function ShareStorefrontMenu({ slug, businessName, logoUrl, isOwner = false, iconOnly = false, className = "" }) {
+export default function ShareStorefrontMenu({
+  slug,
+  businessName,
+  logoUrl,
+  isOwner = false,
+  iconOnly = false,
+  className = "",
+  buttonClassName = "",
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [isQrModalOpen, setIsQrModalOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -111,7 +119,7 @@ export default function ShareStorefrontMenu({ slug, businessName, logoUrl, isOwn
             aria-expanded={isOpen}
             aria-label="Share"
             title="Share Storefront"
-            className="p-2 sm:p-2.5 rounded-xl border border-slate-200/90 hover:border-slate-300 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 transition-colors shadow-2xs focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer inline-flex items-center justify-center min-w-[44px] min-h-[44px] sm:min-w-[38px] sm:min-h-[38px]"
+            className={buttonClassName || "p-2 sm:p-2.5 rounded-xl border border-slate-200/90 hover:border-slate-300 bg-white hover:bg-slate-50 text-slate-600 hover:text-slate-900 transition-colors shadow-2xs focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer inline-flex items-center justify-center min-w-[44px] min-h-[44px] sm:min-w-[38px] sm:min-h-[38px]"}
           >
             <Share2 className="w-4 h-4 text-slate-600" aria-hidden="true" />
           </button>
@@ -121,7 +129,7 @@ export default function ShareStorefrontMenu({ slug, businessName, logoUrl, isOwn
             onClick={handleTriggerClick}
             aria-haspopup="menu"
             aria-expanded={isOpen}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 hover:border-slate-400 rounded-lg transition-colors min-h-[34px] sm:min-h-[36px] shadow-2xs focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer"
+            className={buttonClassName || "w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 hover:border-slate-400 rounded-lg transition-colors min-h-[34px] sm:min-h-[36px] shadow-2xs focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer"}
           >
             <Share2 className="w-3.5 h-3.5 text-slate-600" aria-hidden="true" />
             <span>Share</span>

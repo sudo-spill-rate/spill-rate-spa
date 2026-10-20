@@ -1,7 +1,7 @@
-﻿import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import QRCode from "qrcode";
-import { Download, X, QrCode, Check } from "lucide-react";
-import { useBodyScrollLock } from "../../../../hooks/useBodyScrollLock";
+import { Download, QrCode, Check } from "lucide-react";
+import BaseModal from "../../../../components/common/BaseModal";
 
 /**
  * QR Code Modal with embedded central logo (business logo or SpillRate fallback).
@@ -17,8 +17,6 @@ export default function StorefrontQrModal({
   const canvasRef = useRef(null);
   const [isGenerating, setIsGenerating] = useState(true);
   const [downloadSuccess, setDownloadSuccess] = useState(false);
-
-  useBodyScrollLock(isOpen);
 
   useEffect(() => {
     if (!isOpen || !publicUrl) return;
@@ -227,42 +225,19 @@ export default function StorefrontQrModal({
   if (!isOpen) return null;
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="qr-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in"
-      onClick={onClose}
+    <BaseModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Storefront QR Code"
+      description="Scan with any smartphone camera"
+      icon={
+        <span className="w-8 h-8 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center shrink-0">
+          <QrCode className="w-4 h-4" />
+        </span>
+      }
+      titleId="qr-modal-title"
+      maxWidth="max-w-sm"
     >
-      <div
-        className="relative w-full max-w-sm bg-white rounded-2xl border border-slate-200/90 shadow-2xl p-5 sm:p-6 space-y-4 animate-scale-up"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Modal Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-          <div className="flex items-center gap-2">
-            <span className="w-8 h-8 rounded-lg bg-teal-50 text-teal-700 flex items-center justify-center shrink-0">
-              <QrCode className="w-4 h-4" />
-            </span>
-            <div>
-              <h2 id="qr-modal-title" className="text-sm font-bold text-slate-900">
-                Storefront QR Code
-              </h2>
-              <p className="text-[11px] text-slate-500 font-medium">
-                Scan with any smartphone camera
-              </p>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100 transition-colors cursor-pointer"
-            aria-label="Close QR Modal"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
         {/* QR Code Canvas Card */}
         <div className="flex flex-col items-center justify-center p-4 bg-slate-50/70 rounded-xl border border-slate-200/80">
           <div className="relative p-2.5 bg-white rounded-xl shadow-xs border border-slate-200/80">
@@ -315,7 +290,6 @@ export default function StorefrontQrModal({
             Close
           </button>
         </div>
-      </div>
-    </div>
+    </BaseModal>
   );
 }
