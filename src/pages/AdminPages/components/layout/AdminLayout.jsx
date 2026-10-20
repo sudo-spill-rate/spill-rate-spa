@@ -1,6 +1,7 @@
 import React from "react";
 import AdminNavbar from "./AdminNavbar";
 import AdminDashboardSidebar from "./AdminDashboardSidebar";
+import AdminBottomNavbar from "./AdminBottomNavbar";
 
 export default function AdminLayout({
   children,
@@ -17,7 +18,7 @@ export default function AdminLayout({
       <AdminNavbar />
 
       {/* Main Body with Sidebar */}
-      <div className="flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-3.5 sm:py-5">
+      <div className="flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-3.5 sm:py-5 pb-24 sm:pb-28 md:pb-12">
         <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 items-start">
           {/* Sidebar */}
           {activeSidebar}
@@ -49,9 +50,8 @@ export default function AdminLayout({
         </div>
       </div>
 
-      <footer className="mt-auto border-t border-slate-200 bg-white py-4 text-center text-xs text-slate-500">
-        SpillRate &bull; Platform Management & Moderation Environment
-      </footer>
+      {/* Mobile Sticky Bottom Navigation Bar */}
+      <AdminBottomNavbar />
     </div>
   );
 }

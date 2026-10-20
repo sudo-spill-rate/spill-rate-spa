@@ -27,18 +27,27 @@ export default function AdminDashboardSidebar({
   };
 
   const isOverviewActive =
+    location.pathname === "/admin/platform/overview" ||
     location.pathname === "/admin/overview" ||
     location.pathname === "/admin/dashboard" ||
     location.pathname === "/admin";
 
-  const isReportsActive = location.pathname === "/admin/reports";
-  const isStorefrontsActive = location.pathname === "/admin/storefronts";
-  const isCategoriesActive = location.pathname === "/admin/categories";
-  const isDirectoryActive = location.pathname === "/admin/directory";
+  const isReportsActive =
+    location.pathname === "/admin/platform/reports" ||
+    location.pathname === "/admin/reports";
+  const isStorefrontsActive =
+    location.pathname === "/admin/platform/storefronts" ||
+    location.pathname === "/admin/storefronts";
+  const isCategoriesActive =
+    location.pathname === "/admin/platform/categories" ||
+    location.pathname === "/admin/categories";
+  const isDirectoryActive =
+    location.pathname === "/admin/platform/directory" ||
+    location.pathname === "/admin/directory";
 
   return (
     <aside
-      className="w-full lg:w-60 xl:w-64 shrink-0 lg:sticky lg:top-4"
+      className="hidden lg:block w-60 xl:w-64 shrink-0 lg:sticky lg:top-4"
       aria-label="Admin sidebar navigation"
     >
       <div className="bg-white rounded-xl border border-slate-200/90 shadow-2xs overflow-hidden flex flex-col divide-y divide-slate-100">
@@ -76,7 +85,7 @@ export default function AdminDashboardSidebar({
           </div>
           <nav className="space-y-0.5 mt-1" aria-label="Admin routes">
             <Link
-              to="/admin/overview"
+              to="/admin/platform/overview"
               className={`flex items-center justify-between px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors min-h-[34px] ${
                 isOverviewActive
                   ? "bg-slate-100 text-slate-900 font-semibold"
@@ -87,7 +96,7 @@ export default function AdminDashboardSidebar({
             </Link>
 
             <Link
-              to="/admin/reports"
+              to="/admin/platform/reports"
               className={`flex items-center justify-between px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors min-h-[34px] ${
                 isReportsActive
                   ? "bg-slate-100 text-slate-900 font-semibold"
@@ -103,7 +112,7 @@ export default function AdminDashboardSidebar({
             </Link>
 
             <Link
-              to="/admin/storefronts"
+              to="/admin/platform/storefronts"
               className={`flex items-center justify-between px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors min-h-[34px] ${
                 isStorefrontsActive
                   ? "bg-slate-100 text-slate-900 font-semibold"
@@ -114,7 +123,7 @@ export default function AdminDashboardSidebar({
             </Link>
 
             <Link
-              to="/admin/categories"
+              to="/admin/platform/categories"
               className={`flex items-center justify-between px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors min-h-[34px] ${
                 isCategoriesActive
                   ? "bg-slate-100 text-slate-900 font-semibold"
@@ -125,7 +134,7 @@ export default function AdminDashboardSidebar({
             </Link>
 
             <Link
-              to="/admin/directory"
+              to="/admin/platform/directory"
               className={`flex items-center justify-between px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors min-h-[34px] ${
                 isDirectoryActive
                   ? "bg-slate-100 text-slate-900 font-semibold"
