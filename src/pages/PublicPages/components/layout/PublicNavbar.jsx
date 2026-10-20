@@ -51,7 +51,7 @@ export default function PublicNavbar() {
             {/* Brand Logo */}
             <Link
               to="/"
-              className="flex items-center gap-2 font-bold text-lg sm:text-xl text-slate-900 group focus:outline-none focus:ring-2 focus:ring-teal-600 rounded-lg p-1"
+              className="flex items-center gap-2 font-bold text-lg sm:text-xl text-slate-900 group focus:outline-none focus:ring-2 focus:ring-teal-600 rounded-lg p-1 min-h-[44px]"
             >
               <img
                 src="/logo.png"
@@ -64,17 +64,17 @@ export default function PublicNavbar() {
             </Link>
 
             {/* Desktop Navigation Links */}
-            <nav aria-label="Main Navigation" className="hidden md:flex items-center gap-1">
+            <nav aria-label="Main Navigation" className="hidden md:flex items-center gap-1.5">
               {navLinks.map((link) => (
                 <NavLink
                   key={link.path}
                   to={link.path}
                   end={link.path === "/"}
                   className={({ isActive }) =>
-                    `px-3 py-1.5 rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600 ${
+                    `px-3.5 py-2 rounded-lg text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600 ${
                       isActive
-                        ? "text-teal-800 bg-teal-50 font-semibold"
-                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
+                        ? "text-teal-900 bg-teal-50 font-semibold"
+                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                     }`
                   }
                 >
@@ -89,13 +89,13 @@ export default function PublicNavbar() {
                 <div className="flex items-center gap-2">
                   <Link
                     to={user?.role === "founder" ? "/admin/dashboard" : (user?.is_admin || user?.role === "admin") ? "/admin/dashboard" : "/dashboard"}
-                    className="flex items-center gap-2 px-3 py-1.5 text-xs sm:text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[36px]"
+                    className="flex items-center gap-2 px-3.5 py-2 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[38px]"
                   >
                     {user?.avatar_url || user?.picture ? (
                       <img
                         src={user.avatar_url || user.picture}
                         alt={user.name || "User account"}
-                        className="w-4 h-4 sm:w-5 sm:h-5 rounded-full object-cover"
+                        className="w-5 h-5 rounded-full object-cover"
                       />
                     ) : (
                       <User className="w-4 h-4 text-slate-600" />
@@ -105,9 +105,10 @@ export default function PublicNavbar() {
                     </span>
                   </Link>
                   <button
+                    type="button"
                     onClick={logout}
                     title="Sign out"
-                    className="p-1.5 text-slate-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-red-600 cursor-pointer min-h-[36px] min-w-[36px] flex items-center justify-center"
+                    className="p-2 text-slate-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-red-600 cursor-pointer min-h-[38px] min-w-[38px] flex items-center justify-center"
                   >
                     <LogOut className="w-4 h-4" />
                     <span className="sr-only">Sign out</span>
@@ -117,23 +118,23 @@ export default function PublicNavbar() {
                 <button
                   type="button"
                   onClick={() => setIsSignInModalOpen(true)}
-                  className="px-3.5 py-1.5 text-xs sm:text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 active:bg-slate-950 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[36px] inline-flex items-center justify-center cursor-pointer"
+                  className="px-4 py-2 text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 active:bg-slate-950 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[38px] inline-flex items-center justify-center cursor-pointer shadow-xs"
                 >
                   Sign In
                 </button>
               )}
             </div>
 
-            {/* Mobile Hamburger Toggle */}
+            {/* Mobile Hamburger Toggle with 44px Touch Target */}
             <div className="flex items-center gap-2 md:hidden">
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(true)}
                 aria-label="Open navigation menu"
                 aria-expanded={mobileMenuOpen}
-                className="p-2 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[40px] min-w-[40px] flex items-center justify-center cursor-pointer"
+                className="p-2 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
               >
-                <Menu className="w-5 h-5 sm:w-6 sm:h-6" />
+                <Menu className="w-6 h-6" />
               </button>
             </div>
           </div>
@@ -155,7 +156,7 @@ export default function PublicNavbar() {
               <Link
                 to="/"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-2 font-bold text-lg sm:text-xl text-slate-900 group focus:outline-none focus:ring-2 focus:ring-teal-600 rounded-lg p-1"
+                className="flex items-center gap-2 font-bold text-lg sm:text-xl text-slate-900 group focus:outline-none focus:ring-2 focus:ring-teal-600 rounded-lg p-1 min-h-[44px]"
               >
                 <img
                   src="/logo.png"
@@ -167,14 +168,14 @@ export default function PublicNavbar() {
                 </span>
               </Link>
 
-              {/* Close Button ('X') in the exact same spot as the hamburger toggle */}
+              {/* Close Button ('X') with 44px Touch Target */}
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(false)}
                 aria-label="Close navigation menu"
-                className="p-2 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[40px] min-w-[40px] flex items-center justify-center cursor-pointer"
+                className="p-2 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer"
               >
-                <X className="w-5 h-5 sm:w-6 sm:h-6" />
+                <X className="w-6 h-6" />
               </button>
             </div>
           </div>

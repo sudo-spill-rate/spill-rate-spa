@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Link } from "react-router";
 import { CheckCircle2 } from "lucide-react";
 import { useBodyScrollLock } from "../../../../hooks/useBodyScrollLock";
@@ -22,14 +23,19 @@ export default function ReviewSuccessDialog({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [onClose]);
 
-  return (
+  const modalNode = (
     <div
       role="dialog"
       aria-modal="true"
       aria-labelledby="success-dialog-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs"
+      className="fixed inset-0 z-[100] isolate flex items-center justify-center p-4"
     >
-      <div className="max-w-md w-full bg-white rounded-2xl p-6 sm:p-8 shadow-2xl border border-slate-200 text-center space-y-4">
+      <div
+        className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-150"
+        aria-hidden="true"
+        onClick={onClose}
+      />
+      <div className="relative z-10 max-w-md w-full bg-white rounded-2xl p-6 sm:p-8 shadow-2xl border border-slate-200 text-center space-y-4">
         <div className="w-14 h-14 rounded-full bg-teal-50 text-teal-700 flex items-center justify-center mx-auto">
           <CheckCircle2 className="w-8 h-8" />
         </div>
@@ -77,4 +83,10 @@ export default function ReviewSuccessDialog({
       </div>
     </div>
   );
+
+  if (typeof document === "undefined") {
+    return modalNode;
+  }
+
+  return createPortal(modalNode, document.body);
 }

@@ -38,19 +38,20 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setIsLoading(true);
 
         try {
+            // Gamitin ang explicitToken o tab-scoped sessionStorage / localStorage
             const currentToken =
                 explicitToken ||
-                localStorage.getItem("accessToken") ||
-                sessionStorage.getItem("accessToken");
+                (typeof window !== "undefined"
+                    ? sessionStorage.getItem("accessToken") || localStorage.getItem("accessToken")
+                    : null);
 
+            // Kung walang token (unauthenticated public visitor), huwag tumawag sa /auth/me upang maiwasan ang 401 error sa console
             if (!currentToken) {
                 delete api.defaults.headers.common["Authorization"];
                 updateAuthState(false, null, null);
                 return false;
             }
 
-            // Siguraduhing naka-bind ang Bearer token sa axios bago tumawag
-            localStorage.setItem("accessToken", currentToken);
             api.defaults.headers.common["Authorization"] = `Bearer ${currentToken}`;
 
             const response = await authService.getMe(currentToken);
@@ -62,8 +63,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
             throw new Error(response.message || "Failed to authenticate");
         } catch {
-            localStorage.removeItem("accessToken");
-            sessionStorage.removeItem("accessToken");
+            if (typeof window !== "undefined") {
+                sessionStorage.removeItem("accessToken");
+                localStorage.removeItem("accessToken");
+            }
             delete api.defaults.headers.common["Authorization"];
             updateAuthState(false, null, null);
             return false;
@@ -124,7 +127,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     };
 
     const setToken = async (newToken: string): Promise<void> => {
-        localStorage.setItem("accessToken", newToken);
+        if (typeof window !== "undefined") {
+            sessionStorage.setItem("accessToken", newToken);
+            localStorage.setItem("accessToken", newToken);
+        }
         api.defaults.headers.common["Authorization"] = `Bearer ${newToken}`;
         await checkAuth(newToken);
     };

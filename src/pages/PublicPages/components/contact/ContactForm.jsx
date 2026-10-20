@@ -1,11 +1,11 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 
 export default function ContactForm() {
   const [name, setName] = useState("");
   const [inquiryTopic, setInquiryTopic] = useState("General Question");
   const [error, setError] = useState("");
 
-  const supportEmail = "support@spillrate.local";
+  const supportEmail = "spillrate@gmail.com";
 
   const buildSubjectAndBody = () => {
     const trimmedName = name.trim();
@@ -57,13 +57,15 @@ export default function ContactForm() {
               setName(e.target.value);
               if (error) setError("");
             }}
+            aria-invalid={!!error}
+            aria-describedby={error ? "contact-name-error" : undefined}
             placeholder="e.g. Maria Santos"
-            className={`w-full px-3.5 py-2.5 bg-white border rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[44px] ${
+            className={`w-full px-3.5 py-2.5 bg-white border rounded-xl text-base sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[44px] ${
               error ? "border-red-500" : "border-slate-300"
             }`}
           />
           {error && (
-            <p className="mt-1 text-xs text-red-600 font-medium">
+            <p id="contact-name-error" className="mt-1 text-xs text-red-600 font-medium" role="alert">
               {error}
             </p>
           )}
@@ -78,7 +80,7 @@ export default function ContactForm() {
             id="contact-topic"
             value={inquiryTopic}
             onChange={(e) => setInquiryTopic(e.target.value)}
-            className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[44px]"
+            className="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-base sm:text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[44px]"
           >
             <option value="General Question">General Question</option>
             <option value="Business Owner Verification">Business Owner Verification</option>
@@ -100,7 +102,7 @@ export default function ContactForm() {
       </div>
 
       <p className="mt-3.5 text-[11px] text-slate-500 text-center leading-normal">
-        Opens Gmail with the subject and recipient (<code className="text-slate-700 font-mono">support@spillrate.local</code>) already filled in.
+        Opens Gmail with the subject and recipient (<code className="text-slate-700 font-mono">spillrate@gmail.com</code>) already filled in.
       </p>
     </form>
   );

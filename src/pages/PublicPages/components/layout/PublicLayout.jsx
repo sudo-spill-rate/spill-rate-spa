@@ -1,15 +1,9 @@
-import React, { useEffect } from "react";
-import { Outlet, useLocation } from "react-router";
+import React from "react";
+import { Outlet } from "react-router";
 import PublicNavbar from "./PublicNavbar";
 import PublicFooter from "./PublicFooter";
 
 export default function PublicLayout() {
-  const { pathname } = useLocation();
-
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [pathname]);
-
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900 font-sans antialiased selection:bg-teal-700 selection:text-white">
       {/* Keyboard accessible skip-to-content anchor */}

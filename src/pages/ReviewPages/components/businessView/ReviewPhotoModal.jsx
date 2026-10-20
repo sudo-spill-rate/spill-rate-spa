@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { useBodyScrollLock } from "../../../../hooks/useBodyScrollLock";
 
@@ -41,16 +42,20 @@ export default function ReviewPhotoModal({
   const activeSrc = gallery[currentIndex] || gallery[0];
   const hasMultiple = gallery.length > 1;
 
-  return (
+  const modalNode = (
     <div
       role="dialog"
       aria-modal="true"
       aria-label="Enlarged review photo"
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/80 backdrop-blur-sm"
-      onClick={onClose}
+      className="fixed inset-0 z-[100] isolate flex items-center justify-center p-3 sm:p-4"
     >
       <div
-        className="relative max-w-3xl w-full bg-slate-950 rounded-xl overflow-hidden shadow-2xl border border-slate-800"
+        className="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity duration-150"
+        aria-hidden="true"
+        onClick={onClose}
+      />
+      <div
+        className="relative max-w-3xl w-full bg-slate-950 rounded-xl overflow-hidden shadow-2xl border border-slate-800 z-10"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Top Counter Badge (for 2 or 3+ photos) */}
@@ -106,4 +111,10 @@ export default function ReviewPhotoModal({
       </div>
     </div>
   );
+
+  if (typeof document === "undefined") {
+    return modalNode;
+  }
+
+  return createPortal(modalNode, document.body);
 }

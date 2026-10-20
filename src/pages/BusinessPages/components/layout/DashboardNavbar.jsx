@@ -1,4 +1,4 @@
-﻿import React, { useState } from "react";
+import React, { useState } from "react";
 import { Link, useNavigate, useLocation } from "react-router";
 import {
   Building,
@@ -56,7 +56,7 @@ export default function DashboardNavbar() {
           <div className="flex items-center gap-3">
             <Link
               to="/dashboard"
-              className="flex items-center gap-2 sm:gap-2.5 focus:outline-none focus:ring-2 focus:ring-teal-600 rounded-lg p-1"
+              className="flex items-center gap-2 sm:gap-2.5 focus:outline-none focus:ring-2 focus:ring-teal-600 rounded-lg p-1 min-h-[44px]"
             >
               <img
                 src="/logo.png"
@@ -74,12 +74,22 @@ export default function DashboardNavbar() {
 
           {/* User Profile & Logout (Desktop Utility Bar) */}
           <div className="hidden md:flex items-center gap-4">
-            <div className="flex items-center gap-2.5 text-right">
+            <button
+              type="button"
+              onClick={() => setIsSettingsOpen(true)}
+              aria-label="Manage account settings"
+              className="flex items-center gap-2.5 text-left hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-teal-600 rounded-xl p-1.5 transition-colors cursor-pointer min-h-[44px]"
+            >
               {user?.avatar_url || user?.picture ? (
                 <img
                   src={user.avatar_url || user.picture}
                   alt={user.name || "Owner profile"}
+                  crossOrigin="anonymous"
+                  referrerPolicy="no-referrer"
                   className="w-8 h-8 rounded-full border border-slate-200 object-cover"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
                 />
               ) : (
                 <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600">
@@ -94,7 +104,7 @@ export default function DashboardNavbar() {
                   {user?.email || "owner@spillrate.internal"}
                 </p>
               </div>
-            </div>
+            </button>
 
             {(user?.is_admin || user?.role === "admin" || user?.role === "founder") && (
               <Link
@@ -135,9 +145,9 @@ export default function DashboardNavbar() {
               onClick={() => setMobileMenuOpen(true)}
               aria-expanded={mobileMenuOpen}
               aria-label="Open navigation menu"
-              className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-700 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl min-h-[44px] focus:outline-none focus:ring-2 focus:ring-teal-600 transition-colors cursor-pointer"
+              className="inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-700 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl min-h-[44px] min-w-[44px] focus:outline-none focus:ring-2 focus:ring-teal-600 transition-colors cursor-pointer"
             >
-              <Menu className="w-4 h-4 text-slate-600" />
+              <Menu className="w-5 h-5 text-slate-600" />
               <span>Menu</span>
             </button>
           </div>
@@ -159,7 +169,7 @@ export default function DashboardNavbar() {
               <Link
                 to="/dashboard"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-2 sm:gap-2.5 focus:outline-none focus:ring-2 focus:ring-teal-600 rounded-lg p-1"
+                className="flex items-center gap-2 sm:gap-2.5 focus:outline-none focus:ring-2 focus:ring-teal-600 rounded-lg p-1 min-h-[44px]"
               >
                 <img
                   src="/logo.png"
@@ -179,9 +189,9 @@ export default function DashboardNavbar() {
                 type="button"
                 onClick={() => setMobileMenuOpen(false)}
                 aria-label="Close navigation menu"
-                className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-700 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl min-h-[44px] focus:outline-none focus:ring-2 focus:ring-teal-600 transition-colors cursor-pointer"
+                className="inline-flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-semibold text-slate-700 hover:text-slate-900 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl min-h-[44px] min-w-[44px] focus:outline-none focus:ring-2 focus:ring-teal-600 transition-colors cursor-pointer"
               >
-                <X className="w-4 h-4 text-slate-600" />
+                <X className="w-5 h-5 text-slate-600" />
                 <span>Close</span>
               </button>
             </div>
@@ -190,12 +200,25 @@ export default function DashboardNavbar() {
           {/* Full Screen Menu Content */}
           <div className="flex-1 overflow-y-auto px-4 py-5 space-y-4 max-w-md w-full mx-auto">
             {/* User Profile Card */}
-            <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-200/90 shadow-2xs">
+            <button
+              type="button"
+              onClick={() => {
+                setMobileMenuOpen(false);
+                setIsSettingsOpen(true);
+              }}
+              aria-label="Manage account settings"
+              className="w-full flex items-center gap-3 p-3 rounded-2xl bg-slate-50 border border-slate-200/90 shadow-2xs hover:bg-slate-100 transition-colors cursor-pointer text-left min-h-[44px] focus:outline-none focus:ring-2 focus:ring-teal-600"
+            >
               {user?.avatar_url || user?.picture ? (
                 <img
                   src={user.avatar_url || user.picture}
                   alt={user.name || "Owner profile"}
+                  crossOrigin="anonymous"
+                  referrerPolicy="no-referrer"
                   className="w-11 h-11 rounded-full border border-slate-200 object-cover shrink-0"
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
                 />
               ) : (
                 <div className="w-11 h-11 rounded-full bg-slate-200 border border-slate-300 flex items-center justify-center text-slate-600 shrink-0">
@@ -206,7 +229,7 @@ export default function DashboardNavbar() {
                 <p className="text-sm font-bold text-slate-900 truncate">{user?.name || "Business Owner"}</p>
                 <p className="text-xs text-slate-500 truncate">{user?.email || "owner@spillrate.internal"}</p>
               </div>
-            </div>
+            </button>
 
             {/* Primary Nav Links */}
             <div className="space-y-1">

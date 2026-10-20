@@ -36,9 +36,11 @@ export const BusinessRoutes = [
         path: "/dashboard/business/:id",
         element: (
             <BusinessProvider>
-                <ManageReviewProvider>
-                    <BusinessManageProfilePage />
-                </ManageReviewProvider>
+                <ReviewProvider>
+                    <ManageReviewProvider>
+                        <BusinessManageProfilePage />
+                    </ManageReviewProvider>
+                </ReviewProvider>
             </BusinessProvider>
         ),
     },

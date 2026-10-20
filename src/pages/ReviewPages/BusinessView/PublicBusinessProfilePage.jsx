@@ -15,6 +15,7 @@ import {
   Star,
   MessageSquare,
   Camera,
+  CheckCircle2,
 } from "lucide-react";
 import PublicNavbar from "../../PublicPages/components/layout/PublicNavbar";
 import PublicFooter from "../../PublicPages/components/layout/PublicFooter";
@@ -23,6 +24,7 @@ import BusinessRatingStatsCard from "../../BusinessPages/components/profile/Busi
 import ReviewModerationHub from "../../BusinessPages/components/profile/ReviewModerationHub";
 import ShareStorefrontMenu from "../../BusinessPages/components/profile/ShareStorefrontMenu";
 import { DeleteBusinessModal } from "../../BusinessPages/components/profile/BusinessActionModals";
+import SegmentedTabs from "../../../components/common/SegmentedTabs";
 import WriteCustomerReviewModal from "../components/submit/WriteCustomerReviewModal";
 import PublicReviewFeed from "../components/businessView/PublicReviewFeed";
 import ReviewPhotoModal from "../components/businessView/ReviewPhotoModal";
@@ -368,11 +370,9 @@ export default function PublicBusinessProfilePage() {
                             <span className="text-slate-300 font-light text-xs sm:text-sm" aria-hidden="true">
                               |
                             </span>
-                            <img
-                              src="https://res.cloudinary.com/qzludnat/image/upload/v1792131560/Teal_Verified_Shield_Icon-removebg-preview.png"
-                              alt=""
-                              className="w-5 h-5 object-contain inline-block shrink-0"
-                              decoding="async"
+                            <CheckCircle2
+                              className="w-5 h-5 text-teal-700 inline-block shrink-0 drop-shadow-2xs"
+                              aria-hidden="true"
                             />
                           </span>
                         )}
@@ -627,70 +627,29 @@ export default function PublicBusinessProfilePage() {
           {/* Right Column: Mobile Tab Switcher, Mobile Ratings, and Reviews Feed */}
           <div className="lg:col-span-7 flex flex-col">
             {/* Mobile Tab Switcher (Visible on mobile/tablet < lg only) */}
-            <div
-              role="tablist"
-              aria-label="Storefront feedback views"
-              className="lg:hidden bg-white rounded-xl border border-slate-200/90 shadow-xs overflow-hidden grid grid-cols-2 divide-x divide-slate-200/80 mb-2.5"
-            >
-              <button
-                type="button"
-                role="tab"
-                id="mobile-tab-reviews"
-                aria-selected={mobileTab === "reviews"}
-                aria-controls="mobile-panel-reviews"
-                onClick={() => setMobileTab("reviews")}
-                className={`inline-flex items-center justify-center gap-2 py-2.5 px-3 text-xs transition-colors min-h-[44px] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-teal-600 ${
-                  mobileTab === "reviews"
-                    ? "border-b-2 border-teal-700 bg-teal-50/25 text-slate-900 font-bold"
-                    : "border-b-2 border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50/60 font-semibold"
-                }`}
-              >
-                <MessageSquare
-                  className={`w-3.5 h-3.5 shrink-0 ${
-                    mobileTab === "reviews" ? "text-teal-700" : "text-slate-500"
-                  }`}
-                  aria-hidden="true"
-                />
-                <span>Reviews</span>
-                <span
-                  className={`px-1.5 py-0.5 rounded-md text-[11px] tabular-nums ${
-                    mobileTab === "reviews"
-                      ? "bg-teal-100/80 text-teal-900 font-bold"
-                      : "bg-slate-100 text-slate-700 font-semibold"
-                  }`}
-                >
-                  {reviews.length}
-                </span>
-              </button>
-
-              <button
-                type="button"
-                role="tab"
-                id="mobile-tab-analytics"
-                aria-selected={mobileTab === "analytics"}
-                aria-controls="mobile-panel-analytics"
-                onClick={() => setMobileTab("analytics")}
-                className={`inline-flex items-center justify-center gap-2 py-2.5 px-3 text-xs transition-colors min-h-[44px] cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-teal-600 ${
-                  mobileTab === "analytics"
-                    ? "border-b-2 border-teal-700 bg-teal-50/25 text-slate-900 font-bold"
-                    : "border-b-2 border-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-50/60 font-semibold"
-                }`}
-              >
-                <Star
-                  className="w-3.5 h-3.5 fill-amber-500 text-amber-600 shrink-0"
-                  aria-hidden="true"
-                />
-                <span>Ratings</span>
-                <span
-                  className={`px-1.5 py-0.5 rounded-md text-[11px] tabular-nums ${
-                    mobileTab === "analytics"
-                      ? "bg-amber-100/80 text-amber-900 font-bold"
-                      : "bg-slate-100 text-slate-700 font-semibold"
-                  }`}
-                >
-                  {hasRating ? Number(rawAvg).toFixed(1) : "0.0"}
-                </span>
-              </button>
+            <div className="lg:hidden mb-2.5">
+              <SegmentedTabs
+                tabs={[
+                  {
+                    id: "reviews",
+                    label: "Reviews",
+                    count: reviews.length,
+                    icon: MessageSquare,
+                  },
+                  {
+                    id: "analytics",
+                    label: "Ratings",
+                    count: hasRating ? Number(rawAvg).toFixed(1) : "0.0",
+                    icon: Star,
+                  },
+                ]}
+                activeTab={mobileTab}
+                onChange={setMobileTab}
+                variant="pill"
+                size="md"
+                fullWidth
+                ariaLabel="Storefront feedback views"
+              />
             </div>
 
             {/* Mobile Ratings Breakdown & Photos (Only shown when mobileTab is 'analytics' on < lg screens) */}

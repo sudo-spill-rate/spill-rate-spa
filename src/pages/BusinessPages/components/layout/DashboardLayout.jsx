@@ -1,6 +1,6 @@
-﻿import React from "react";
+import React from "react";
 import DashboardNavbar from "./DashboardNavbar";
-import DashboardSidebar from "./DashboardSidebar";
+import MerchantDashboardSidebar from "./MerchantDashboardSidebar";
 
 export default function DashboardLayout({
   children,
@@ -23,10 +23,10 @@ export default function DashboardLayout({
       <DashboardNavbar />
 
       {/* Main Body with Sidebar */}
-      <div className="flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-3 sm:py-6">
+      <div className="flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-3 sm:py-6 pb-8 sm:pb-12">
         <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 lg:gap-8 items-start">
           {/* Sidebar */}
-          <DashboardSidebar activeBusinessSlug={activeBusinessSlug} />
+          <MerchantDashboardSidebar activeBusinessSlug={activeBusinessSlug} />
 
           {/* Primary Main Content Panel */}
           <main id="dashboard-main" tabIndex={-1} className="flex-1 w-full min-w-0">
@@ -54,18 +54,6 @@ export default function DashboardLayout({
           </main>
         </div>
       </div>
-
-      {/* Subtle Owner Portal Footer */}
-      <footer className="mt-auto border-t border-slate-200 bg-white py-4">
-        <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-2.5 text-xs text-slate-500 text-center sm:text-left">
-          <p>SpillRate Business Management. All customer reviews are cryptographically recorded.</p>
-          <div className="flex items-center gap-4">
-            <a href="/faq" className="hover:text-slate-800 transition-colors py-1">Owner FAQ</a>
-            <a href="/contact" className="hover:text-slate-800 transition-colors py-1">Support</a>
-            <a href="/terms" className="hover:text-slate-800 transition-colors py-1">Terms of Service</a>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

@@ -6,18 +6,15 @@ const baseUrl = config?.API_URL || "http://localhost:3000/v1/api";
 export const api = axios.create({
     baseURL: baseUrl,
     withCredentials: true,
-    headers: {
-        "Cache-Control": "no-cache",
-        "X-Requested-With": "XMLHttpRequest",
-    },
 });
 
 // 🔐 1. Request Interceptor na may explicit InternalAxiosRequestConfig type
 api.interceptors.request.use((reqConfig: InternalAxiosRequestConfig) => {
     if (typeof window !== "undefined") {
+        // Alisin ang persistent localStorage access; gamitin ang sessionStorage bilang temporary tab fallback
         const token =
-            localStorage.getItem("accessToken") ||
-            sessionStorage.getItem("accessToken");
+            sessionStorage.getItem("accessToken") ||
+            localStorage.getItem("accessToken");
 
         if (token && reqConfig.headers) {
             reqConfig.headers.Authorization = `Bearer ${token}`;
@@ -83,9 +80,9 @@ api.interceptors.response.use(
 
             // I-redirect ang user sa root page
             if (navigateFunction) {
-                navigateFunction("/?signin=true");
+                navigateFunction("/");
             } else if (typeof window !== "undefined") {
-                window.location.href = "/?signin=true";
+                window.location.href = "/";
             }
 
             return Promise.reject(error);

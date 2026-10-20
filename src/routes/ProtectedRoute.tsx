@@ -19,7 +19,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     }
 
     if (!isAuthenticated) {
-        return <Navigate to="/?signin=true" state={{ from: location }} replace />;
+        return <Navigate to="/" replace />;
     }
 
     // Founder RBAC Guard: Ang Founder ay may sariling nakatalagang route (/admin/*)
@@ -31,4 +31,5 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     return children ? <>{children}</> : <Outlet />;
 };
 
-export default ProtectedRoute;
+export default ProtectedRoute;
+

@@ -15,6 +15,7 @@ import {
   Star,
   MessageSquare,
   Camera,
+  CheckCircle2,
 } from "lucide-react";
 import DashboardLayout from "../components/layout/DashboardLayout";
 import BusinessRatingStatsCard from "../components/profile/BusinessRatingStatsCard";
@@ -305,11 +306,9 @@ export default function DashboardExploreBusinessViewPage() {
                             <span className="text-slate-300 font-light text-xs sm:text-sm" aria-hidden="true">
                               |
                             </span>
-                            <img
-                              src="https://res.cloudinary.com/qzludnat/image/upload/v1792131560/Teal_Verified_Shield_Icon-removebg-preview.png"
-                              alt=""
-                              className="w-5 h-5 object-contain inline-block shrink-0"
-                              decoding="async"
+                            <CheckCircle2
+                              className="w-5 h-5 text-teal-700 inline-block shrink-0 drop-shadow-2xs"
+                              aria-hidden="true"
                             />
                           </span>
                         )}

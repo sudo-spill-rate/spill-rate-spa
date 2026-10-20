@@ -33,14 +33,16 @@ export default function ReviewCommentTextarea({
         onChange={(e) => onChange(e.target.value)}
         maxLength={maxLength}
         disabled={disabled}
+        aria-invalid={!!error}
+        aria-describedby={error ? "review-comment-error" : undefined}
         placeholder="Share your firsthand experience with this business. What did you order or request? How was the service, quality, and overall value?"
-        className={`w-full p-3.5 bg-white border rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 leading-relaxed disabled:bg-slate-50 disabled:text-slate-500 ${
+        className={`w-full p-3.5 bg-white border rounded-xl text-base sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 leading-relaxed disabled:bg-slate-50 disabled:text-slate-500 ${
           error ? "border-red-500" : "border-slate-300"
         }`}
       />
 
       {error && (
-        <p className="text-xs text-red-600 flex items-center gap-1 mt-1" role="alert">
+        <p id="review-comment-error" className="text-xs text-red-600 flex items-center gap-1 mt-1" role="alert">
           <AlertCircle className="w-3.5 h-3.5 shrink-0" />
           <span>{error}</span>
         </p>

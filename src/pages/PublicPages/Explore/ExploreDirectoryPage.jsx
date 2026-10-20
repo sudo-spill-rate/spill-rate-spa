@@ -105,7 +105,7 @@ export default function ExploreDirectoryPage() {
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="Search by business name or keyword..."
-                className="w-full pl-9 sm:pl-10 pr-9 py-2 text-slate-900 placeholder-slate-400 bg-white border border-slate-300 rounded-lg text-xs sm:text-sm focus:outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20 transition-colors min-h-[40px]"
+                className="w-full pl-9 sm:pl-10 pr-9 py-2 text-slate-900 placeholder-slate-400 bg-white border border-slate-300 rounded-lg text-base sm:text-sm focus:outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20 transition-colors min-h-[44px] sm:min-h-[40px]"
               />
               {searchInput && (
                 <button

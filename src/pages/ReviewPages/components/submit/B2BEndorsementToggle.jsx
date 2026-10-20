@@ -41,7 +41,7 @@ export default function B2BEndorsementToggle({
               disabled={disabled}
               onChange={(e) => onBusinessIdChange(e.target.value)}
               placeholder="e.g. Acme Supplies Corp"
-              className="w-full pl-9 pr-3.5 py-2 text-xs sm:text-sm bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600"
+              className="w-full pl-9 pr-3.5 py-2 text-base sm:text-sm bg-white border border-slate-300 rounded-lg text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[44px] sm:min-h-[38px]"
             />
           </div>
         </div>

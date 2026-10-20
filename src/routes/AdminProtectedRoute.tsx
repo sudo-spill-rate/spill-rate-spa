@@ -22,7 +22,7 @@ export const AdminProtectedRoute: React.FC<AdminProtectedRouteProps> = ({ childr
     }
 
     if (!isAuthenticated) {
-        return <Navigate to="/?signin=true" state={{ from: location }} replace />;
+        return <Navigate to="/" replace />;
     }
 
     // Role Guard: founder o admin lang ang pwedeng pumasok

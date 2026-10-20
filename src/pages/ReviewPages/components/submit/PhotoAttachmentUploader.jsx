@@ -23,7 +23,8 @@ export default function PhotoAttachmentUploader({
 
     const validFiles = [];
     for (const file of files) {
-      if (!file.type.startsWith("image/")) {
+      const isExtValid = /\.(jpe?g|png|webp)$/i.test(file.name);
+      if (!file.type.startsWith("image/") || !isExtValid) {
         setUploadError("Only image files (JPEG, PNG, WebP) are allowed.");
         return;
       }
@@ -75,7 +76,7 @@ export default function PhotoAttachmentUploader({
                 type="button"
                 onClick={() => handleRemoveImage(idx)}
                 aria-label={`Remove photo ${idx + 1}`}
-                className="absolute top-1 right-1 p-1 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600"
+                className="absolute top-1 right-1 w-7 h-7 sm:w-6 sm:h-6 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white flex items-center justify-center transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer"
               >
                 <X className="w-3.5 h-3.5" />
               </button>
@@ -104,12 +105,14 @@ export default function PhotoAttachmentUploader({
         accept="image/*"
         multiple
         onChange={handleFileChange}
-        className="sr-only"
+        className="hidden"
         aria-label="Upload review photos"
+        aria-invalid={!!uploadError}
+        aria-describedby={uploadError ? "photo-upload-error" : undefined}
       />
 
       {uploadError && (
-        <p className="text-xs text-red-600 flex items-center gap-1 mt-1" role="alert">
+        <p id="photo-upload-error" className="text-xs text-red-600 flex items-center gap-1 mt-1" role="alert">
           <AlertCircle className="w-3.5 h-3.5 shrink-0" />
           <span>{uploadError}</span>
         </p>

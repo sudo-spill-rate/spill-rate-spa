@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Flag, X, AlertCircle, CheckCircle, RotateCw } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Flag, AlertCircle, CheckCircle, RotateCw } from "lucide-react";
 import { reviewService } from "../../../../services/reviewService";
-import { useBodyScrollLock } from "../../../../hooks/useBodyScrollLock";
+import { toast } from "react-toastify";
+import BaseModal from "../../../../components/common/BaseModal";
 
 const REPORT_REASONS = [
   { value: "spam", label: "Spam or promotional content" },
@@ -12,14 +13,11 @@ const REPORT_REASONS = [
 ];
 
 export default function ReportReviewModal({ review, isOpen, onClose }) {
-  useBodyScrollLock(isOpen);
   const [reason, setReason] = useState("spam");
   const [details, setDetails] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [isSuccess, setIsSuccess] = useState(false);
-
-  const modalRef = useRef(null);
 
   useEffect(() => {
     if (!isOpen) {
@@ -30,16 +28,6 @@ export default function ReportReviewModal({ review, isOpen, onClose }) {
       setIsSubmitting(false);
     }
   }, [isOpen]);
-
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === "Escape" && isOpen) {
-        onClose();
-      }
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
 
   if (!isOpen || !review) return null;
 
@@ -56,58 +44,43 @@ export default function ReportReviewModal({ review, isOpen, onClose }) {
 
       if (res.success) {
         setIsSuccess(true);
+        toast.success("Report submitted for moderation.");
         setTimeout(() => {
           onClose();
         }, 2200);
       } else {
-        setError(res.message || "Failed to submit report. Please try again.");
+        const msg = res.message || "Failed to submit report. Please try again.";
+        setError(msg);
+        toast.error(msg);
       }
     } catch (err) {
-      setError(err?.message || "Failed to submit report. Please try again.");
+      const msg = err?.message || "Failed to submit report. Please try again.";
+      setError(msg);
+      toast.error(msg);
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="report-review-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto"
-      onClick={(e) => {
-        if (e.target === e.currentTarget && !isSubmitting) onClose();
-      }}
-    >
-      <div
-        ref={modalRef}
-        onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-xl border border-slate-200 shadow-xl max-w-md w-full p-5 sm:p-6 my-auto space-y-4"
-      >
-        <div className="flex items-start justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center shrink-0">
-              <Flag className="w-4 h-4" />
-            </div>
-            <div>
-              <h3 id="report-review-title" className="text-base font-bold text-slate-900">
-                Report this Review
-              </h3>
-              <p className="text-xs text-slate-500">
-                Review by <strong className="text-slate-800">{review.name}</strong>
-              </p>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-1 text-slate-400 hover:text-slate-700 rounded focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[36px] min-w-[36px] flex items-center justify-center cursor-pointer"
-            aria-label="Close report dialog"
-          >
-            <X className="w-5 h-5" />
-          </button>
+    <BaseModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Report this Review"
+      description={
+        <span>
+          Review by <strong className="text-slate-800">{review.name}</strong>
+        </span>
+      }
+      icon={
+        <div className="w-8 h-8 rounded-lg bg-red-50 text-red-600 flex items-center justify-center shrink-0">
+          <Flag className="w-4 h-4" />
         </div>
-
+      }
+      titleId="report-review-title"
+      maxWidth="max-w-md"
+      isProcessing={isSubmitting}
+    >
         {isSuccess ? (
           <div className="py-6 text-center space-y-2">
             <CheckCircle className="w-10 h-10 text-teal-600 mx-auto" />
@@ -187,7 +160,6 @@ export default function ReportReviewModal({ review, isOpen, onClose }) {
             </div>
           </form>
         )}
-      </div>
-    </div>
+    </BaseModal>
   );
 }
