@@ -1,49 +1,30 @@
 import React, { useState } from "react";
-import { Plus, Trash2, CheckCircle2, AlertCircle } from "lucide-react";
+import { toast } from "react-toastify";
+import { Plus, Trash2, RotateCw } from "lucide-react";
 import { useCategories } from "../../../../hooks/useCategories";
 import { useAdmin } from "../../../../hooks/useAdmin";
+import BaseModal from "../../../../components/common/BaseModal";
 
 export default function AdminCategoriesSection({ onOpenAddModal }) {
   const { categories, refetch } = useCategories();
   const { deleteCategory, isDeletingCategory } = useAdmin();
 
-  const [notification, setNotification] = useState(null);
-  const [errorNotification, setErrorNotification] = useState(null);
-  const [deletingId, setDeletingId] = useState(null);
+  const [categoryToDelete, setCategoryToDelete] = useState(null);
 
-  const handleDelete = async (id, name) => {
-    if (!window.confirm(`Permanently remove category "${name}"?`)) return;
-    setDeletingId(id);
-    setErrorNotification(null);
+  const handleConfirmDelete = async () => {
+    if (!categoryToDelete) return;
     try {
-      await deleteCategory(id);
-      setNotification(`Category "${name}" removed successfully.`);
+      await deleteCategory(categoryToDelete.id);
+      toast.success(`Category "${categoryToDelete.name}" removed successfully.`);
       refetch();
-      setTimeout(() => setNotification(null), 3000);
+      setCategoryToDelete(null);
     } catch (err) {
-      setErrorNotification(err?.message || "Failed to delete category.");
-      setTimeout(() => setErrorNotification(null), 4000);
-    } finally {
-      setDeletingId(null);
+      toast.error(err?.message || "Failed to delete category.");
     }
   };
 
   return (
     <div className="space-y-4">
-      {/* Notifications */}
-      {notification && (
-        <div className="p-3 bg-teal-50 border border-teal-200 text-teal-800 rounded-xl text-xs flex items-center gap-2">
-          <CheckCircle2 className="w-4 h-4 text-teal-700 shrink-0" />
-          <span>{notification}</span>
-        </div>
-      )}
-      {errorNotification && (
-        <div className="p-3 bg-red-50 border border-red-200 text-red-800 rounded-xl text-xs flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
-          <span>{errorNotification}</span>
-        </div>
-      )}
-
       {/* Header bar */}
       <div className="bg-white rounded-xl border border-slate-200/90 p-4 shadow-xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
@@ -86,8 +67,8 @@ export default function AdminCategoriesSection({ onOpenAddModal }) {
               {cat.id && (
                 <button
                   type="button"
-                  onClick={() => handleDelete(cat.id, cat.name)}
-                  disabled={isDeletingCategory && deletingId === cat.id}
+                  onClick={() => setCategoryToDelete(cat)}
+                  disabled={isDeletingCategory}
                   className="min-h-[36px] min-w-[36px] p-2 text-slate-400 hover:text-red-700 hover:bg-red-50 rounded-lg cursor-pointer transition-colors disabled:opacity-40 focus:outline-none focus:ring-2 focus:ring-red-500"
                   title={`Delete category ${cat.name}`}
                   aria-label={`Delete category ${cat.name}`}
@@ -98,6 +79,49 @@ export default function AdminCategoriesSection({ onOpenAddModal }) {
             </div>
           ))}
         </div>
+      )}
+
+      {/* Reusable Accessible Confirmation Modal */}
+      {categoryToDelete && (
+        <BaseModal
+          isOpen={Boolean(categoryToDelete)}
+          onClose={() => setCategoryToDelete(null)}
+          title="Remove Industry Category?"
+          titleId="delete-category-modal-title"
+          maxWidth="max-w-md"
+          isProcessing={isDeletingCategory}
+        >
+          <div className="space-y-3 text-xs">
+            <p className="text-slate-600 leading-relaxed">
+              Are you sure you want to permanently remove category <strong className="text-slate-900">&ldquo;{categoryToDelete.name}&rdquo;</strong>? Existing storefronts with this category may need re-categorization.
+            </p>
+            <div className="grid grid-cols-2 gap-2 pt-3 border-t border-slate-100 font-semibold">
+              <button
+                type="button"
+                onClick={() => setCategoryToDelete(null)}
+                disabled={isDeletingCategory}
+                className="w-full px-3.5 py-2.5 rounded-lg border border-slate-300 text-slate-700 hover:bg-slate-50 min-h-[44px] cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleConfirmDelete}
+                disabled={isDeletingCategory}
+                className="w-full inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 rounded-lg bg-red-600 hover:bg-red-700 text-white min-h-[44px] cursor-pointer disabled:opacity-50"
+              >
+                {isDeletingCategory ? (
+                  <>
+                    <RotateCw className="w-3.5 h-3.5 animate-spin" />
+                    <span>Removing...</span>
+                  </>
+                ) : (
+                  <span>Remove Category</span>
+                )}
+              </button>
+            </div>
+          </div>
+        </BaseModal>
       )}
     </div>
   );
