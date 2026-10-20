@@ -1,6 +1,6 @@
 import React from "react";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
-import AdminStatCard from "./AdminStatCard";
+import { ArrowRight, CheckCircle2, Users, Building, MessageSquare, AlertCircle } from "lucide-react";
+import StatCard from "../../../../components/common/StatCard";
 
 export default function AdminOverviewSection({ overview, onNavigateTab }) {
   const stats = overview?.stats || {};
@@ -11,22 +11,25 @@ export default function AdminOverviewSection({ overview, onNavigateTab }) {
     <div className="space-y-6">
       {/* 4 Clean Stat Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <AdminStatCard
+        <StatCard
           title="Registered Users"
           value={stats.total_users ?? "0"}
           subtitle="Consumer & Merchant"
+          icon={Users}
         />
-        <AdminStatCard
+        <StatCard
           title="Active Storefronts"
           value={stats.total_businesses ?? "0"}
           subtitle="Directory Listings"
+          icon={Building}
         />
-        <AdminStatCard
+        <StatCard
           title="Verified Reviews"
           value={stats.total_reviews ?? "0"}
           subtitle="Public Ratings"
+          icon={MessageSquare}
         />
-        <AdminStatCard
+        <StatCard
           title="Pending Reports"
           value={stats.pending_reports ?? "0"}
           subtitle={
@@ -34,6 +37,9 @@ export default function AdminOverviewSection({ overview, onNavigateTab }) {
               ? "Requires Moderation"
               : "All clear"
           }
+          icon={AlertCircle}
+          trend={stats.pending_reports > 0 ? "Action Needed" : "All Clear"}
+          trendType={stats.pending_reports > 0 ? "warning" : "positive"}
         />
       </div>
 

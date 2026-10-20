@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 import {
   CheckCircle2,
   Trash2,
@@ -11,12 +12,14 @@ import {
 } from "lucide-react";
 import { useAdmin } from "../../../../hooks/useAdmin";
 import { businessService } from "../../../../services/businessService";
+import { DeleteBusinessModal } from "../../../BusinessPages/components/profile/BusinessActionModals";
 
 export default function AdminBusinessesSection({ overview, refetchOverview }) {
   const { verifyBusiness, deleteBusiness, isVerifying, isDeletingBusiness } = useAdmin();
 
   const [search, setSearch] = useState("");
   const [processingId, setProcessingId] = useState(null);
+  const [businessToDelete, setBusinessToDelete] = useState(null);
 
   // Fetch all registered businesses from directory
   const {
@@ -47,33 +50,28 @@ export default function AdminBusinessesSection({ overview, refetchOverview }) {
     setProcessingId(businessId);
     try {
       await verifyBusiness({ businessId, is_verified: !currentVerified });
+      toast.success(currentVerified ? "Storefront marked as unverified." : "Storefront verified successfully.");
       refetchBusinesses();
       if (refetchOverview) refetchOverview();
     } catch (err) {
-      alert(err?.message || "Failed to update verification status.");
+      toast.error(err?.message || "Failed to update verification status.");
     } finally {
       setProcessingId(null);
     }
   };
 
-  const handleDelete = async (businessId, businessName) => {
-    const confirmation = window.prompt(
-      `DANGER: Permanent deletion of "${businessName}". All associated reviews and feedback will be destroyed.\nType "${businessName}" to confirm:`
-    );
-    if (confirmation !== businessName) {
-      if (confirmation !== null) alert("Confirmation failed. Store name did not match.");
-      return;
-    }
-
-    setProcessingId(businessId);
+  const handleDeleteConfirm = async (businessId) => {
     try {
       await deleteBusiness(businessId);
+      toast.success("Business storefront deleted successfully.");
       refetchBusinesses();
       if (refetchOverview) refetchOverview();
+      setBusinessToDelete(null);
+      return { success: true };
     } catch (err) {
-      alert(err?.message || "Failed to delete storefront.");
-    } finally {
-      setProcessingId(null);
+      const errMsg = err?.message || "Failed to delete storefront.";
+      toast.error(errMsg);
+      return { success: false, message: errMsg };
     }
   };
 
@@ -82,9 +80,15 @@ export default function AdminBusinessesSection({ overview, refetchOverview }) {
       {/* Search Header */}
       <div className="bg-white rounded-xl border border-slate-200/90 p-3.5 shadow-xs flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="relative flex-1 max-w-md">
+          <label htmlFor="admin-business-search" className="sr-only">
+            Filter storefronts
+          </label>
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
+            id="admin-business-search"
+            name="search"
             type="search"
+            autoComplete="off"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Filter storefronts by name, slug, or category..."
@@ -200,7 +204,7 @@ export default function AdminBusinessesSection({ overview, refetchOverview }) {
 
                         <button
                           type="button"
-                          onClick={() => handleDelete(biz.id, biz.name)}
+                          onClick={() => setBusinessToDelete(biz)}
                           disabled={isDeletingBusiness && processingId === biz.id}
                           className="inline-flex items-center gap-1 px-2.5 py-1.5 text-red-700 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-lg text-xs font-semibold cursor-pointer disabled:opacity-40 min-h-[36px]"
                           title="Permanently remove storefront"
@@ -217,6 +221,17 @@ export default function AdminBusinessesSection({ overview, refetchOverview }) {
           </div>
         )}
       </div>
+
+      {/* Reusable Accessible Delete Confirmation Modal */}
+      {businessToDelete && (
+        <DeleteBusinessModal
+          isOpen={Boolean(businessToDelete)}
+          onClose={() => setBusinessToDelete(null)}
+          business={businessToDelete}
+          onDelete={handleDeleteConfirm}
+          isDeleting={isDeletingBusiness}
+        />
+      )}
     </div>
   );
 }

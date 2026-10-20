@@ -70,9 +70,15 @@ export default function AdminDirectorySection() {
       {/* Search Bar & Stats */}
       <div className="bg-white rounded-xl border border-slate-200 p-4 shadow-xs space-y-3">
         <form onSubmit={handleSearchSubmit} className="relative flex items-center">
+          <label htmlFor="admin-directory-search" className="sr-only">
+            Search storefronts
+          </label>
           <Search className="absolute left-3.5 w-4 h-4 text-slate-400 pointer-events-none" />
           <input
+            id="admin-directory-search"
+            name="search"
             type="search"
+            autoComplete="off"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             placeholder="Search all platform storefronts by name, handle, or location..."

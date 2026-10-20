@@ -1,26 +1,15 @@
-import React, { useState, useEffect } from "react";
-import { X, UserCheck, AlertCircle, RotateCw } from "lucide-react";
+import React, { useState } from "react";
+import { UserCheck, AlertCircle, RotateCw } from "lucide-react";
 import { useAdmin } from "../../../../hooks/useAdmin";
-import { useBodyScrollLock } from "../../../../hooks/useBodyScrollLock";
+import BaseModal from "../../../../components/common/BaseModal";
 
 export default function PromoteAdminModal({ isOpen, onClose }) {
-  useBodyScrollLock(isOpen);
   const { promoteAdmin, isPromoting } = useAdmin();
 
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("admin");
   const [error, setError] = useState(null);
   const [successMsg, setSuccessMsg] = useState(null);
-
-  // Close on Escape key
-  useEffect(() => {
-    if (!isOpen) return;
-    const handleKeyDown = (e) => {
-      if (e.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
@@ -51,37 +40,15 @@ export default function PromoteAdminModal({ isOpen, onClose }) {
   };
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="promote-admin-title"
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto"
-      onClick={(e) => {
-        if (e.target === e.currentTarget && !isPromoting) onClose();
-      }}
+    <BaseModal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Promote User to Admin"
+      icon={<UserCheck className="w-4 h-4 text-teal-700" />}
+      titleId="promote-admin-title"
+      maxWidth="max-w-md"
+      isProcessing={isPromoting}
     >
-      <div
-        onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-xl border border-slate-200 shadow-xl w-full max-w-md p-5 sm:p-6 my-auto space-y-4"
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-200">
-          <div className="flex items-center gap-2">
-            <UserCheck className="w-4 h-4 text-teal-700" />
-            <h2 id="promote-admin-title" className="text-sm font-bold text-slate-900">
-              Promote User to Admin
-            </h2>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="p-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded-lg cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-teal-700 min-h-[36px] min-w-[36px] flex items-center justify-center"
-            aria-label="Close dialog"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-
         {/* Alerts */}
         {error && (
           <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-800 flex items-center gap-2">
@@ -106,7 +73,9 @@ export default function PromoteAdminModal({ isOpen, onClose }) {
             </label>
             <input
               id="promote-email-input"
+              name="email"
               type="email"
+              autoComplete="email"
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -122,6 +91,8 @@ export default function PromoteAdminModal({ isOpen, onClose }) {
             </label>
             <select
               id="promote-role-select"
+              name="role"
+              autoComplete="off"
               value={role}
               onChange={(e) => setRole(e.target.value)}
               disabled={isPromoting}
@@ -157,7 +128,6 @@ export default function PromoteAdminModal({ isOpen, onClose }) {
             </button>
           </div>
         </form>
-      </div>
-    </div>
+    </BaseModal>
   );
 }
