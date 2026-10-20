@@ -38,11 +38,11 @@ export default function AdminOverviewPage() {
           overview={overview}
           onNavigateTab={(tab) => {
             const routeMap = {
-              reports: "/admin/reports",
-              businesses: "/admin/storefronts",
-              categories: "/admin/categories",
+              reports: "/admin/platform/reports",
+              businesses: "/admin/platform/storefronts",
+              categories: "/admin/platform/categories",
             };
-            navigate(routeMap[tab] || "/admin/overview");
+            navigate(routeMap[tab] || "/admin/platform/overview");
           }}
         />
       </div>

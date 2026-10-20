@@ -90,8 +90,8 @@ export default function AdminMyStorePage() {
               </span>
             </div>
 
-            {/* Full-width Business Cards Grid */}
-            <div className="grid grid-cols-1 gap-4">
+            {/* 2-Column Business Cards Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {businessList.map((biz) => (
                 <AdminOwnerBusinessCard key={biz.id || biz.slug} business={biz} />
               ))}

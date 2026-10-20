@@ -18,6 +18,7 @@ import { ProtectedRoute } from "./routes/ProtectedRoute";
 import { AdminProtectedRoute } from "./routes/AdminProtectedRoute";
 import PageNotFound from "./pages/PageNotFound/PageNotFoundPage";
 import PublicLayout from "./pages/PublicPages/components/layout/PublicLayout";
+import ScrollToTop from "./components/common/ScrollToTop";
 
 const queryClient = new QueryClient({
     defaultOptions: {
@@ -33,8 +34,9 @@ export default function Routes() {
         <QueryClientProvider client={queryClient}>
             {/* 🔐 Global AuthProvider: Para sa user session at navbar sa buong app */}
             <AuthProvider>
+                <ScrollToTop />
                 <ReactRoutes>
-                    {/* 1. Public Pages (Landing, About, Contact, FAQ, Terms, Privacy) */}
+                    {/* 1. Public Pages (Landing, About, Contact, FAQ, Terms, Privacy) & 404 Fallback */}
                     <Route element={<PublicLayout />}>
                         {PublicRoutes.map((route) => (
                             <Route
@@ -43,6 +45,7 @@ export default function Routes() {
                                 element={route.element}
                             />
                         ))}
+                        <Route path="*" element={<PageNotFound />} />
                     </Route>
 
                     {/* 2. Authentication Routes (/login, /oauth/callback) */}
@@ -102,9 +105,6 @@ export default function Routes() {
                             />
                         ))}
                     </Route>
-
-                    {/* 6. 404 Fallback */}
-                    <Route path="*" element={<PageNotFound />} />
                 </ReactRoutes>
             </AuthProvider>
         </QueryClientProvider>
