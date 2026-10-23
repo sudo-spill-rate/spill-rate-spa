@@ -1,7 +1,15 @@
+import React from "react";
 import PublicPageHeader from "../components/layout/PublicPageHeader";
 import FeaturedSection from "../components/landing/FeaturedSection";
+import { useDocumentTitle } from "../../../hooks/useDocumentTitle";
 
 export default function LandingPage() {
+  useDocumentTitle(
+    "SpillRate - Discover, Review, and Rate Trusted Businesses",
+    "Discover local businesses, read verified customer feedback, and share authentic ratings and reviews with photos.",
+    "/"
+  );
+
   return (
     <div className="flex-1 flex flex-col">
       <PublicPageHeader

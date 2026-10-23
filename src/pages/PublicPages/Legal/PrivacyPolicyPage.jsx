@@ -1,5 +1,6 @@
-﻿import React from "react";
+import React from "react";
 import LegalDocumentViewer from "../components/legal/LegalDocumentViewer";
+import { useDocumentTitle } from "../../../hooks/useDocumentTitle";
 
 const PRIVACY_SECTIONS = [
   {
@@ -12,10 +13,19 @@ const PRIVACY_SECTIONS = [
   },
   {
     id: "anti-spam-cooldowns",
-    heading: "How We Stop Spam Without Tracking You",
+    heading: "How We Stop Spam Without Intrusive Tracking",
     paragraphs: [
-      "The central challenge for any open community directory is preventing fake reviews, duplicate ratings, and automated spam floods without invading the personal privacy of everyday patrons who share honest feedback. While traditional advertising platforms track users across the internet using intrusive surveillance cookies, commercial tracking pixels, and invasive data harvesting, SpillRate firmly rejects these disrespectful monitoring practices. Instead of tracking your personal identity or browsing history, our system utilizes an anonymous twenty-four-hour device cooldown mechanism that simply verifies whether a specific browser device recently reviewed that exact business. When you submit a review, our system records an anonymous device identifier alongside temporary network connection markers solely to calculate whether your twenty-four-hour submission waiting interval has passed. These cooldown records cannot be reversed to reveal your private name, your physical home location, your telephone number, or your personal internet activity outside of SpillRate.",
-      "Our cooldown identifiers never follow you when you browse other websites across the internet, and we never combine them with advertising profiles, marketing databases, or commercial data broker lists under any circumstances. Once the twenty-four-hour submission waiting period has concluded, these temporary cooldown records naturally expire, leaving no lingering historical record of your device or connection on our web servers. This privacy-first engineering ensures that honest neighborhood entrepreneurs are effectively protected against coordinated review-bombing mobs, automated bot scripts, and malicious competitor attacks without requiring everyday customers to surrender personal privacy. You can browse local recommendations and submit authentic customer feedback with complete confidence, knowing your digital privacy is respected and your hardware details are never shared, rented, or monetized. We prove that it is entirely possible to operate an open, spam-free local rating directory while upholding the highest standards of digital privacy, transparency, and civic respect.",
+      "The central challenge for any open community directory is preventing fake reviews, duplicate ratings, and automated spam floods without compromising the trust of everyday patrons who share honest feedback. For our core review submission features, SpillRate does not require user account registration, password creation, or invasive personal profiling. Instead, our review integrity system utilizes an anonymous twenty-four-hour device cooldown mechanism that simply verifies whether a specific browser device recently reviewed that exact business. When you submit a review, our system records an anonymous cryptographic device identifier alongside temporary network markers solely to calculate whether your twenty-four-hour submission waiting interval has passed. These cooldown records cannot be reversed to reveal your private name, your physical home location, your telephone number, or your personal internet activity outside of SpillRate.",
+      "Our cooldown identifiers never follow you when you browse other websites across the internet, and we never combine them with personal profiles or commercial data broker lists under any circumstances. Once the twenty-four-hour submission waiting period has concluded, these temporary cooldown records naturally expire, leaving no lingering historical record of your device or connection on our web servers. This privacy-first engineering ensures that honest neighborhood entrepreneurs are effectively protected against coordinated review-bombing mobs, automated bot scripts, and malicious competitor attacks without requiring everyday customers to surrender personal privacy. You can browse local recommendations and submit authentic customer feedback with complete confidence, knowing your digital privacy is respected and your hardware details are never shared, rented, or monetized. We prove that it is entirely possible to operate an open, spam-free local rating directory while upholding the highest standards of digital privacy, transparency, and civic respect.",
+    ],
+  },
+  {
+    id: "cookies-and-advertising",
+    heading: "Third-Party Advertising, Cookies & Google AdSense",
+    paragraphs: [
+      "To support our free community platform and ensure local directory access remains open to everyone, SpillRate works with third-party advertising partners, including Google AdSense, to display relevant digital advertisements across our public pages. Third-party vendors, including Google, use cookies, web beacons, and similar technologies to serve ads based on a user's prior visits to SpillRate or other websites across the internet.",
+      "Google's use of advertising cookies enables it and its partners to serve personalized or contextual advertisements to our users based on their visit to SpillRate and/or other sites on the Internet. These cookies allow advertising networks to measure advertisement performance, prevent fraudulent impressions or clicks, and present advertisements aligned with general consumer interests without accessing your private personal identification details such as your name, email address, or private communications.",
+      "Users have complete freedom to control and personalize their advertising preferences. You may opt out of personalized advertising at any time by visiting Google Ads Settings (https://adssettings.google.com). Alternatively, you can opt out of a third-party vendor's use of cookies for personalized advertising by visiting the Digital Advertising Alliance Consumer Choice page at www.aboutads.info (https://www.aboutads.info) or the Network Advertising Initiative opt-out portal (https://optout.networkadvertising.org). You can also adjust your web browser settings to block or delete cookies entirely at any time.",
     ],
   },
   {
@@ -23,7 +33,7 @@ const PRIVACY_SECTIONS = [
     heading: "How We Use Your Information",
     paragraphs: [
       "At SpillRate, we believe in complete operational transparency regarding how data is managed, and we promise to use the information you share with us only for clear, honest, and community-centered purposes. We use submitted customer ratings and feedback messages to calculate direct arithmetic score averages for local businesses, ensuring neighborhood consumers make well-informed choices based on truthful community sentiment. We display public customer reviews, star ratings, and uploaded photographs on the corresponding business profile pages so that community members can discover dependable local services and learn from genuine customer experiences. For registered business owners, we utilize Google authentication credentials to confirm merchant identity, grant access to profile editing features, and allow the pinning of up to three highlight reviews. If you submit a moderation report regarding an abusive comment, competitor sabotage, or suspected extortion attempt, our moderation team uses your report details to investigate the claim and uphold our community standards.",
-      "We use general, aggregated website performance metrics to identify technical software bugs, optimize server response speeds, and ensure that our directory functions smoothly across all mobile devices and desktop computers. We never sell, rent, trade, or distribute your email address, reviewer name, or private merchant details to third-party marketing companies, advertising networks, or commercial telemarketers under any circumstances. We do not send unsolicited promotional marketing campaigns or third-party commercial advertisements, and any direct email you receive from us will be strictly related to your administrative inquiries or essential support notices. In rare circumstances where we are legally required by official law enforcement subpoenas or court orders, we may disclose minimal necessary technical information to comply with valid legal processes. Outside of these clear, legitimate operational responsibilities, your information remains safely protected within our secure cloud databases and is never repurposed for commercial exploitation or behavioral tracking.",
+      "We use general, aggregated website performance metrics to identify technical software bugs, optimize server response speeds, and ensure that our directory functions smoothly across all mobile devices and desktop computers. We never sell, rent, trade, or distribute your email address, reviewer name, or private merchant details to third-party telemarketers or external broker databases under any circumstances. We do not send unsolicited promotional marketing emails, and any direct email you receive from us will be strictly related to your administrative inquiries or essential support notices. In rare circumstances where we are legally required by official law enforcement subpoenas or court orders, we may disclose minimal necessary technical information to comply with valid legal processes. Outside of these clear, legitimate operational responsibilities, your information remains safely protected within our secure cloud databases and is never repurposed for commercial exploitation or behavioral tracking.",
     ],
   },
   {
@@ -53,11 +63,16 @@ const PRIVACY_SECTIONS = [
 ];
 
 export default function PrivacyPolicyPage() {
+  useDocumentTitle(
+    "Privacy Policy & Google AdSense Cookie Disclosures - SpillRate",
+    "Understand how SpillRate protects user privacy, enforces anti-spam device cooldowns without tracking, and complies with Google AdSense advertising cookie standards.",
+    "/privacy-policy"
+  );
   return (
     <LegalDocumentViewer
       title="Privacy Policy"
       lastUpdated="October 2026"
-      description="This policy outlines how SpillRate collects, stores, and protects information submitted by community patrons and business owners."
+      description="This policy outlines how SpillRate collects, stores, and protects information submitted by community patrons and business owners, including our advertising and cookie policies."
       breadcrumbs={[
         { label: "Home", href: "/" },
         { label: "Legal" },

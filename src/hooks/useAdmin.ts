@@ -1,6 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { adminService } from "../services/adminService";
-import { AdminReportsQuery, AddCategoryPayload, PromoteAdminPayload } from "../types/admin";
+import {
+    AdminReportsQuery,
+    AddCategoryPayload,
+    UpdateCategoryPayload,
+    PromoteAdminPayload,
+    AdminBusinessesQuery,
+    AdminUsersQuery,
+} from "../types/admin";
 
 export const useAdmin = (reportsQuery?: AdminReportsQuery) => {
     const queryClient = useQueryClient();
@@ -20,7 +27,7 @@ export const useAdmin = (reportsQuery?: AdminReportsQuery) => {
 
     // 2. Fetch Global Reports
     const reportsQueryData = useQuery({
-        queryKey: ["admin-reports", reportsQuery?.status],
+        queryKey: ["admin-reports", reportsQuery?.status, reportsQuery?.limit],
         queryFn: async () => {
             const res = await adminService.getReports(reportsQuery);
             if (res.success) {
@@ -31,7 +38,20 @@ export const useAdmin = (reportsQuery?: AdminReportsQuery) => {
         staleTime: 1000 * 30,
     });
 
-    // 3. Toggle Business Verification
+    // 3. Fetch Platform Admins List
+    const adminsQuery = useQuery({
+        queryKey: ["admin-admins-list"],
+        queryFn: async () => {
+            const res = await adminService.getAdmins();
+            if (res.success) {
+                return res.data;
+            }
+            throw new Error(res.message || "Failed to load platform admins");
+        },
+        staleTime: 1000 * 60,
+    });
+
+    // 4. Toggle Business Verification
     const verifyMutation = useMutation({
         mutationFn: async ({ businessId, isVerified }: { businessId: string; isVerified: boolean }) => {
             const res = await adminService.verifyBusiness(businessId, isVerified);
@@ -40,11 +60,12 @@ export const useAdmin = (reportsQuery?: AdminReportsQuery) => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["admin-overview"] });
+            queryClient.invalidateQueries({ queryKey: ["admin-businesses-queue"] });
             queryClient.invalidateQueries({ queryKey: ["community-feed-businesses"] });
         },
     });
 
-    // 4. Admin Delete Business
+    // 5. Admin Delete Business
     const deleteBusinessMutation = useMutation({
         mutationFn: async (businessId: string) => {
             const res = await adminService.deleteBusiness(businessId);
@@ -53,11 +74,12 @@ export const useAdmin = (reportsQuery?: AdminReportsQuery) => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["admin-overview"] });
+            queryClient.invalidateQueries({ queryKey: ["admin-businesses-queue"] });
             queryClient.invalidateQueries({ queryKey: ["community-feed-businesses"] });
         },
     });
 
-    // 5. Admin Delete Toxic Review
+    // 6. Admin Delete Toxic Review
     const deleteReviewMutation = useMutation({
         mutationFn: async (reviewId: string) => {
             const res = await adminService.deleteReview(reviewId);
@@ -70,7 +92,7 @@ export const useAdmin = (reportsQuery?: AdminReportsQuery) => {
         },
     });
 
-    // 6. Add Category
+    // 7. Add Category
     const addCategoryMutation = useMutation({
         mutationFn: async (payload: AddCategoryPayload) => {
             const res = await adminService.addCategory(payload);
@@ -82,7 +104,19 @@ export const useAdmin = (reportsQuery?: AdminReportsQuery) => {
         },
     });
 
-    // 7. Delete Category
+    // 8. Update Category
+    const updateCategoryMutation = useMutation({
+        mutationFn: async ({ id, payload }: { id: string; payload: UpdateCategoryPayload }) => {
+            const res = await adminService.updateCategory(id, payload);
+            if (!res.success) throw new Error(res.message || "Failed to update category");
+            return res.data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["business-categories"] });
+        },
+    });
+
+    // 9. Delete Category
     const deleteCategoryMutation = useMutation({
         mutationFn: async (categoryId: string) => {
             const res = await adminService.deleteCategory(categoryId);
@@ -94,12 +128,42 @@ export const useAdmin = (reportsQuery?: AdminReportsQuery) => {
         },
     });
 
-    // 8. Promote User to Admin
+    // 10. Promote User to Admin
     const promoteMutation = useMutation({
         mutationFn: async (payload: PromoteAdminPayload) => {
             const res = await adminService.promoteAdmin(payload);
             if (!res.success) throw new Error(res.message || "Failed to promote account");
             return res.data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["admin-admins-list"] });
+            queryClient.invalidateQueries({ queryKey: ["admin-overview"] });
+        },
+    });
+
+    // 11. Revoke Admin Access
+    const revokeMutation = useMutation({
+        mutationFn: async (email: string) => {
+            const res = await adminService.revokeAdmin(email);
+            if (!res.success) throw new Error(res.message || "Failed to revoke admin privileges");
+            return res.data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["admin-admins-list"] });
+            queryClient.invalidateQueries({ queryKey: ["admin-overview"] });
+        },
+    });
+
+    // 12. Ban / Unban User
+    const banUserMutation = useMutation({
+        mutationFn: async ({ userId, isBanned }: { userId: string; isBanned: boolean }) => {
+            const res = await adminService.banUser(userId, isBanned);
+            if (!res.success) throw new Error(res.message || "Failed to update user ban status");
+            return res.data;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["admin-users-list"] });
+            queryClient.invalidateQueries({ queryKey: ["admin-overview"] });
         },
     });
 
@@ -115,6 +179,11 @@ export const useAdmin = (reportsQuery?: AdminReportsQuery) => {
         reportsError: reportsQueryData.error?.message,
         refetchReports: reportsQueryData.refetch,
 
+        admins: adminsQuery.data || [],
+        isLoadingAdmins: adminsQuery.isLoading,
+        adminsError: adminsQuery.error?.message,
+        refetchAdmins: adminsQuery.refetch,
+
         // Actions
         verifyBusiness: verifyMutation.mutateAsync,
         isVerifying: verifyMutation.isPending,
@@ -128,12 +197,61 @@ export const useAdmin = (reportsQuery?: AdminReportsQuery) => {
         addCategory: addCategoryMutation.mutateAsync,
         isAddingCategory: addCategoryMutation.isPending,
 
+        updateCategory: updateCategoryMutation.mutateAsync,
+        isUpdatingCategory: updateCategoryMutation.isPending,
+
         deleteCategory: deleteCategoryMutation.mutateAsync,
         isDeletingCategory: deleteCategoryMutation.isPending,
 
         promoteAdmin: promoteMutation.mutateAsync,
         isPromoting: promoteMutation.isPending,
+
+        revokeAdmin: revokeMutation.mutateAsync,
+        isRevoking: revokeMutation.isPending,
+
+        banUser: banUserMutation.mutateAsync,
+        isBanningUser: banUserMutation.isPending,
     };
+};
+
+/**
+ * Hook para sa Admin Businesses Queue (GET /v1/api/admin/businesses)
+ */
+export const useAdminBusinesses = (query?: AdminBusinessesQuery) => {
+    return useQuery({
+        queryKey: ["admin-businesses-queue", query?.status, query?.search, query?.limit, query?.cursor],
+        queryFn: async () => {
+            const res = await adminService.getBusinesses(query);
+            if (res.success) {
+                return {
+                    businesses: res.data || [],
+                    pagination: res.pagination,
+                };
+            }
+            throw new Error(res.message || "Failed to fetch admin businesses");
+        },
+        staleTime: 1000 * 30,
+    });
+};
+
+/**
+ * Hook para sa Platform User Directory & Moderation (GET /v1/api/admin/users)
+ */
+export const useAdminUsers = (query?: AdminUsersQuery) => {
+    return useQuery({
+        queryKey: ["admin-users-list", query?.search, query?.role, query?.limit, query?.cursor],
+        queryFn: async () => {
+            const res = await adminService.getUsers(query);
+            if (res.success) {
+                return {
+                    users: res.data || [],
+                    pagination: res.pagination,
+                };
+            }
+            throw new Error(res.message || "Failed to fetch users");
+        },
+        staleTime: 1000 * 30,
+    });
 };
 
 export default useAdmin;

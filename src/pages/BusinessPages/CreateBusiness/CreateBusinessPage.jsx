@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router";
 import { ChevronLeft } from "lucide-react";
 import DashboardLayout from "../components/layout/DashboardLayout";
-import CreateBusinessForm from "../components/create/CreateBusinessForm";
+import StorefrontWizardForm from "../../../components/common/StorefrontWizardForm";
 
 export default function CreateBusinessPage() {
   const navigate = useNavigate();
@@ -28,7 +28,11 @@ export default function CreateBusinessPage() {
         </div>
 
         {/* Form Component */}
-        <CreateBusinessForm />
+        <StorefrontWizardForm
+          onSuccessRedirect={(slug) => `/dashboard/business/${slug}`}
+          onCancelRedirect="/dashboard"
+          quotaDashboardPath="/dashboard"
+        />
       </div>
     </DashboardLayout>
   );

@@ -30,6 +30,22 @@ export default function ContactForm() {
     window.open(gmailUrl, "_blank", "noopener,noreferrer");
   };
 
+  const handleOpenMailto = (e) => {
+    e.preventDefault();
+    if (!name.trim()) {
+      setError("Please enter your name.");
+      return;
+    }
+    setError("");
+
+    const { subject, body } = buildSubjectAndBody();
+    const mailtoUrl = `mailto:${encodeURIComponent(supportEmail)}?subject=${encodeURIComponent(
+      subject
+    )}&body=${encodeURIComponent(body)}`;
+
+    window.location.href = mailtoUrl;
+  };
+
   return (
     <form
       onSubmit={handleOpenGmail}
@@ -91,18 +107,25 @@ export default function ContactForm() {
         </div>
       </div>
 
-      {/* Action Button */}
-      <div className="mt-6">
+      {/* Action Buttons */}
+      <div className="mt-6 flex flex-col sm:flex-row items-center gap-2.5">
         <button
           type="submit"
-          className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-teal-700 hover:bg-teal-800 active:bg-teal-900 text-white font-semibold text-sm rounded-xl transition-colors min-h-[44px] focus:outline-none focus:ring-2 focus:ring-teal-600"
+          className="w-full sm:flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-teal-700 hover:bg-teal-800 active:bg-teal-900 text-white font-semibold text-sm rounded-xl transition-colors min-h-[44px] focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 cursor-pointer"
         >
           Open in Gmail
+        </button>
+        <button
+          type="button"
+          onClick={handleOpenMailto}
+          className="w-full sm:flex-1 flex items-center justify-center gap-2 px-5 py-3 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 text-slate-800 font-semibold text-sm rounded-xl transition-colors min-h-[44px] focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 border border-slate-200/80 cursor-pointer"
+        >
+          Default Mail App
         </button>
       </div>
 
       <p className="mt-3.5 text-[11px] text-slate-500 text-center leading-normal">
-        Opens Gmail with the subject and recipient (<code className="text-slate-700 font-mono">spillrate@gmail.com</code>) already filled in.
+        Opens with your message subject and recipient (<code className="text-slate-700 font-mono">spillrate@gmail.com</code>) pre-filled.
       </p>
     </form>
   );

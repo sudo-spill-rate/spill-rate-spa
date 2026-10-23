@@ -1,0 +1,16 @@
+User-agent: Mediapartners-Google
+Allow: /
+
+User-agent: Googlebot
+Allow: /
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /oauth/callback
+
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /oauth/callback
+
+Sitemap: https://spillrate.up.railway.app/sitemap.xml

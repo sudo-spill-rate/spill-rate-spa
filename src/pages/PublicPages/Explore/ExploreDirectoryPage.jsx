@@ -6,8 +6,14 @@ import PublicPageHeader from "../components/layout/PublicPageHeader";
 import DirectorySearchResults from "../components/explore/DirectorySearchResults";
 import { businessService } from "../../../services/businessService";
 import { useCategories } from "../../../hooks/useCategories";
+import { useDocumentTitle } from "../../../hooks/useDocumentTitle";
 
 export default function ExploreDirectoryPage() {
+  useDocumentTitle(
+    "Explore Local Businesses & Storefront Ratings - SpillRate Directory",
+    "Search and discover verified local businesses, customer ratings, operating hours, and authentic community feedback across your neighborhood.",
+    "/explore"
+  );
   const [searchParams, setSearchParams] = useSearchParams();
   const searchParam = searchParams.get("search") || "";
   const categoryParam = searchParams.get("category") || "";
@@ -174,20 +180,20 @@ export default function ExploreDirectoryPage() {
                 <button
                   type="button"
                   onClick={() => handleSelectCategory("")}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-teal-50 border border-teal-200 text-teal-800 font-medium hover:bg-teal-100 transition-colors cursor-pointer text-[11px]"
+                  className="inline-flex items-center gap-1.5 px-3 py-2 sm:py-1.5 rounded-full bg-teal-50 border border-teal-200 text-teal-800 font-medium hover:bg-teal-100 transition-colors cursor-pointer text-xs min-h-[44px] sm:min-h-[36px] focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
                 >
                   <span>Category: {categoryParam}</span>
-                  <X className="w-3 h-3 text-teal-700" />
+                  <X className="w-3.5 h-3.5 text-teal-700" />
                 </button>
               )}
               {searchParam && (
                 <button
                   type="button"
                   onClick={handleClearSearch}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-700 font-medium hover:bg-slate-200 transition-colors cursor-pointer text-[11px]"
+                  className="inline-flex items-center gap-1.5 px-3 py-2 sm:py-1.5 rounded-full bg-slate-100 border border-slate-200 text-slate-700 font-medium hover:bg-slate-200 transition-colors cursor-pointer text-xs min-h-[44px] sm:min-h-[36px] focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
                 >
                   <span>Search: "{searchParam}"</span>
-                  <X className="w-3 h-3 text-slate-500" />
+                  <X className="w-3.5 h-3.5 text-slate-500" />
                 </button>
               )}
             </div>

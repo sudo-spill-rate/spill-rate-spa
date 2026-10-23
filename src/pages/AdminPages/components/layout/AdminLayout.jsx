@@ -18,8 +18,8 @@ export default function AdminLayout({
       <AdminNavbar />
 
       {/* Main Body with Sidebar */}
-      <div className="flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-3.5 sm:py-5 pb-24 sm:pb-28 md:pb-12">
-        <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 items-start">
+      <div className="flex-1 max-w-7xl w-full mx-auto px-3.5 sm:px-6 lg:px-8 py-3.5 sm:py-5 pb-28 sm:pb-32 lg:pb-12 min-w-0">
+        <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 items-start w-full min-w-0">
           {/* Sidebar */}
           {activeSidebar}
 

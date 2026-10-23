@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { useParams, useNavigate, Link } from "react-router";
+import { useParams, useNavigate, useLocation, Link } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import {
   ChevronLeft,
@@ -7,7 +7,6 @@ import {
   RotateCw,
   AlertTriangle,
   Building,
-  CheckCircle2,
   MapPin,
   Phone,
   Globe,
@@ -18,20 +17,24 @@ import {
   Camera,
 } from "lucide-react";
 import DashboardLayout from "../components/layout/DashboardLayout";
+import AdminLayout from "../../AdminPages/components/layout/AdminLayout";
 import ReviewModerationHub from "../components/profile/ReviewModerationHub";
 import BusinessRatingStatsCard from "../components/profile/BusinessRatingStatsCard";
 import ShareStorefrontMenu from "../components/profile/ShareStorefrontMenu";
 import SegmentedTabs from "../../../components/common/SegmentedTabs";
 import { EditBusinessModal, DeleteBusinessModal } from "../components/profile/BusinessActionModals";
 import ReviewPhotoModal from "../../ReviewPages/components/businessView/ReviewPhotoModal";
-import { ReviewProvider } from "../../../context/review/reviewContextProvider";
-import { ManageReviewProvider } from "../../../context/manageReview/manageReviewContextProvider";
 import { useBusinessProfile } from "../../../hooks/useBusinessProfile";
 import { reviewService } from "../../../services/reviewService";
 
 export default function BusinessManageProfilePage() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isAdmin = location.pathname.startsWith("/admin");
+  const Layout = isAdmin ? AdminLayout : DashboardLayout;
+  const backDestination = isAdmin ? "/admin/my-store" : "/dashboard";
+
   const {
     selectedBusiness,
     fetchBusinessBySlug,
@@ -107,13 +110,13 @@ export default function BusinessManageProfilePage() {
   }, [rawReviews]);
 
   const handleBack = () => {
-    navigate("/dashboard");
+    navigate(backDestination);
   };
 
   const handleUpdate = async (bizId, payload) => {
     const res = await updateBusiness(bizId, payload);
     if (res.success) {
-      navigate("/dashboard");
+      navigate(backDestination);
     }
     return res;
   };
@@ -121,7 +124,7 @@ export default function BusinessManageProfilePage() {
   const handleDelete = async (bizId) => {
     const res = await deleteBusiness(bizId);
     if (res.success) {
-      navigate("/dashboard");
+      navigate(backDestination);
     }
     return res;
   };
@@ -140,7 +143,7 @@ export default function BusinessManageProfilePage() {
     0;
 
   return (
-    <DashboardLayout activeBusinessSlug={id}>
+    <Layout activeBusinessSlug={id}>
       {/* 1. Mobile Storefront Navigation Bar (Sticky under header on Mobile, hidden on Desktop) */}
       <nav
         aria-label="Storefront navigation"
@@ -152,10 +155,12 @@ export default function BusinessManageProfilePage() {
           type="button"
           onClick={handleBack}
           className="inline-flex items-center gap-1.5 text-xs text-slate-600 hover:text-slate-900 active:text-slate-950 transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600 rounded py-1 px-1 cursor-pointer min-h-[36px]"
-          aria-label="Back to Dashboard"
+          aria-label={isAdmin ? "Back to Storefronts" : "Back to Dashboard"}
         >
           <ChevronLeft className="w-4 h-4 text-slate-500 shrink-0" aria-hidden="true" />
-          <span className="font-semibold text-slate-700">Back to Dashboard</span>
+          <span className="font-semibold text-slate-700">
+            {isAdmin ? "Back to Storefronts" : "Back to Dashboard"}
+          </span>
         </button>
 
         <button
@@ -209,10 +214,10 @@ export default function BusinessManageProfilePage() {
                 <span>Retry</span>
               </button>
               <Link
-                to="/dashboard"
+                to={backDestination}
                 className="px-4 py-2 text-xs font-semibold text-teal-700 hover:text-teal-800 transition-colors min-h-[44px] inline-flex items-center"
               >
-                Return to Dashboard
+                {isAdmin ? "Return to Storefronts" : "Return to Dashboard"}
               </Link>
             </div>
           </div>
@@ -221,9 +226,7 @@ export default function BusinessManageProfilePage() {
 
       {/* 4. Unified Storefront Management View */}
       {!isLoading && selectedBusiness && (
-        <ReviewProvider key={selectedBusiness.slug}>
-          <ManageReviewProvider>
-            <div className="space-y-4">
+        <div className="space-y-4">
           {/* Main Business Details Header Card */}
           <div className="bg-white rounded-2xl border border-slate-200/90 p-3.5 sm:p-5 shadow-xs space-y-3 sm:space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 sm:gap-5">
@@ -263,9 +266,12 @@ export default function BusinessManageProfilePage() {
                           <span className="text-slate-300 font-light text-xs sm:text-sm" aria-hidden="true">
                             |
                           </span>
-                          <CheckCircle2
-                            className="w-4 h-4 sm:w-5 sm:h-5 text-teal-700 inline-block shrink-0 drop-shadow-2xs"
-                            aria-hidden="true"
+                          <img
+                            src="/assets/verified-shield.png"
+                            alt="Verified Establishment"
+                            className="w-4 h-4 sm:w-5 sm:h-5 object-contain inline-block shrink-0 drop-shadow-2xs"
+                            loading="lazy"
+                            decoding="async"
                           />
                         </span>
                       )}
@@ -568,9 +574,7 @@ export default function BusinessManageProfilePage() {
             />
           )}
             </div>
-          </ManageReviewProvider>
-        </ReviewProvider>
-      )}
-    </DashboardLayout>
-  );
+        )}
+      </Layout>
+    );
 }

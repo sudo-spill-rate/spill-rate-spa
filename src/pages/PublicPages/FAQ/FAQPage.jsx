@@ -1,7 +1,8 @@
-﻿import React from "react";
+import React from "react";
 import { Link } from "react-router";
 import PublicPageHeader from "../components/layout/PublicPageHeader";
 import FaqAccordionList from "../components/faq/FaqAccordionList";
+import { useDocumentTitle } from "../../../hooks/useDocumentTitle";
 
 const FAQ_DATA = [
   {
@@ -20,7 +21,7 @@ const FAQ_DATA = [
     category: "integrity",
     question: "How is the overall star rating calculated for each business?",
     answer:
-      "The overall star rating displayed on every SpillRate business profile is calculated using a completely transparent arithmetic average of all approved customer ratings submitted by real community members who have experienced the establishment. To calculate this score, our system adds together all the individual ratings awarded by verified customers—ranging from one star to five stars—and divides that total sum by the exact number of submitted customer evaluations without adding artificial weights. We completely reject opaque ranking algorithms, secretive quality weightings, hidden promotional multipliers, or commercial pay-to-win mechanics that give unfair numerical advantages to large advertising brands or premium sponsors over neighborhood spots. On many conventional review websites, paying businesses receive artificial boosts that highlight their best feedback while quietly suppressing critical comments, leaving everyday consumers confused and misled about the genuine quality of the service they will receive. At SpillRate, a small neighborhood bakery with thirty honest positive reviews stands on equal algorithmic footing with a large national franchise because raw customer satisfaction is the only metric that influences the score.\n\nWe also refuse to use decaying time formulas that prematurely erase older honest feedback or arbitrary filters that artificially boost businesses simply because they updated their photo gallery or registered a new promotional campaign. Whenever a new verified review is accepted onto a business listing, the mathematical average updates immediately so that prospective customers can see the most recent and truthful assessment of current business standards without unnecessary delays. If a fraudulent review is investigated by our moderation team and subsequently removed for violating our community standards, that invalid score is immediately removed from the calculation, restoring total mathematical accuracy and fairness. We believe this direct mathematical approach gives consumers the clearest possible picture of what to expect while giving business owners an honest, unmanipulated benchmark of their ongoing customer service performance over time. Trust is built on total mathematical clarity, and our platform guarantees that the star rating you see on your screen is always a genuine, tamper-free reflection of authentic neighborhood sentiment.",
+      "The overall star rating displayed on every SpillRate business profile is calculated using a completely transparent arithmetic average of all approved customer ratings submitted by real community members who have experienced the establishment. To calculate this score, our system adds together all the individual ratings awarded by verified customers (ranging from one star to five stars) and divides that total sum by the exact number of submitted customer evaluations without adding artificial weights. We completely reject opaque ranking algorithms, secretive quality weightings, hidden promotional multipliers, or commercial pay-to-win mechanics that give unfair numerical advantages to large advertising brands or premium sponsors over neighborhood spots. On many conventional review websites, paying businesses receive artificial boosts that highlight their best feedback while quietly suppressing critical comments, leaving everyday consumers confused and misled about the genuine quality of the service they will receive. At SpillRate, a small neighborhood bakery with thirty honest positive reviews stands on equal algorithmic footing with a large national franchise because raw customer satisfaction is the only metric that influences the score.\n\nWe also refuse to use decaying time formulas that prematurely erase older honest feedback or arbitrary filters that artificially boost businesses simply because they updated their photo gallery or registered a new promotional campaign. Whenever a new verified review is accepted onto a business listing, the mathematical average updates immediately so that prospective customers can see the most recent and truthful assessment of current business standards without unnecessary delays. If a fraudulent review is investigated by our moderation team and subsequently removed for violating our community standards, that invalid score is immediately removed from the calculation, restoring total mathematical accuracy and fairness. We believe this direct mathematical approach gives consumers the clearest possible picture of what to expect while giving business owners an honest, unmanipulated benchmark of their ongoing customer service performance over time. Trust is built on total mathematical clarity, and our platform guarantees that the star rating you see on your screen is always a genuine, tamper-free reflection of authentic neighborhood sentiment.",
   },
   {
     category: "owners",
@@ -49,6 +50,11 @@ const FAQ_DATA = [
 ];
 
 export default function FAQPage() {
+  useDocumentTitle(
+    "Frequently Asked Questions - SpillRate Community & Business Ratings",
+    "Read answers to common questions about submitting reviews, merchant claim processes, 24-hour anti-spam cooldowns, and rating calculations.",
+    "/faq"
+  );
   return (
     <div>
       <PublicPageHeader
@@ -70,7 +76,7 @@ export default function FAQPage() {
             <span>Answers and guidelines apply to all users and visitors of SpillRate.</span>
             <Link
               to="/contact"
-              className="font-medium text-teal-700 hover:text-teal-800 transition-colors inline-flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-teal-600 rounded"
+              className="font-medium text-teal-700 hover:text-teal-800 transition-colors inline-flex items-center gap-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 rounded py-2 min-h-[44px]"
             >
               Have questions? Contact our team →
             </Link>

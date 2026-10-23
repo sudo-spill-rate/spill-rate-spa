@@ -31,39 +31,39 @@ export default function AdminBottomNavbar() {
   const pendingReportsCount = overview?.stats?.pending_reports || 0;
 
   // Determine current context
-  const isGoogleSection = location.pathname === "/admin/google-overview";
+  const isGoogleSection = location.pathname.startsWith("/admin/google");
   const isMyStoreSection = location.pathname.startsWith("/admin/my-store");
   const isPlatformSection = !isGoogleSection && !isMyStoreSection;
 
-  // 1. Google Overview Items
+  // 1. Google Overview Standalone Items
   const googleItems = [
     {
       id: "realtime",
       label: "Real-time",
-      path: "/admin/google-overview?tab=realtime",
+      path: "/admin/google/overview",
       icon: Activity,
-      isActive: isGoogleSection && currentGoogleTab === "realtime",
+      isActive: location.pathname === "/admin/google/overview",
     },
     {
       id: "visitors",
       label: "Visitors",
-      path: "/admin/google-overview?tab=visitors",
+      path: "/admin/google/visitors",
       icon: Users,
-      isActive: isGoogleSection && currentGoogleTab === "visitors",
+      isActive: location.pathname === "/admin/google/visitors",
     },
     {
       id: "sources",
       label: "Sources",
-      path: "/admin/google-overview?tab=sources",
+      path: "/admin/google/traffic-sources",
       icon: Globe,
-      isActive: isGoogleSection && currentGoogleTab === "sources",
+      isActive: location.pathname === "/admin/google/traffic-sources",
     },
     {
       id: "pages",
-      label: "Pages",
-      path: "/admin/google-overview?tab=pages",
+      label: "Top Pages",
+      path: "/admin/google/top-pages",
       icon: FileText,
-      isActive: isGoogleSection && currentGoogleTab === "pages",
+      isActive: location.pathname === "/admin/google/top-pages",
     },
   ];
 
@@ -99,13 +99,9 @@ export default function AdminBottomNavbar() {
     {
       id: "overview",
       label: "Overview",
-      path: "/admin/platform/overview",
+      path: "/admin",
       icon: LayoutDashboard,
-      isActive:
-        location.pathname === "/admin/platform/overview" ||
-        location.pathname === "/admin/overview" ||
-        location.pathname === "/admin" ||
-        location.pathname === "/admin/dashboard",
+      isActive: location.pathname === "/admin",
     },
     {
       id: "reports",
@@ -113,27 +109,28 @@ export default function AdminBottomNavbar() {
       path: "/admin/platform/reports",
       icon: ShieldAlert,
       badge: pendingReportsCount > 0 ? pendingReportsCount : null,
-      isActive:
-        location.pathname === "/admin/platform/reports" ||
-        location.pathname === "/admin/reports",
+      isActive: location.pathname === "/admin/platform/reports",
     },
     {
       id: "storefronts",
       label: "Stores",
       path: "/admin/platform/storefronts",
       icon: Building2,
-      isActive:
-        location.pathname === "/admin/platform/storefronts" ||
-        location.pathname === "/admin/storefronts",
+      isActive: location.pathname === "/admin/platform/storefronts",
     },
     {
       id: "categories",
       label: "Categories",
       path: "/admin/platform/categories",
       icon: Tags,
-      isActive:
-        location.pathname === "/admin/platform/categories" ||
-        location.pathname === "/admin/categories",
+      isActive: location.pathname === "/admin/platform/categories",
+    },
+    {
+      id: "users",
+      label: "Users",
+      path: "/admin/platform/users",
+      icon: Users,
+      isActive: location.pathname === "/admin/platform/users",
     },
   ];
 
@@ -148,9 +145,9 @@ export default function AdminBottomNavbar() {
     <>
       <nav
         aria-label="Admin Mobile Navigation"
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-lg px-2 py-1"
+        className="lg:hidden fixed bottom-0 inset-x-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/90 shadow-lg px-2 pt-1 pb-[max(0.375rem,env(safe-area-inset-bottom))] w-full"
       >
-        <div className="flex items-center justify-around gap-1 max-w-md mx-auto">
+        <div className="flex items-center justify-around gap-1 max-w-md mx-auto w-full">
           {activeItems.map((item) => {
             const Icon = item.icon;
             const active = item.isActive;
@@ -159,10 +156,10 @@ export default function AdminBottomNavbar() {
               <Link
                 key={item.id}
                 to={item.path}
-                className={`relative flex flex-col items-center justify-center py-1 px-1.5 rounded-xl min-h-[46px] min-w-[46px] flex-1 transition-all ${
+                className={`relative flex flex-col items-center justify-center py-1 px-1.5 rounded-xl min-h-[46px] min-w-[44px] flex-1 transition-all ${
                   active
-                    ? "text-teal-700 font-bold bg-teal-50/70"
-                    : "text-slate-500 hover:text-slate-900 active:bg-slate-100 font-medium"
+                    ? "text-teal-800 font-bold bg-teal-50/80 border border-teal-200/60 shadow-2xs"
+                    : "text-slate-600 hover:text-slate-900 active:bg-slate-100 font-medium border border-transparent"
                 }`}
                 aria-label={item.label}
               >
@@ -178,15 +175,15 @@ export default function AdminBottomNavbar() {
                     </span>
                   )}
                 </div>
-                <span className="text-[10px] mt-1 tracking-tight truncate max-w-[62px] text-center">
+                <span className="text-[10px] mt-1 tracking-tight truncate w-full text-center px-0.5 leading-tight">
                   {item.label}
                 </span>
-                {active && (
-                  <span
-                    className="w-1 h-1 rounded-full bg-teal-700 mt-0.5"
-                    aria-hidden="true"
-                  />
-                )}
+                <span
+                  className={`w-1 h-1 rounded-full mt-0.5 transition-opacity ${
+                    active ? "bg-teal-700 opacity-100" : "opacity-0"
+                  }`}
+                  aria-hidden="true"
+                />
               </Link>
             );
           })}
@@ -196,14 +193,15 @@ export default function AdminBottomNavbar() {
             <button
               type="button"
               onClick={() => setIsPromoteModalOpen(true)}
-              className="relative flex flex-col items-center justify-center py-1 px-1.5 rounded-xl min-h-[46px] min-w-[46px] flex-1 text-slate-500 hover:text-teal-700 active:bg-slate-100 font-medium cursor-pointer transition-colors"
+              className="relative flex flex-col items-center justify-center py-1 px-1.5 rounded-xl min-h-[46px] min-w-[44px] flex-1 text-slate-600 hover:text-teal-700 active:bg-slate-100 font-medium cursor-pointer transition-colors border border-transparent"
               aria-label="Promote Admin"
               title="Promote User to Admin"
             >
               <UserPlus className="w-4 h-4 sm:w-5 sm:h-5 stroke-[1.8] text-teal-700" />
-              <span className="text-[10px] mt-1 tracking-tight truncate max-w-[62px] text-center">
+              <span className="text-[10px] mt-1 tracking-tight truncate w-full text-center px-0.5 leading-tight">
                 Promote
               </span>
+              <span className="w-1 h-1 rounded-full mt-0.5 opacity-0" aria-hidden="true" />
             </button>
           )}
         </div>

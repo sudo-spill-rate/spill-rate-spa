@@ -43,18 +43,82 @@ export default function BaseModal({
 }) {
   useBodyScrollLock(isOpen);
   const cardRef = useRef(null);
+  const previouslyFocusedElement = useRef(null);
 
-  // Close on Escape key
+  // Accessible keyboard handling: Escape to close and Tab focus trapping within dialog
   useEffect(() => {
-    if (!isOpen || !closeOnEscape || isProcessing) return;
+    if (!isOpen) return;
+
+    if (typeof document !== "undefined") {
+      previouslyFocusedElement.current = document.activeElement;
+    }
+
+    const card = cardRef.current;
+    if (!card) return;
+
+    const focusableSelector =
+      'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+    // Move initial focus into modal
+    const focusableElements = Array.from(card.querySelectorAll(focusableSelector)).filter(
+      (el) => el.offsetParent !== null || el === document.activeElement
+    );
+
+    if (focusableElements.length > 0) {
+      const timer = setTimeout(() => {
+        focusableElements[0]?.focus();
+      }, 10);
+      return () => clearTimeout(timer);
+    } else {
+      card.setAttribute("tabindex", "-1");
+      card.focus();
+    }
 
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
-        onClose();
+        if (closeOnEscape && !isProcessing) {
+          onClose();
+        }
+        return;
+      }
+
+      if (e.key === "Tab") {
+        const currentFocusables = Array.from(card.querySelectorAll(focusableSelector)).filter(
+          (el) => el.offsetParent !== null || el === document.activeElement
+        );
+
+        if (currentFocusables.length === 0) {
+          e.preventDefault();
+          return;
+        }
+
+        const firstElement = currentFocusables[0];
+        const lastElement = currentFocusables[currentFocusables.length - 1];
+
+        if (e.shiftKey) {
+          if (document.activeElement === firstElement || !card.contains(document.activeElement)) {
+            e.preventDefault();
+            lastElement.focus();
+          }
+        } else {
+          if (document.activeElement === lastElement || !card.contains(document.activeElement)) {
+            e.preventDefault();
+            firstElement.focus();
+          }
+        }
       }
     };
+
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      if (
+        previouslyFocusedElement.current &&
+        typeof previouslyFocusedElement.current.focus === "function"
+      ) {
+        previouslyFocusedElement.current.focus();
+      }
+    };
   }, [isOpen, closeOnEscape, isProcessing, onClose]);
 
   if (!isOpen) return null;
@@ -126,9 +190,9 @@ export default function BaseModal({
                     onClick={onClose}
                     disabled={isProcessing}
                     aria-label="Close dialog"
-                    className="p-1 text-slate-400 hover:text-slate-700 active:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[36px] min-w-[36px] flex items-center justify-center cursor-pointer shrink-0 disabled:opacity-40 disabled:cursor-not-allowed -mr-1 -mt-1"
+                    className="p-2 text-slate-400 hover:text-slate-700 active:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer shrink-0 disabled:opacity-40 disabled:cursor-not-allowed -mr-1.5 -mt-1.5"
                   >
-                    <X className="w-4 h-4" aria-hidden="true" />
+                    <X className="w-5 h-5" aria-hidden="true" />
                   </button>
                 )}
               </div>
@@ -141,9 +205,9 @@ export default function BaseModal({
                 onClick={onClose}
                 disabled={isProcessing}
                 aria-label="Close dialog"
-                className="absolute top-3 right-3 sm:top-4 sm:right-4 z-10 p-1 text-slate-400 hover:text-slate-700 active:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[36px] min-w-[36px] flex items-center justify-center cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                className="absolute top-2 right-2 sm:top-3 sm:right-3 z-10 p-2 text-slate-400 hover:text-slate-700 active:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 min-h-[44px] min-w-[44px] flex items-center justify-center cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                <X className="w-4 h-4" aria-hidden="true" />
+                <X className="w-5 h-5" aria-hidden="true" />
               </button>
             )}
 

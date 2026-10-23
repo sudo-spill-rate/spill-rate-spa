@@ -1,6 +1,7 @@
 import React from "react";
 import { Star, MessageSquare, Building } from "lucide-react";
 import StatCard from "../../../../components/common/StatCard";
+import MobileMetricsList from "../../../../components/common/MobileMetricsList";
 
 export default function PortfolioStatsOverview({ businesses = [] }) {
   const totalBusinesses = businesses.length;
@@ -26,9 +27,49 @@ export default function PortfolioStatsOverview({ businesses = [] }) {
         ).toFixed(1)
       : null;
 
+  // High-Density Key-Value rows for Mobile: [Details      Value]
+  const mobileMetrics = [
+    {
+      title: "Total Reviews",
+      value: totalReviews.toLocaleString(),
+      subtitle: totalReviews === 1 ? "1 customer evaluation" : `${totalReviews} customer evaluations`,
+      icon: MessageSquare,
+    },
+    {
+      title: "Rating Average",
+      value: averageRating ? (
+        <span className="inline-flex items-center gap-1">
+          <span>{averageRating}</span>
+          <Star className="w-3.5 h-3.5 fill-amber-500 text-amber-500 inline-block shrink-0" aria-hidden="true" />
+        </span>
+      ) : (
+        "—"
+      ),
+      subtitle: averageRating ? `${ratedBusinesses.length} rated storefront(s)` : "Awaiting reviews",
+      icon: Star,
+      trend: averageRating ? "/ 5.0" : undefined,
+      trendType: "positive",
+    },
+    {
+      title: "Active Storefronts",
+      value: `${totalBusinesses} / 5`,
+      subtitle:
+        5 - totalBusinesses > 0
+          ? `${5 - totalBusinesses} slot(s) remaining`
+          : "Quota reached",
+      icon: Building,
+      trend: 5 - totalBusinesses === 0 ? "Quota Reached" : undefined,
+      trendType: 5 - totalBusinesses === 0 ? "warning" : "neutral",
+    },
+  ];
+
   return (
     <section aria-label="Portfolio metrics overview" className="mb-4 sm:mb-6">
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3.5">
+      {/* Mobile: High-Density Key-Value Layout [Details    Value] */}
+      <MobileMetricsList items={mobileMetrics} />
+
+      {/* Desktop: 3 Clean Stat Cards */}
+      <div className="hidden sm:grid sm:grid-cols-3 gap-2.5 sm:gap-3.5">
         {/* Metric 1: Total Customer Reviews */}
         <StatCard
           title="Total Reviews"
@@ -55,7 +96,6 @@ export default function PortfolioStatsOverview({ businesses = [] }) {
 
         {/* Metric 3: Active Storefronts */}
         <StatCard
-          className="col-span-2 sm:col-span-1"
           title="Active Storefronts"
           value={totalBusinesses}
           secondaryValue={<span className="text-xs font-normal text-slate-400 ml-1">/ 5 quota</span>}

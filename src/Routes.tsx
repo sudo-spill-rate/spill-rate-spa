@@ -10,8 +10,7 @@ import { BusinessRoutes } from "./routes/Routes.business";
 import { AdminRoutes } from "./routes/Routes.admin";
 
 // 2. Providers
-import { AuthProvider } from "./context/auth/authContextProvider";
-import { BusinessProvider } from "./context/business/businessContextProvider";
+import { AppProviders } from "./context/AppProviders";
 
 // 3. Pages & Guards
 import { ProtectedRoute } from "./routes/ProtectedRoute";
@@ -32,8 +31,8 @@ const queryClient = new QueryClient({
 export default function Routes() {
     return (
         <QueryClientProvider client={queryClient}>
-            {/* 🔐 Global AuthProvider: Para sa user session at navbar sa buong app */}
-            <AuthProvider>
+            {/* Global AppProviders: Auth, Business, Review, at ManageReview */}
+            <AppProviders>
                 <ScrollToTop />
                 <ReactRoutes>
                     {/* 1. Public Pages (Landing, About, Contact, FAQ, Terms, Privacy) & 404 Fallback */}
@@ -57,20 +56,16 @@ export default function Routes() {
                         />
                     ))}
 
-                    {/* 3. Customer Review Routes (/business/:slug, /business/:businessId/write-review) */}
+                    {/* 3. Customer Review Routes */}
                     {ReviewRoutes.map((route) => (
                         <Route
                             key={route.key}
                             path={route.path}
-                            element={
-                                <BusinessProvider>
-                                    {route.element}
-                                </BusinessProvider>
-                            }
+                            element={route.element}
                         />
                     ))}
 
-                    {/* 4. 🔐 Protected Business Owner Portal (/dashboard, /dashboard/business/:id) */}
+                    {/* 4. Protected Business Owner Portal (/dashboard, /dashboard/business/:id) */}
                     <Route
                         element={
                             <ProtectedRoute>
@@ -87,13 +82,11 @@ export default function Routes() {
                         ))}
                     </Route>
 
-                    {/* 5. 🛡️ Protected Platform Admin Portal (/admin) */}
+                    {/* 5. Protected Platform Admin Portal (/admin) */}
                     <Route
                         element={
                             <AdminProtectedRoute>
-                                <BusinessProvider>
-                                    <Outlet />
-                                </BusinessProvider>
+                                <Outlet />
                             </AdminProtectedRoute>
                         }
                     >
@@ -106,7 +99,7 @@ export default function Routes() {
                         ))}
                     </Route>
                 </ReactRoutes>
-            </AuthProvider>
+            </AppProviders>
         </QueryClientProvider>
     );
 }

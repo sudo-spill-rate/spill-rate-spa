@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import {
   Building,
-  CheckCircle2,
+
   MapPin,
   Phone,
   Globe,
@@ -64,7 +64,14 @@ export default function BusinessProfileEditor({ business }) {
               </h2>
               {business.is_verified && (
                 <span className="inline-flex items-center gap-1 text-[10px] sm:text-xs font-semibold text-teal-700 bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
-                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <img
+                    src="/assets/verified-shield.png"
+                    alt=""
+                    className="w-3.5 h-3.5 object-contain shrink-0 drop-shadow-2xs"
+                    loading="lazy"
+                    decoding="async"
+                    aria-hidden="true"
+                  />
                   <span>Verified Identity</span>
                 </span>
               )}

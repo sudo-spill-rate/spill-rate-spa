@@ -7,7 +7,7 @@ import {
   LogOut,
   Menu,
   X,
-  CheckCircle2,
+
   User as UserIcon,
   Settings,
   Shield,
@@ -15,6 +15,7 @@ import {
 import { useUserAuth } from "../../../../hooks/useUserAuth";
 import { useBusinessDirectory } from "../../../../hooks/useBusinessDirectory";
 import { useBodyScrollLock } from "../../../../hooks/useBodyScrollLock";
+import NavbarBrandLogo from "../../../../components/common/NavbarBrandLogo";
 import AccountSettingsModal from "./AccountSettingsModal";
 
 export default function DashboardNavbar() {
@@ -54,22 +55,7 @@ export default function DashboardNavbar() {
         <div className="flex items-center justify-between h-16">
           {/* Brand Logo & Portal Tag */}
           <div className="flex items-center gap-3">
-            <Link
-              to="/dashboard"
-              className="flex items-center gap-2 sm:gap-2.5 focus:outline-none focus:ring-2 focus:ring-teal-600 rounded-lg p-1 min-h-[44px]"
-            >
-              <img
-                src="/logo.png"
-                alt="SpillRate Logo"
-                className="w-8 h-8 sm:w-9 sm:h-9 object-contain shrink-0"
-              />
-              <div className="flex items-baseline gap-1.5 sm:gap-2">
-                <span className="font-bold text-base sm:text-lg text-slate-900 tracking-tight">SpillRate</span>
-                <span className="text-[10px] sm:text-xs font-medium text-teal-800 bg-teal-50 border border-teal-200 px-1.5 sm:px-2 py-0.5 rounded-full">
-                  Owner Portal
-                </span>
-              </div>
-            </Link>
+            <NavbarBrandLogo to="/dashboard" badgeText="Owner Portal" />
           </div>
 
           {/* User Profile & Logout (Desktop Utility Bar) */}
@@ -166,23 +152,11 @@ export default function DashboardNavbar() {
           <div className="border-b border-slate-200 px-3.5 sm:px-6 shrink-0 bg-white">
             <div className="flex items-center justify-between h-16 max-w-7xl mx-auto">
               {/* Brand Logo & Portal Tag */}
-              <Link
+              <NavbarBrandLogo
                 to="/dashboard"
+                badgeText="Owner Portal"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-2 sm:gap-2.5 focus:outline-none focus:ring-2 focus:ring-teal-600 rounded-lg p-1 min-h-[44px]"
-              >
-                <img
-                  src="/logo.png"
-                  alt="SpillRate Logo"
-                  className="w-8 h-8 object-contain shrink-0"
-                />
-                <div className="flex items-baseline gap-1.5 sm:gap-2">
-                  <span className="font-bold text-base sm:text-lg text-slate-900 tracking-tight">SpillRate</span>
-                  <span className="text-[10px] sm:text-xs font-medium text-teal-800 bg-teal-50 border border-teal-200 px-1.5 sm:px-2 py-0.5 rounded-full">
-                    Owner Portal
-                  </span>
-                </div>
-              </Link>
+              />
 
               {/* Close Button ('X') in the exact position of the hamburger button */}
               <button
@@ -285,7 +259,13 @@ export default function DashboardNavbar() {
                           <span className="truncate">{biz.name}</span>
                         </div>
                         {biz.is_verified && (
-                          <CheckCircle2 className="w-3.5 h-3.5 text-teal-600 shrink-0" />
+                          <img
+                            src="/assets/verified-shield.png"
+                            alt="Verified Storefront"
+                            className="w-3.5 h-3.5 object-contain shrink-0 drop-shadow-2xs"
+                            loading="lazy"
+                            decoding="async"
+                          />
                         )}
                       </Link>
                     );

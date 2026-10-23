@@ -7,6 +7,7 @@ import {
   AlertCircle,
   Eye,
   Calendar,
+  ExternalLink,
 } from "lucide-react";
 import { useAdmin } from "../../../../hooks/useAdmin";
 import BaseModal from "../../../../components/common/BaseModal";
@@ -75,16 +76,6 @@ export default function AdminReportsSection() {
           onChange={setFilter}
           ariaLabel="Filter flagged reports by status"
         />
-
-        <button
-          type="button"
-          onClick={() => refetchReports()}
-          disabled={isLoadingReports}
-          className="inline-flex items-center justify-center gap-1.5 px-3.5 py-1.5 bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 rounded-lg text-xs font-semibold cursor-pointer min-h-[36px] transition-colors focus:outline-none focus:ring-2 focus:ring-teal-700"
-        >
-          <RotateCw className={`w-3.5 h-3.5 ${isLoadingReports ? "animate-spin text-teal-700" : ""}`} />
-          <span>Refresh Queue</span>
-        </button>
       </div>
 
       {/* Error state */}
@@ -114,50 +105,46 @@ export default function AdminReportsSection() {
             </p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border-collapse" aria-label="Flagged reviews table">
-              <thead>
-                <tr className="bg-slate-50 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-600">
-                  <th scope="col" className="px-4 py-3">Storefront</th>
-                  <th scope="col" className="px-4 py-3">Reason</th>
-                  <th scope="col" className="px-4 py-3">Reporter</th>
-                  <th scope="col" className="px-4 py-3">Status</th>
-                  <th scope="col" className="px-4 py-3">Reported At</th>
-                  <th scope="col" className="px-4 py-3 text-right">Moderation Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {filteredReports.map((report) => (
-                  <tr key={report.id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="px-4 py-3.5 font-semibold text-slate-900">
-                      {report.business_name || report.business_id || "Unknown Store"}
-                    </td>
+          <>
+            {/* Mobile View: High-density Card List (Zero horizontal blowout) */}
+            <div className="md:hidden divide-y divide-slate-100">
+              {filteredReports.map((report) => {
+                const businessName =
+                  report.business?.name ||
+                  report.business_name ||
+                  (report.business?.slug ? `/${report.business.slug}` : null);
+                const businessSlug = report.business?.slug;
+                const previewText =
+                  report.review?.comment ||
+                  report.review_text ||
+                  report.details;
 
-                    <td className="px-4 py-3.5">
-                      <div className="space-y-0.5">
-                        <span className="font-semibold text-slate-900 block truncate max-w-xs">
-                          {report.reason}
-                        </span>
-                        {report.review_text && (
-                          <button
-                            type="button"
-                            onClick={() => setSelectedReviewText(report.review_text)}
-                            className="text-[11px] text-teal-700 hover:underline inline-flex items-center gap-1 cursor-pointer"
+                return (
+                  <div key={report.id} className="p-3.5 space-y-2.5">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0 flex-1">
+                        {businessSlug ? (
+                          <a
+                            href={`/business/${businessSlug}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="font-bold text-xs text-slate-900 hover:text-teal-700 hover:underline inline-flex items-center gap-1 truncate"
                           >
-                            <Eye className="w-3 h-3" />
-                            <span>Preview flagged text</span>
-                          </button>
+                            <span className="truncate">{businessName || "Storefront"}</span>
+                            <ExternalLink className="w-3 h-3 text-slate-400 shrink-0" />
+                          </a>
+                        ) : (
+                          <span className="font-bold text-xs text-slate-900 block truncate">
+                            {businessName || "Storefront (Unlisted)"}
+                          </span>
                         )}
+                        <span className="text-[10px] text-slate-500 font-mono block">
+                          {businessSlug ? `/${businessSlug}` : report.business_id ? `ID: ${report.business_id.slice(0, 8)}...` : ""}
+                        </span>
                       </div>
-                    </td>
 
-                    <td className="px-4 py-3.5 text-slate-600 font-mono text-[11px]">
-                      {report.reporter_email || "Anonymous user"}
-                    </td>
-
-                    <td className="px-4 py-3.5">
                       <span
-                        className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${
+                        className={`inline-block px-2 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider border shrink-0 ${
                           report.status === "pending"
                             ? "bg-amber-50 text-amber-800 border-amber-200"
                             : report.status === "resolved"
@@ -167,53 +154,246 @@ export default function AdminReportsSection() {
                       >
                         {report.status || "Pending"}
                       </span>
-                    </td>
+                    </div>
 
-                    <td className="px-4 py-3.5 text-slate-500 text-[11px] whitespace-nowrap">
-                      {report.created_at ? (
-                        <span className="flex items-center gap-1">
-                          <Calendar className="w-3 h-3 text-slate-400" />
-                          <span>{new Date(report.created_at).toLocaleDateString()}</span>
+                    <div className="bg-slate-50 border border-slate-100 rounded-lg p-2.5 text-xs space-y-1">
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span className="font-bold text-slate-800 capitalize">
+                          Reason: {report.reason}
                         </span>
-                      ) : (
-                        "-"
+                        {report.created_at && (
+                          <span className="text-[10px] text-slate-400 font-mono flex items-center gap-1">
+                            <Calendar className="w-2.5 h-2.5" />
+                            {new Date(report.created_at).toLocaleDateString()}
+                          </span>
+                        )}
+                      </div>
+                      {previewText && (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setSelectedReviewText({
+                              comment: previewText,
+                              author: report.review?.name || "Customer",
+                              rating: report.review?.rating,
+                              businessName: businessName || "Storefront",
+                              reason: report.reason,
+                            })
+                          }
+                          className="text-[11px] text-teal-700 hover:text-teal-800 font-semibold inline-flex items-center gap-1 cursor-pointer pt-0.5"
+                        >
+                          <Eye className="w-3 h-3" />
+                          <span>Preview flagged review</span>
+                        </button>
                       )}
-                    </td>
+                    </div>
 
-                    <td className="px-4 py-3.5 text-right whitespace-nowrap">
-                      {report.status === "pending" ? (
-                        <div className="flex items-center justify-end gap-1.5">
-                          <button
-                            type="button"
-                            onClick={() => setActionToConfirm({ reportId: report.id, action: "resolved" })}
-                            disabled={isResolving && processingId === report.id}
-                            className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-teal-700 hover:bg-teal-800 text-white rounded-lg text-xs font-semibold cursor-pointer disabled:opacity-40 min-h-[36px]"
-                            title="Resolve ticket and apply moderation"
-                          >
-                            <CheckCircle2 className="w-3.5 h-3.5" />
-                            <span>Resolve</span>
-                          </button>
+                    {report.status === "pending" ? (
+                      <div className="grid grid-cols-2 gap-2 pt-0.5">
+                        <button
+                          type="button"
+                          onClick={() => setActionToConfirm({ reportId: report.id, action: "resolved" })}
+                          disabled={isResolving && processingId === report.id}
+                          className="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-teal-700 hover:bg-teal-800 text-white rounded-lg text-xs font-semibold cursor-pointer disabled:opacity-40 min-h-[44px] focus:outline-none focus:ring-2 focus:ring-teal-700"
+                        >
+                          <CheckCircle2 className="w-3.5 h-3.5" />
+                          <span>Resolve</span>
+                        </button>
 
-                          <button
-                            type="button"
-                            onClick={() => setActionToConfirm({ reportId: report.id, action: "dismissed" })}
-                            disabled={isResolving && processingId === report.id}
-                            className="inline-flex items-center gap-1 px-2.5 py-1.5 border border-slate-300 hover:bg-slate-100 text-slate-700 rounded-lg text-xs font-semibold cursor-pointer disabled:opacity-40 min-h-[36px]"
-                            title="Dismiss false report"
-                          >
-                            <XCircle className="w-3.5 h-3.5" />
-                            <span>Dismiss</span>
-                          </button>
-                        </div>
-                      ) : (
-                        <span className="text-[11px] text-slate-400 font-medium">Archived</span>
-                      )}
-                    </td>
+                        <button
+                          type="button"
+                          onClick={() => setActionToConfirm({ reportId: report.id, action: "dismissed" })}
+                          disabled={isResolving && processingId === report.id}
+                          className="w-full inline-flex items-center justify-center gap-1.5 px-3 py-2 border border-slate-300 hover:bg-slate-100 text-slate-700 rounded-lg text-xs font-semibold cursor-pointer disabled:opacity-40 min-h-[44px] focus:outline-none focus:ring-2 focus:ring-slate-400"
+                        >
+                          <XCircle className="w-3.5 h-3.5" />
+                          <span>Dismiss</span>
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="text-[10px] text-slate-400 font-medium pt-0.5">
+                        Status: Archived ({report.status})
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Desktop View: Full Data Table */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="w-full text-left text-xs border-collapse" aria-label="Flagged reviews table">
+                <thead>
+                  <tr className="bg-slate-50 border-b border-slate-200 text-[11px] font-bold uppercase tracking-wider text-slate-600">
+                    <th scope="col" className="px-4 py-3">Storefront</th>
+                    <th scope="col" className="px-4 py-3">Reason</th>
+                    <th scope="col" className="px-4 py-3">Reporter</th>
+                    <th scope="col" className="px-4 py-3">Status</th>
+                    <th scope="col" className="px-4 py-3">Reported At</th>
+                    <th scope="col" className="px-4 py-3 text-right">Moderation Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {filteredReports.map((report) => {
+                    const businessName =
+                      report.business?.name ||
+                      report.business_name ||
+                      (report.business?.slug ? `/${report.business.slug}` : null);
+                    const businessSlug = report.business?.slug;
+                    const previewText =
+                      report.review?.comment ||
+                      report.review_text ||
+                      report.details;
+
+                    return (
+                      <tr key={report.id} className="hover:bg-slate-50/80 transition-colors">
+                        {/* Storefront Name or Honest Fallback */}
+                        <td className="px-4 py-3.5 font-semibold text-slate-900">
+                          {businessName ? (
+                            <div className="min-w-0">
+                              {businessSlug ? (
+                                <a
+                                  href={`/business/${businessSlug}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-slate-900 hover:text-teal-700 font-semibold hover:underline inline-flex items-center gap-1 max-w-[200px] truncate"
+                                  title={`Open ${businessName}`}
+                                >
+                                  <span className="truncate">{businessName}</span>
+                                  <ExternalLink className="w-3 h-3 text-slate-400 shrink-0" />
+                                </a>
+                              ) : (
+                                <span className="block truncate max-w-[200px]" title={businessName}>
+                                  {businessName}
+                                </span>
+                              )}
+                              {businessSlug && (
+                                <span className="text-[11px] text-slate-500 font-mono block truncate">
+                                  /{businessSlug}
+                                </span>
+                              )}
+                            </div>
+                          ) : (
+                            <div className="min-w-0">
+                              <span className="text-slate-700 font-medium block">
+                                Storefront (Unlisted)
+                              </span>
+                              <span
+                                className="text-[10px] text-slate-500 font-mono block truncate max-w-[140px]"
+                                title={report.business_id}
+                              >
+                                ID: {report.business_id ? `${report.business_id.slice(0, 8)}...` : "N/A"}
+                              </span>
+                            </div>
+                          )}
+                        </td>
+
+                        {/* Reason & Flagged Preview Button */}
+                        <td className="px-4 py-3.5">
+                          <div className="space-y-1">
+                            <span className="font-semibold text-slate-900 block truncate max-w-xs capitalize">
+                              {report.reason}
+                            </span>
+                            {previewText && (
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  setSelectedReviewText({
+                                    comment: previewText,
+                                    author: report.review?.name || "Customer",
+                                    rating: report.review?.rating,
+                                    businessName: businessName || "Storefront",
+                                    reason: report.reason,
+                                  })
+                                }
+                                className="text-[11px] text-teal-700 hover:text-teal-800 hover:underline inline-flex items-center gap-1 cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-700 rounded py-0.5"
+                              >
+                                <Eye className="w-3 h-3" />
+                                <span>Preview flagged review</span>
+                              </button>
+                            )}
+                          </div>
+                        </td>
+
+                        {/* Reporter Information */}
+                        <td className="px-4 py-3.5 text-slate-600 font-mono text-[11px]">
+                          {report.reporter_email ? (
+                            <span className="truncate block max-w-[150px]" title={report.reporter_email}>
+                              {report.reporter_email}
+                            </span>
+                          ) : report.reporter_ip ? (
+                            <span title={`Reporter IP: ${report.reporter_ip}`} className="text-slate-500 font-mono text-[10px]">
+                              IP: {report.reporter_ip}
+                            </span>
+                          ) : (
+                            <span className="text-slate-500 font-sans">Community User</span>
+                          )}
+                        </td>
+
+                        {/* Ticket Status */}
+                        <td className="px-4 py-3.5">
+                          <span
+                            className={`inline-block px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border ${
+                              report.status === "pending"
+                                ? "bg-amber-50 text-amber-800 border-amber-200"
+                                : report.status === "resolved"
+                                ? "bg-teal-50 text-teal-800 border-teal-200"
+                                : "bg-slate-100 text-slate-700 border-slate-200"
+                            }`}
+                          >
+                            {report.status || "Pending"}
+                          </span>
+                        </td>
+
+                        {/* Reported Date */}
+                        <td className="px-4 py-3.5 text-slate-500 text-[11px] whitespace-nowrap">
+                          {report.created_at ? (
+                            <span className="flex items-center gap-1">
+                              <Calendar className="w-3 h-3 text-slate-500" />
+                              <span>{new Date(report.created_at).toLocaleDateString()}</span>
+                            </span>
+                          ) : (
+                            "-"
+                          )}
+                        </td>
+
+                        {/* Moderation Actions */}
+                        <td className="px-4 py-3.5 text-right whitespace-nowrap">
+                          {report.status === "pending" ? (
+                            <div className="flex items-center justify-end gap-1.5">
+                              <button
+                                type="button"
+                                onClick={() => setActionToConfirm({ reportId: report.id, action: "resolved" })}
+                                disabled={isResolving && processingId === report.id}
+                                className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-teal-700 hover:bg-teal-800 text-white rounded-lg text-xs font-semibold cursor-pointer disabled:opacity-40 min-h-[36px] focus:outline-none focus:ring-2 focus:ring-teal-700"
+                                title="Resolve ticket and apply moderation"
+                              >
+                                <CheckCircle2 className="w-3.5 h-3.5" />
+                                <span>Resolve</span>
+                              </button>
+
+                              <button
+                                type="button"
+                                onClick={() => setActionToConfirm({ reportId: report.id, action: "dismissed" })}
+                                disabled={isResolving && processingId === report.id}
+                                className="inline-flex items-center gap-1 px-2.5 py-1.5 border border-slate-300 hover:bg-slate-100 text-slate-700 rounded-lg text-xs font-semibold cursor-pointer disabled:opacity-40 min-h-[36px] focus:outline-none focus:ring-2 focus:ring-slate-400"
+                                title="Dismiss false report"
+                              >
+                                <XCircle className="w-3.5 h-3.5" />
+                                <span>Dismiss</span>
+                              </button>
+                            </div>
+                          ) : (
+                            <span className="text-[11px] text-slate-500 font-medium">Archived</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </div>
 
@@ -281,28 +461,52 @@ export default function AdminReportsSection() {
         </BaseModal>
       )}
 
-      {/* Review preview modal */}
-      <BaseModal
-        isOpen={Boolean(selectedReviewText)}
-        onClose={() => setSelectedReviewText(null)}
-        title="Flagged Review Content"
-        maxWidth="max-w-lg"
-      >
-        <div className="space-y-3">
-          <div className="p-3 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-800 leading-relaxed max-h-60 overflow-y-auto whitespace-pre-wrap">
-            {selectedReviewText}
+      {/* Enriched Review Preview Modal */}
+      {selectedReviewText && (
+        <BaseModal
+          isOpen={Boolean(selectedReviewText)}
+          onClose={() => setSelectedReviewText(null)}
+          title="Flagged Review Details"
+          maxWidth="max-w-lg"
+        >
+          <div className="space-y-3.5 text-xs">
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3.5 space-y-2">
+              <div className="flex items-center justify-between text-slate-600">
+                <span className="font-semibold text-slate-800">
+                  Storefront: {selectedReviewText.businessName}
+                </span>
+                {typeof selectedReviewText.rating === "number" && (
+                  <span className="inline-flex items-center gap-1 font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                    ★ {selectedReviewText.rating}.0
+                  </span>
+                )}
+              </div>
+              <p className="text-[11px] text-slate-600">
+                Report Reason: <strong className="text-slate-900 capitalize">{selectedReviewText.reason}</strong>
+              </p>
+            </div>
+
+            <div className="space-y-1">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+                Review Content / Feedback
+              </span>
+              <div className="p-3 bg-white border border-slate-200 rounded-xl text-xs text-slate-800 leading-relaxed max-h-60 overflow-y-auto whitespace-pre-wrap">
+                {selectedReviewText.comment || "No text feedback was provided with this review."}
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-2 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setSelectedReviewText(null)}
+                className="px-4 py-2 rounded-lg border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer min-h-[38px] focus:outline-none focus:ring-2 focus:ring-teal-700"
+              >
+                Close Preview
+              </button>
+            </div>
           </div>
-          <div className="flex justify-end pt-2">
-            <button
-              type="button"
-              onClick={() => setSelectedReviewText(null)}
-              className="px-3.5 py-1.5 rounded-lg border border-slate-300 text-xs font-semibold text-slate-700 hover:bg-slate-50 cursor-pointer min-h-[36px]"
-            >
-              Close Preview
-            </button>
-          </div>
-        </div>
-      </BaseModal>
+        </BaseModal>
+      )}
     </div>
   );
 }

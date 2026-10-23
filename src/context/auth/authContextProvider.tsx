@@ -143,8 +143,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             setIsLoading(true);
             const res = await authService.updateProfile(payload);
             if (res.success && res.data) {
-                setUser(res.data);
-                return { success: true, user: res.data, message: res.message };
+                let updatedUser: AuthUser = res.data;
+                setUser((prev) => {
+                    updatedUser = prev ? { ...prev, ...res.data } : res.data;
+                    return updatedUser;
+                });
+                return { success: true, user: updatedUser, message: res.message };
             }
             return { success: false, message: res.message || "Failed to update profile" };
         } catch (err: any) {

@@ -1,6 +1,7 @@
-﻿import React from "react";
+import React from "react";
 import { Link } from "react-router";
 import PublicPageHeader from "../components/layout/PublicPageHeader";
+import { useDocumentTitle } from "../../../hooks/useDocumentTitle";
 
 const FEATURES = [
   {
@@ -26,6 +27,11 @@ const FEATURES = [
 ];
 
 export default function AboutPage() {
+  useDocumentTitle(
+    "About SpillRate - Honest Community Reviews & Local Business Directory",
+    "Learn how SpillRate provides frictionless local business discovery and verified customer reviews with a 24-hour device cooldown anti-spam protection.",
+    "/about"
+  );
   return (
     <div>
       <PublicPageHeader
@@ -91,7 +97,7 @@ export default function AboutPage() {
             <span>SpillRate connects local communities through honest customer feedback.</span>
             <Link
               to="/contact"
-              className="font-medium text-teal-700 hover:text-teal-800 transition-colors inline-flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-teal-600 rounded"
+              className="font-medium text-teal-700 hover:text-teal-800 transition-colors inline-flex items-center gap-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 rounded py-2 min-h-[44px]"
             >
               Have questions? Contact our team →
             </Link>

@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
-import { Plus, Trash2, RotateCw } from "lucide-react";
+import { Plus, Trash2, RotateCw, Edit2 } from "lucide-react";
 import { useCategories } from "../../../../hooks/useCategories";
 import { useAdmin } from "../../../../hooks/useAdmin";
 import BaseModal from "../../../../components/common/BaseModal";
 
-export default function AdminCategoriesSection({ onOpenAddModal }) {
+export default function AdminCategoriesSection({ onOpenAddModal, onEditCategory }) {
   const { categories, refetch } = useCategories();
   const { deleteCategory, isDeletingCategory } = useAdmin();
 
@@ -39,7 +39,7 @@ export default function AdminCategoriesSection({ onOpenAddModal }) {
         <button
           type="button"
           onClick={onOpenAddModal}
-          className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 bg-teal-700 hover:bg-teal-800 active:bg-teal-900 text-white rounded-lg text-xs font-semibold cursor-pointer min-h-[38px] transition-colors focus:outline-none focus:ring-2 focus:ring-teal-700 focus:ring-offset-2"
+          className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-3.5 py-2.5 sm:py-2 bg-teal-700 hover:bg-teal-800 active:bg-teal-900 text-white rounded-lg text-xs font-semibold cursor-pointer min-h-[44px] sm:min-h-[38px] transition-colors focus:outline-none focus:ring-2 focus:ring-teal-700 focus:ring-offset-2"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>Add Category</span>
@@ -48,34 +48,47 @@ export default function AdminCategoriesSection({ onOpenAddModal }) {
 
       {/* Categories Grid */}
       {(!categories || categories.length === 0) ? (
-        <div className="bg-white rounded-xl border border-slate-200 p-8 text-center text-slate-500 text-xs">
+        <div className="bg-white rounded-xl border border-slate-200/90 p-8 text-center text-slate-500 text-xs">
           No categories registered. Click &ldquo;Add Category&rdquo; to create the first one.
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3">
           {categories.map((cat) => (
             <div
               key={cat.id || cat.slug || cat.name}
-              className="bg-white rounded-xl border border-slate-200 p-3.5 shadow-xs hover:border-slate-300 transition-colors flex items-center justify-between gap-3"
+              className="bg-white rounded-xl border border-slate-200/90 p-3 sm:p-3.5 shadow-xs hover:border-slate-300 transition-colors flex items-center justify-between gap-3"
             >
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1">
                 <p className="font-semibold text-xs text-slate-900 truncate">{cat.name}</p>
-                <p className="text-[11px] text-slate-500 font-mono mt-0.5">
+                <p className="text-[11px] text-slate-500 font-mono mt-0.5 truncate">
                   /{cat.slug || cat.name.toLowerCase().replace(/\s+/g, "-")}
                 </p>
               </div>
-              {cat.id && (
-                <button
-                  type="button"
-                  onClick={() => setCategoryToDelete(cat)}
-                  disabled={isDeletingCategory}
-                  className="min-h-[36px] min-w-[36px] p-2 text-slate-400 hover:text-red-700 hover:bg-red-50 rounded-lg cursor-pointer transition-colors disabled:opacity-40 focus:outline-none focus:ring-2 focus:ring-red-500"
-                  title={`Delete category ${cat.name}`}
-                  aria-label={`Delete category ${cat.name}`}
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                </button>
-              )}
+              <div className="flex items-center gap-1 shrink-0">
+                {cat.id && (
+                  <button
+                    type="button"
+                    onClick={() => onEditCategory && onEditCategory(cat)}
+                    className="min-h-[44px] min-w-[44px] sm:min-h-[36px] sm:min-w-[36px] p-2 text-slate-400 hover:text-teal-700 hover:bg-teal-50 rounded-lg cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-teal-500 flex items-center justify-center shrink-0"
+                    title={`Edit category ${cat.name}`}
+                    aria-label={`Edit category ${cat.name}`}
+                  >
+                    <Edit2 className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
+                  </button>
+                )}
+                {cat.id && (
+                  <button
+                    type="button"
+                    onClick={() => setCategoryToDelete(cat)}
+                    disabled={isDeletingCategory}
+                    className="min-h-[44px] min-w-[44px] sm:min-h-[36px] sm:min-w-[36px] p-2 text-slate-400 hover:text-red-700 hover:bg-red-50 rounded-lg cursor-pointer transition-colors disabled:opacity-40 focus:outline-none focus:ring-2 focus:ring-red-500 flex items-center justify-center shrink-0"
+                    title={`Delete category ${cat.name}`}
+                    aria-label={`Delete category ${cat.name}`}
+                  >
+                    <Trash2 className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
+                  </button>
+                )}
+              </div>
             </div>
           ))}
         </div>

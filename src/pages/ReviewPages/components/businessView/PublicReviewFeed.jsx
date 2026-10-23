@@ -1,7 +1,6 @@
 import React from "react";
 import { AlertCircle, MessageSquare, Star } from "lucide-react";
 import CustomerReviewCard from "./CustomerReviewCard";
-import PinnedReviewCard from "./PinnedReviewCard";
 
 export default function PublicReviewFeed({
   reviews = [],
@@ -91,10 +90,11 @@ export default function PublicReviewFeed({
     <div className="space-y-3">
       {/* Pinned Reviews */}
       {pinnedReviews.map((review) => (
-        <PinnedReviewCard
+        <CustomerReviewCard
           key={review.id}
           review={review}
           onPhotoClick={onPhotoClick}
+          isPinned={true}
         />
       ))}
 

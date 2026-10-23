@@ -3,6 +3,7 @@ import { Link, NavLink, useLocation } from "react-router";
 import { Menu, X, User, LogOut, Compass, Info } from "lucide-react";
 import { useUserAuth } from "../../../../hooks/useUserAuth";
 import { useBodyScrollLock } from "../../../../hooks/useBodyScrollLock";
+import NavbarBrandLogo from "../../../../components/common/NavbarBrandLogo";
 import SignInModal from "./SignInModal";
 
 export default function PublicNavbar() {
@@ -49,19 +50,7 @@ export default function PublicNavbar() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-14 sm:h-16">
             {/* Brand Logo */}
-            <Link
-              to="/"
-              className="flex items-center gap-2 font-bold text-lg sm:text-xl text-slate-900 group focus:outline-none focus:ring-2 focus:ring-teal-600 rounded-lg p-1 min-h-[44px]"
-            >
-              <img
-                src="/logo.png"
-                alt="SpillRate Logo"
-                className="w-7 h-7 sm:w-8 sm:h-8 object-contain shrink-0"
-              />
-              <span className="tracking-tight text-lg sm:text-xl font-bold">
-                Spill<span className="text-teal-700">Rate</span>
-              </span>
-            </Link>
+            <NavbarBrandLogo to="/" />
 
             {/* Desktop Navigation Links */}
             <nav aria-label="Main Navigation" className="hidden md:flex items-center gap-1.5">
@@ -88,7 +77,7 @@ export default function PublicNavbar() {
               {isAuthenticated ? (
                 <div className="flex items-center gap-2">
                   <Link
-                    to={user?.role === "founder" ? "/admin/dashboard" : (user?.is_admin || user?.role === "admin") ? "/admin/dashboard" : "/dashboard"}
+                    to={user?.role === "founder" ? "/admin" : (user?.is_admin || user?.role === "admin") ? "/admin" : "/dashboard"}
                     className="flex items-center gap-2 px-3.5 py-2 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 active:bg-slate-300 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[38px]"
                   >
                     {user?.avatar_url || user?.picture ? (
@@ -153,20 +142,7 @@ export default function PublicNavbar() {
           <div className="border-b border-slate-200 px-4 sm:px-6 shrink-0">
             <div className="flex items-center justify-between h-14 sm:h-16 max-w-7xl mx-auto">
               {/* Brand Logo */}
-              <Link
-                to="/"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-2 font-bold text-lg sm:text-xl text-slate-900 group focus:outline-none focus:ring-2 focus:ring-teal-600 rounded-lg p-1 min-h-[44px]"
-              >
-                <img
-                  src="/logo.png"
-                  alt="SpillRate Logo"
-                  className="w-7 h-7 sm:w-8 sm:h-8 object-contain shrink-0"
-                />
-                <span className="tracking-tight text-lg sm:text-xl font-bold">
-                  Spill<span className="text-teal-700">Rate</span>
-                </span>
-              </Link>
+              <NavbarBrandLogo to="/" onClick={() => setMobileMenuOpen(false)} />
 
               {/* Close Button ('X') with 44px Touch Target */}
               <button
@@ -211,7 +187,7 @@ export default function PublicNavbar() {
               {isAuthenticated ? (
                 <>
                   <Link
-                    to={user?.role === "founder" ? "/admin/dashboard" : (user?.is_admin || user?.role === "admin") ? "/admin/dashboard" : "/dashboard"}
+                    to={user?.role === "founder" ? "/admin" : (user?.is_admin || user?.role === "admin") ? "/admin" : "/dashboard"}
                     onClick={() => setMobileMenuOpen(false)}
                     className="flex items-center justify-center gap-2 w-full py-3.5 px-4 bg-slate-100 hover:bg-slate-200 text-slate-900 font-semibold rounded-xl text-center min-h-[48px] focus:outline-none focus:ring-2 focus:ring-teal-600 transition-colors"
                   >

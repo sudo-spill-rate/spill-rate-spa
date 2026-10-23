@@ -1,5 +1,6 @@
-﻿import React from "react";
+import React from "react";
 import LegalDocumentViewer from "../components/legal/LegalDocumentViewer";
+import { useDocumentTitle } from "../../../hooks/useDocumentTitle";
 
 const TERMS_SECTIONS = [
   {
@@ -61,6 +62,11 @@ const TERMS_SECTIONS = [
 ];
 
 export default function TermsAndConditionsPage() {
+  useDocumentTitle(
+    "Terms of Service & Community Guidelines - SpillRate",
+    "Review our community terms, merchant guidelines, honest review standards, content moderation rules, and platform usage policies.",
+    "/terms"
+  );
   return (
     <LegalDocumentViewer
       title="Terms and Conditions"

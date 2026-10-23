@@ -4,8 +4,10 @@ import { useQuery } from "@tanstack/react-query";
 import { CheckCircle2, AlertCircle } from "lucide-react";
 import { businessService } from "../../../../services/businessService";
 import BusinessCard from "../../../../components/common/BusinessCard";
+import { useUserAuth } from "../../../../hooks/useUserAuth";
 
 export default function FeaturedSection() {
+  const { isAuthenticated } = useUserAuth();
   const {
     data: businesses = [],
     isLoading,
@@ -101,8 +103,8 @@ export default function FeaturedSection() {
           </p>
           <div className="mt-3.5 sm:mt-4">
             <Link
-              to="/dashboard/business/new"
-              className="inline-flex items-center justify-center px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs sm:text-sm font-semibold transition-colors min-h-[44px] focus:outline-none focus:ring-2 focus:ring-teal-600"
+              to={isAuthenticated ? "/dashboard/business/new" : "/?signin=true"}
+              className="inline-flex items-center justify-center px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs sm:text-sm font-semibold transition-colors min-h-[44px] focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600"
             >
               Register Your Business
             </Link>

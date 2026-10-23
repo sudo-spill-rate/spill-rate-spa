@@ -22,7 +22,7 @@
 | Method | Endpoint | Access | Description |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/v1/api/review/manage/:businessId` | Authenticated (Owner) | Manage reviews (filters: `all`, `public`, `private`, `pinned`) |
-| `POST` | `/v1/api/review/:reviewId/reply` | Authenticated (Owner) | Post or update official business owner response to a review |
+| `POST` / `PATCH` | `/v1/api/review/:reviewId/reply` | Authenticated (Owner) | Post or update official business owner response to a review |
 | `DELETE` | `/v1/api/review/:reviewId/reply` | Authenticated (Owner) | Remove owner response from a review |
 | `PATCH` | `/v1/api/review/:reviewId/pin` | Authenticated (Owner) | Pin review to top of store (max 3 pinned reviews) |
 | `PATCH` | `/v1/api/review/:reviewId/unpin` | Authenticated (Owner) | Unpin review |
@@ -194,9 +194,9 @@ Allows customers or owners to report fake, abusive, or spam reviews. Rate limite
 ---
 
 ## 6. Business Owner Reply
-### `POST /v1/api/review/:reviewId/reply`
+### `POST` / `PATCH` / `PUT /v1/api/review/:reviewId/reply`
 
-Owner posts or updates an official response to a customer review.
+Owner posts or updates an official response to a customer review. Both `POST`, `PATCH`, and `PUT` are supported.
 
 * **Headers:** `Authorization: Bearer <access_token>`
 * **Request Body:**

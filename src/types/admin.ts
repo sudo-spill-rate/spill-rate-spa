@@ -118,3 +118,117 @@ export interface PromoteAdminResponse {
         role: "admin" | "founder";
     };
 }
+
+// 9. Admin Businesses Queue types (GET /v1/api/admin/businesses)
+export interface AdminBusinessQueueItem {
+    id: string;
+    name: string;
+    slug: string;
+    category?: string | null;
+    is_verified: boolean;
+    total_reviews: number;
+    average_rating: number;
+    user_id?: string;
+    phone?: string | null;
+    website?: string | null;
+    created_at: string;
+}
+
+export interface AdminBusinessesQuery {
+    status?: "all" | "unverified" | "verified";
+    search?: string;
+    limit?: number;
+    cursor?: string;
+}
+
+export interface AdminBusinessesResponse {
+    success: true;
+    message: string;
+    data: AdminBusinessQueueItem[];
+    pagination: {
+        limit: number;
+        has_more: boolean;
+        next_cursor: string | null;
+    };
+}
+
+// 10. Category Update types (PATCH /v1/api/admin/category/:id)
+export interface UpdateCategoryPayload {
+    name?: string;
+    icon?: string;
+}
+
+export interface UpdateCategoryResponse {
+    success: true;
+    message: string;
+    data: {
+        id: string;
+        name: string;
+        slug: string;
+        icon?: string | null;
+    };
+}
+
+// 11. Platform Admin List & Revoke types (GET /v1/api/admin/admins & DELETE /v1/api/admin/admins/:email)
+export interface PlatformAdminItem {
+    email: string;
+    role: "founder" | "admin";
+    created_at: string;
+}
+
+export interface PlatformAdminsResponse {
+    success: true;
+    message: string;
+    data: PlatformAdminItem[];
+}
+
+export interface RevokeAdminResponse {
+    success: true;
+    message: string;
+    data: {
+        email: string;
+    };
+}
+
+// 12. Admin Users Directory & Moderation (GET /v1/api/admin/users & PATCH /v1/api/admin/user/:id/ban)
+export interface AdminUsersQuery {
+    search?: string;
+    role?: "all" | "user" | "admin" | "founder" | "banned";
+    limit?: number;
+    cursor?: string;
+}
+
+export interface AdminUserListItem {
+    id: string;
+    email: string;
+    full_name?: string | null;
+    avatar_url?: string | null;
+    role: "user" | "admin" | "founder" | "banned";
+    created_at: string;
+}
+
+export interface AdminUsersResponse {
+    success: true;
+    message: string;
+    data: AdminUserListItem[];
+    pagination: {
+        limit: number;
+        has_more: boolean;
+        next_cursor: string | null;
+    };
+}
+
+export interface BanUserPayload {
+    is_banned: boolean;
+}
+
+export interface BanUserResponse {
+    success: true;
+    message: string;
+    data: {
+        id: string;
+        email: string;
+        role: "banned" | "user";
+    };
+}
+

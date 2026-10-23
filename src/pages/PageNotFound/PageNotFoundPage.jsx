@@ -1,8 +1,15 @@
 import React from "react";
 import { Link } from "react-router";
 import { Compass, Home } from "lucide-react";
+import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 
 export default function PageNotFoundPage() {
+  useDocumentTitle(
+    "404 - Page Not Found | SpillRate",
+    "The page you are looking for does not exist or may have been moved.",
+    "",
+    true // noindex, nofollow
+  );
   return (
     <div className="max-w-2xl mx-auto w-full py-12 sm:py-16 lg:py-20 px-4 sm:px-6">
       <div className="bg-white rounded-2xl border border-slate-200/90 p-8 sm:p-12 shadow-xs text-center space-y-6">

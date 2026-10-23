@@ -19,13 +19,13 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     }
 
     if (!isAuthenticated) {
-        return <Navigate to="/" replace />;
+        return <Navigate to="/?signin=true" replace />;
     }
 
     // Founder RBAC Guard: Ang Founder ay may sariling nakatalagang route (/admin/*)
     // Hindi dapat makapunta sa merchant /dashboard
     if (user?.role === "founder") {
-        return <Navigate to="/admin/dashboard" replace />;
+        return <Navigate to="/admin" replace />;
     }
 
     return children ? <>{children}</> : <Outlet />;

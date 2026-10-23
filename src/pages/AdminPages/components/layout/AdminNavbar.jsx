@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { useUserAuth } from "../../../../hooks/useUserAuth";
 import { useBodyScrollLock } from "../../../../hooks/useBodyScrollLock";
+import NavbarBrandLogo from "../../../../components/common/NavbarBrandLogo";
 import AccountSettingsModal from "../../../BusinessPages/components/layout/AccountSettingsModal";
 
 export default function AdminNavbar() {
@@ -37,11 +38,8 @@ export default function AdminNavbar() {
   };
 
   const isPlatformOverviewActive =
-    location.pathname === "/admin/platform/overview" ||
-    location.pathname === "/admin/overview" ||
-    location.pathname === "/admin" ||
-    location.pathname === "/admin/dashboard";
-  const isGoogleOverviewActive = location.pathname === "/admin/google-overview";
+    location.pathname === "/admin";
+  const isGoogleOverviewActive = location.pathname.startsWith("/admin/google");
   const isMyStoreActive = location.pathname.startsWith("/admin/my-store");
 
   return (
@@ -50,29 +48,11 @@ export default function AdminNavbar() {
         <div className="flex items-center justify-between h-16">
           {/* Brand & Badge */}
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <Link
-              to="/admin/platform/overview"
-              className="flex items-center gap-2 sm:gap-2.5 focus:outline-none focus:ring-2 focus:ring-teal-700 rounded-lg p-1 min-h-[44px] min-w-0"
-              aria-label="SpillRate Admin Overview"
-            >
-              <img
-                src="/logo.png"
-                alt="SpillRate Logo"
-                className="w-7 h-7 sm:w-8 sm:h-8 object-contain shrink-0"
-              />
-              <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
-                <span className="font-bold text-base sm:text-lg tracking-tight text-slate-900 truncate">
-                  SpillRate
-                </span>
-                <span className="text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded-full border border-teal-200 bg-teal-50 text-teal-800 shrink-0">
-                  Platform Admin
-                </span>
-              </div>
-            </Link>
+            <NavbarBrandLogo to="/admin" badgeText="Platform Admin" />
           </div>
 
           {/* Desktop User Session, Settings & Logout */}
-          <div className="hidden md:flex items-center gap-3">
+          <div className="hidden lg:flex items-center gap-3">
             <div className="flex items-center gap-2 pl-3 border-l border-slate-200">
               <div className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 overflow-hidden flex items-center justify-center text-xs font-bold text-slate-700">
                 {user?.avatar_url || user?.picture ? (
@@ -123,7 +103,7 @@ export default function AdminNavbar() {
           </div>
 
           {/* Mobile Menu Toggle Button */}
-          <div className="flex md:hidden items-center">
+          <div className="flex lg:hidden items-center">
             <button
               type="button"
               onClick={() => setMobileMenuOpen(true)}
@@ -144,30 +124,16 @@ export default function AdminNavbar() {
           role="dialog"
           aria-modal="true"
           aria-label="Platform Admin Navigation"
-          className="fixed inset-0 z-50 md:hidden bg-white flex flex-col"
+          className="fixed inset-0 z-50 lg:hidden bg-white flex flex-col"
         >
           {/* Top Bar inside Drawer: Identical height & alignment */}
           <div className="border-b border-slate-200 px-3.5 sm:px-6 shrink-0 bg-white">
             <div className="flex items-center justify-between h-16 max-w-7xl mx-auto">
-              <Link
-                to="/admin/overview"
+              <NavbarBrandLogo
+                to="/admin"
+                badgeText="Platform Admin"
                 onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-2 sm:gap-2.5 focus:outline-none focus:ring-2 focus:ring-teal-700 rounded-lg p-1 min-h-[44px] min-w-0"
-              >
-                <img
-                  src="/logo.png"
-                  alt="SpillRate Logo"
-                  className="w-7 h-7 sm:w-8 sm:h-8 object-contain shrink-0"
-                />
-                <div className="flex items-center gap-1.5 sm:gap-2 min-w-0">
-                  <span className="font-bold text-base sm:text-lg tracking-tight text-slate-900">
-                    SpillRate
-                  </span>
-                  <span className="text-[10px] sm:text-xs font-semibold px-1.5 sm:px-2 py-0.5 rounded-full border border-teal-200 bg-teal-50 text-teal-800 shrink-0">
-                    Platform Admin
-                  </span>
-                </div>
-              </Link>
+              />
 
               {/* Close Button */}
               <button
@@ -228,7 +194,7 @@ export default function AdminNavbar() {
             {/* Overview Links: Platform Overview & Google Overview */}
             <div className="space-y-1.5 pt-1">
               <Link
-                to="/admin/platform/overview"
+                to="/admin"
                 onClick={() => setMobileMenuOpen(false)}
                 className={`flex items-center gap-3 px-3.5 py-3 text-sm font-semibold rounded-xl transition-colors min-h-[46px] ${
                   isPlatformOverviewActive
@@ -241,7 +207,7 @@ export default function AdminNavbar() {
               </Link>
 
               <Link
-                to="/admin/google-overview"
+                to="/admin/google/overview"
                 onClick={() => setMobileMenuOpen(false)}
                 className={`flex items-center gap-3 px-3.5 py-3 text-sm font-semibold rounded-xl transition-colors min-h-[46px] ${
                   isGoogleOverviewActive

@@ -1,38 +1,27 @@
 import React from "react";
 
-// Platform Workspace Pages mula sa AdminPages/ subfolders
+// Platform Workspace Pages
 import AdminOverviewPage from "../pages/AdminPages/Overview/AdminOverviewPage";
 import AdminGoogleOverviewPage from "../pages/AdminPages/GoogleOverview/AdminGoogleOverviewPage";
+import AdminGoogleVisitorsPage from "../pages/AdminPages/GoogleOverview/AdminGoogleVisitorsPage";
+import AdminGoogleSourcesPage from "../pages/AdminPages/GoogleOverview/AdminGoogleSourcesPage";
+import AdminGooglePagesPage from "../pages/AdminPages/GoogleOverview/AdminGooglePagesPage";
 import AdminReportsPage from "../pages/AdminPages/Reports/AdminReportsPage";
 import AdminStorefrontsPage from "../pages/AdminPages/Storefronts/AdminStorefrontsPage";
 import AdminCategoriesPage from "../pages/AdminPages/Categories/AdminCategoriesPage";
+import AdminUsersPage from "../pages/AdminPages/Users/AdminUsersPage";
 import AdminDirectoryPage from "../pages/AdminPages/Directory/AdminDirectoryPage";
 
-// Founder Storefront Pages mula sa AdminPages/ subfolders
-import AdminMyStorePage from "../pages/AdminPages/MyStore/AdminMyStorePage";
+// Founder Storefront Pages
+import BusinessDashboardPage from "../pages/BusinessPages/Dashboard/BusinessDashboardPage";
 import AdminCreateStorefrontPage from "../pages/AdminPages/CreateStorefront/AdminCreateStorefrontPage";
-import AdminManageStorefrontPage from "../pages/AdminPages/ManageStorefront/AdminManageStorefrontPage";
+import BusinessManageProfilePage from "../pages/BusinessPages/Profile/BusinessManageProfilePage";
 
 export const AdminRoutes = [
-    // 1. Platform Workspace Routes (/admin/platform/* may backward compatibility)
+    // 1. Platform Governance Routes (Primary overview is /admin)
     {
-        key: "admin-root",
+        key: "admin-overview",
         path: "/admin",
-        element: <AdminOverviewPage />,
-    },
-    {
-        key: "admin-dashboard",
-        path: "/admin/dashboard",
-        element: <AdminOverviewPage />,
-    },
-    {
-        key: "admin-platform-overview",
-        path: "/admin/platform/overview",
-        element: <AdminOverviewPage />,
-    },
-    {
-        key: "admin-overview-legacy",
-        path: "/admin/overview",
         element: <AdminOverviewPage />,
     },
     {
@@ -41,18 +30,8 @@ export const AdminRoutes = [
         element: <AdminReportsPage />,
     },
     {
-        key: "admin-reports-legacy",
-        path: "/admin/reports",
-        element: <AdminReportsPage />,
-    },
-    {
         key: "admin-platform-storefronts",
         path: "/admin/platform/storefronts",
-        element: <AdminStorefrontsPage />,
-    },
-    {
-        key: "admin-storefronts-legacy",
-        path: "/admin/storefronts",
         element: <AdminStorefrontsPage />,
     },
     {
@@ -61,38 +40,38 @@ export const AdminRoutes = [
         element: <AdminCategoriesPage />,
     },
     {
-        key: "admin-categories-legacy",
-        path: "/admin/categories",
-        element: <AdminCategoriesPage />,
-    },
-    {
-        key: "admin-platform-directory",
-        path: "/admin/platform/directory",
-        element: <AdminDirectoryPage />,
-    },
-    {
-        key: "admin-directory-legacy",
-        path: "/admin/directory",
-        element: <AdminDirectoryPage />,
+        key: "admin-platform-users",
+        path: "/admin/platform/users",
+        element: <AdminUsersPage />,
     },
 
-    // 2. Google Overview Routes
+    // 2. Google Analytics Standalone Routes
     {
         key: "admin-google-overview",
-        path: "/admin/google-overview",
-        element: <AdminGoogleOverviewPage />,
-    },
-    {
-        key: "admin-google-overview-nested",
         path: "/admin/google/overview",
         element: <AdminGoogleOverviewPage />,
     },
+    {
+        key: "admin-google-visitors",
+        path: "/admin/google/visitors",
+        element: <AdminGoogleVisitorsPage />,
+    },
+    {
+        key: "admin-google-sources",
+        path: "/admin/google/traffic-sources",
+        element: <AdminGoogleSourcesPage />,
+    },
+    {
+        key: "admin-google-pages",
+        path: "/admin/google/top-pages",
+        element: <AdminGooglePagesPage />,
+    },
 
-    // 2. Founder Storefront Management Routes (Exclusively inside AdminPages)
+    // 3. Founder Storefront Management Routes
     {
         key: "admin-my-store",
         path: "/admin/my-store",
-        element: <AdminMyStorePage />,
+        element: <BusinessDashboardPage />,
     },
     {
         key: "admin-my-store-directory",
@@ -107,7 +86,7 @@ export const AdminRoutes = [
     {
         key: "admin-manage-store",
         path: "/admin/my-store/:id",
-        element: <AdminManageStorefrontPage />,
+        element: <BusinessManageProfilePage />,
     },
 ];
 

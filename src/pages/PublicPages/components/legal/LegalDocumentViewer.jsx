@@ -1,4 +1,4 @@
-﻿import React from "react";
+import React from "react";
 import { Link } from "react-router";
 import PublicPageHeader from "../layout/PublicPageHeader";
 
@@ -75,7 +75,7 @@ export default function LegalDocumentViewer({
               <span>Terms apply to all users and visitors of SpillRate.</span>
               <Link
                 to="/contact"
-                className="font-medium text-teal-700 hover:text-teal-800 transition-colors inline-flex items-center gap-1 focus:outline-none focus:ring-2 focus:ring-teal-600 rounded"
+                className="font-medium text-teal-700 hover:text-teal-800 transition-colors inline-flex items-center gap-1 focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 rounded py-2 min-h-[44px]"
               >
                 Have questions? Contact our team →
               </Link>

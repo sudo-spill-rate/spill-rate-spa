@@ -7,14 +7,13 @@ export default function AdminStorefrontsPage() {
   const { overview, refetchOverview } = useAdmin();
 
   return (
-    <AdminLayout
-      title="Storefront Verification"
-      description="Audit registered storefronts, toggle verified badges, or remove non-compliant business entries."
-    >
-      <AdminBusinessesSection
-        overview={overview}
-        refetchOverview={refetchOverview}
-      />
+    <AdminLayout>
+      <div className="w-full max-w-full min-w-0">
+        <AdminBusinessesSection
+          overview={overview}
+          refetchOverview={refetchOverview}
+        />
+      </div>
     </AdminLayout>
   );
 }

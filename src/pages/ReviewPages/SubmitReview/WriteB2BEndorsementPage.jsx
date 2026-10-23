@@ -22,7 +22,7 @@ import { businessService } from "../../../services/businessService";
 import { reviewService } from "../../../services/reviewService";
 import { useUserAuth } from "../../../hooks/useUserAuth";
 import { useDeviceId } from "../../../hooks/useDeviceId";
-import { useBusiness } from "../../../context/business/useBusiness";
+import { useBusiness } from "../../../hooks/useBusiness";
 
 import InteractiveStarPicker from "../components/submit/InteractiveStarPicker";
 import ReviewCommentTextarea from "../components/submit/ReviewCommentTextarea";
@@ -409,7 +409,14 @@ export default function WriteB2BEndorsementPage() {
 
                 {business.is_verified && (
                   <span className="inline-flex items-center gap-0.5 text-[10px] font-semibold text-teal-700 bg-teal-50 px-1 py-0.5 rounded border border-teal-200">
-                    <CheckCircle2 className="w-2.5 h-2.5 text-teal-600" />
+                    <img
+                      src="/assets/verified-shield.png"
+                      alt=""
+                      className="w-3 h-3 object-contain inline-block shrink-0 drop-shadow-2xs"
+                      loading="lazy"
+                      decoding="async"
+                      aria-hidden="true"
+                    />
                     <span>Verified</span>
                   </span>
                 )}

@@ -50,7 +50,7 @@ export const BusinessProvider: React.FC<BusinessProviderProps> = ({ children }) 
 
             if (res.success) {
                 const ownerBusinesses = user?.id
-                    ? (res.data || []).filter((b) => b.user_id === user.id)
+                    ? (res.data || []).filter((b) => !b.user_id || b.user_id === user.id)
                     : res.data || [];
                 setBusinesses(ownerBusinesses);
                 setPagination(res.pagination);
@@ -78,7 +78,7 @@ export const BusinessProvider: React.FC<BusinessProviderProps> = ({ children }) 
 
             if (res.success) {
                 const ownerBusinesses = user?.id
-                    ? (res.data || []).filter((b) => b.user_id === user.id)
+                    ? (res.data || []).filter((b) => !b.user_id || b.user_id === user.id)
                     : res.data || [];
                 setBusinesses((prev) => [...prev, ...ownerBusinesses]);
                 setPagination(res.pagination);

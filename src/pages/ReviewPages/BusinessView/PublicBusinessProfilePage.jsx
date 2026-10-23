@@ -15,7 +15,6 @@ import {
   Star,
   MessageSquare,
   Camera,
-  CheckCircle2,
 } from "lucide-react";
 import PublicNavbar from "../../PublicPages/components/layout/PublicNavbar";
 import PublicFooter from "../../PublicPages/components/layout/PublicFooter";
@@ -32,8 +31,7 @@ import { businessService } from "../../../services/businessService";
 import { reviewService } from "../../../services/reviewService";
 import { useDeviceId } from "../../../hooks/useDeviceId";
 import { useUserAuth } from "../../../hooks/useUserAuth";
-import { useBusiness } from "../../../context/business/useBusiness";
-import { ManageReviewProvider } from "../../../context/manageReview/manageReviewContextProvider";
+import { useBusiness } from "../../../hooks/useBusiness";
 
 export default function PublicBusinessProfilePage() {
   const { slug } = useParams();
@@ -370,9 +368,12 @@ export default function PublicBusinessProfilePage() {
                             <span className="text-slate-300 font-light text-xs sm:text-sm" aria-hidden="true">
                               |
                             </span>
-                            <CheckCircle2
-                              className="w-5 h-5 text-teal-700 inline-block shrink-0 drop-shadow-2xs"
-                              aria-hidden="true"
+                            <img
+                              src="/assets/verified-shield.png"
+                              alt="Verified Establishment"
+                              className="w-5 h-5 object-contain inline-block shrink-0 drop-shadow-2xs"
+                              loading="lazy"
+                              decoding="async"
                             />
                           </span>
                         )}
@@ -440,7 +441,7 @@ export default function PublicBusinessProfilePage() {
                       {business.phone ? (
                         <a
                           href={`tel:${business.phone}`}
-                          className="inline-flex items-center gap-1.5 text-slate-800 hover:text-teal-700 transition-colors font-medium focus:outline-none focus:underline min-w-0"
+                          className="inline-flex items-center gap-1.5 text-slate-800 hover:text-teal-700 transition-colors font-medium focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 rounded px-1 -mx-1 min-w-0"
                         >
                           <Phone className="w-3.5 h-3.5 text-teal-700 shrink-0" aria-hidden="true" />
                           <span className="truncate">{business.phone}</span>
@@ -479,7 +480,7 @@ export default function PublicBusinessProfilePage() {
                           href={business.website}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 text-teal-700 hover:text-teal-800 hover:underline font-medium min-w-0 max-w-[160px] sm:max-w-[280px]"
+                          className="inline-flex items-center gap-1.5 text-teal-700 hover:text-teal-800 hover:underline font-medium min-w-0 max-w-[160px] sm:max-w-[280px] focus:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 rounded px-1 -mx-1"
                         >
                           <Globe className="w-3.5 h-3.5 text-teal-700 shrink-0" aria-hidden="true" />
                           <span className="truncate">
@@ -708,12 +709,10 @@ export default function PublicBusinessProfilePage() {
               className={`${mobileTab === "reviews" ? "block" : "hidden lg:block"}`}
             >
               {isOwnerOrFounder ? (
-                <ManageReviewProvider>
-                  <ReviewModerationHub
-                    businessId={business.id}
-                    businessSlug={business.slug}
-                  />
-                </ManageReviewProvider>
+                <ReviewModerationHub
+                  businessId={business.id}
+                  businessSlug={business.slug}
+                />
               ) : (
                 <div className="space-y-3.5">
                   <PublicReviewFeed

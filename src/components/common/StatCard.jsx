@@ -9,7 +9,7 @@ const TREND_VARIANTS = {
 
 /**
  * Reusable Metric / Stat Card component.
- * Adheres to WCAG AA contrast standards, Anti-AI-Slop typography and responsive layout rhythm.
+ * Adheres to WCAG AA contrast standards, Anti-AI-Slop typography, and responsive layout rhythm.
  *
  * @param {Object} props
  * @param {string|React.ReactNode} props.title - Metric heading / title
@@ -35,48 +35,69 @@ export default function StatCard({
 }) {
   const trendClass = TREND_VARIANTS[trendType] || TREND_VARIANTS.neutral;
 
+  // Detect whether value is a number/short metric vs long text title
+  const isTextualValue =
+    typeof value === "string" &&
+    (value.length > 7 || (isNaN(Number(value)) && !value.includes("%")));
+
   return (
     <div
-      className={`bg-white rounded-xl sm:rounded-2xl border border-slate-200/90 p-3.5 sm:p-5 shadow-xs flex flex-col justify-between hover:border-slate-300 transition-colors ${className}`}
+      className={`bg-white rounded-xl border border-slate-200/90 p-2.5 sm:p-4 shadow-2xs hover:border-slate-300 transition-colors flex flex-col justify-between h-full min-h-[92px] sm:min-h-[105px] ${className}`}
     >
       <div>
         {/* Header: Title + Optional Icon / Trend Pill */}
-        <div className="flex items-center justify-between gap-2 mb-1.5">
-          <div className="flex items-center gap-2 min-w-0">
+        <div className="flex items-center justify-between gap-1.5 mb-0.5 sm:mb-1">
+          <div className="flex items-center gap-1.5 min-w-0">
             {Icon && (
-              <div className="w-6 h-6 rounded-md bg-slate-100 flex items-center justify-center shrink-0 text-slate-600">
-                <Icon className="w-3.5 h-3.5" aria-hidden="true" />
+              <div className="w-4 h-4 sm:w-5 sm:h-5 rounded-md bg-slate-100 flex items-center justify-center shrink-0 text-slate-500">
+                <Icon className="w-2.5 h-2.5 sm:w-3 sm:h-3" aria-hidden="true" />
               </div>
             )}
-            <h3 className="text-xs font-semibold text-slate-600 truncate">
+            <h3
+              className="text-[11px] sm:text-xs font-semibold text-slate-600 truncate"
+              title={typeof title === "string" ? title : undefined}
+            >
               {title}
             </h3>
           </div>
 
           {trend && (
             <span
-              className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border shrink-0 ${trendClass}`}
+              className={`text-[9px] sm:text-[10px] font-semibold px-1.5 sm:px-2 py-0.2 rounded-full border shrink-0 ${trendClass}`}
             >
               {trend}
             </span>
           )}
         </div>
 
-        {/* Metric Value */}
-        <div className="flex items-baseline gap-1 mt-1">
-          <div className="text-xl sm:text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight tabular-nums leading-none">
-            {value}
-          </div>
-          {secondaryValue && (
-            <div className="shrink-0">{secondaryValue}</div>
+        {/* Metric Value: Fixed baseline-aligned container (h-7 sm:h-8) to guarantee equal height */}
+        <div className="h-7 sm:h-8 flex items-center mt-0.5 sm:mt-1">
+          {isTextualValue ? (
+            <div
+              className="text-xs sm:text-sm font-bold text-slate-900 tracking-tight line-clamp-2 leading-snug break-words"
+              title={String(value)}
+            >
+              {value}
+            </div>
+          ) : (
+            <div className="flex items-baseline gap-1">
+              <div className="text-lg sm:text-2xl font-extrabold text-slate-900 tracking-tight tabular-nums leading-none">
+                {value}
+              </div>
+              {secondaryValue && (
+                <div className="shrink-0 text-[10px] sm:text-xs text-slate-500 font-medium">
+                  {secondaryValue}
+                </div>
+              )}
+            </div>
           )}
         </div>
       </div>
 
-      {/* Subtitle / Description Footer */}
+      {/* Subtitle / Description Footer with tight white space */}
       {(subtitle || children) && (
-        <div className="mt-2 pt-2 border-t border-slate-100/90 text-[11px] sm:text-xs text-slate-500 line-clamp-1">
-          {subtitle}
+        <div className="mt-1.5 sm:mt-2 pt-1 sm:pt-1.5 border-t border-slate-100 text-[10px] sm:text-[11px] text-slate-500 line-clamp-1 flex items-center justify-between">
+          <span className="truncate">{subtitle}</span>
           {children}
         </div>
       )}

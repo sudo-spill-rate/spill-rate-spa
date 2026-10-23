@@ -6,7 +6,6 @@ import {
   Phone,
   Globe,
   Briefcase,
-  CheckCircle2,
 } from "lucide-react";
 import { BusinessContext } from "../../context/business/businessContext";
 import { AuthContext } from "../../context/auth/authContext";
@@ -108,14 +107,17 @@ export default function BusinessCard({
                     <span className="text-slate-300 font-light text-xs" aria-hidden="true">
                       |
                     </span>
-                    <CheckCircle2
-                      className="w-4 h-4 text-teal-700 inline-block drop-shadow-2xs shrink-0"
-                      aria-hidden="true"
+                    <img
+                      src="/assets/verified-shield.png"
+                      alt="Verified Establishment"
+                      className="w-4 h-4 object-contain inline-block drop-shadow-2xs shrink-0"
+                      loading="lazy"
+                      decoding="async"
                     />
                   </span>
                 )}
 
-                {(variant === "merchant" || (variant === "explore" && isActualOwner)) && (
+                {(variant === "merchant" || variant === "admin" || (variant === "explore" && isActualOwner)) && (
                   <span className="text-[10px] sm:text-[11px] font-semibold bg-teal-50 text-teal-800 px-1.5 py-0.5 rounded border border-teal-200 shrink-0">
                     Your Storefront
                   </span>
@@ -170,13 +172,6 @@ export default function BusinessCard({
             </div>
           </div>
 
-          {/* Optional Short Description for Admin / Detailed variants */}
-          {variant === "admin" && b.description && (
-            <p className="pb-3 text-xs text-slate-600 leading-relaxed whitespace-pre-wrap break-words line-clamp-2">
-              {b.description}
-            </p>
-          )}
-
           {/* 2. Horizontal Divider */}
           <div className="w-full border-t border-slate-200/80" />
 
@@ -230,19 +225,9 @@ export default function BusinessCard({
 
         {/* 4. Bottom Action Row */}
         <div className="w-full pt-2.5 border-t border-slate-200/80 flex items-center justify-between text-xs font-semibold text-teal-700 group-hover:text-teal-800">
-          {variant === "merchant" ? (
+          {variant === "merchant" || variant === "admin" ? (
             <>
               <span className="text-slate-600 font-medium">Your Storefront</span>
-              <span className="inline-flex items-center gap-1 font-semibold text-teal-700 group-hover:text-teal-800 transition-colors">
-                <span>Manage Storefront</span>
-                <span aria-hidden="true">&rarr;</span>
-              </span>
-            </>
-          ) : variant === "admin" ? (
-            <>
-              <span className="text-slate-500 font-normal">
-                Slug: <span className="font-mono text-slate-700">{b.slug}</span>
-              </span>
               <span className="inline-flex items-center gap-1 font-semibold text-teal-700 group-hover:text-teal-800 transition-colors">
                 <span>Manage Storefront</span>
                 <span aria-hidden="true">&rarr;</span>

@@ -2,8 +2,14 @@ import React from "react";
 import PublicPageHeader from "../components/layout/PublicPageHeader";
 import ContactForm from "../components/contact/ContactForm";
 import ContactDetailsCard from "../components/contact/ContactDetailsCard";
+import { useDocumentTitle } from "../../../hooks/useDocumentTitle";
 
 export default function ContactPage() {
+  useDocumentTitle(
+    "Contact Us - SpillRate Community Support & Verification Desk",
+    "Get in touch with the SpillRate team for support, merchant storefront verification, feedback, or community moderation inquiries.",
+    "/contact"
+  );
   return (
     <div>
       <PublicPageHeader

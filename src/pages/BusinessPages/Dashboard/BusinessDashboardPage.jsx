@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Link } from "react-router";
+import { Link, useLocation } from "react-router";
 import {
   PlusCircle,
   Building,
@@ -7,12 +7,19 @@ import {
   RotateCw,
 } from "lucide-react";
 import DashboardLayout from "../components/layout/DashboardLayout";
+import AdminLayout from "../../AdminPages/components/layout/AdminLayout";
 import PortfolioStatsOverview from "../components/dashboard/PortfolioStatsOverview";
 import BusinessLimitBanner from "../components/dashboard/BusinessLimitBanner";
-import OwnerBusinessCard from "../components/dashboard/OwnerBusinessCard";
+import BusinessCard from "../../../components/common/BusinessCard";
 import { useBusinessDirectory } from "../../../hooks/useBusinessDirectory";
 
 export default function BusinessDashboardPage() {
+  const location = useLocation();
+  const isAdmin = location.pathname.startsWith("/admin");
+  const Layout = isAdmin ? AdminLayout : DashboardLayout;
+  const newStorefrontPath = isAdmin ? "/admin/my-store/new" : "/dashboard/business/new";
+  const cardVariant = isAdmin ? "admin" : "merchant";
+
   const {
     businesses,
     pagination,
@@ -32,17 +39,21 @@ export default function BusinessDashboardPage() {
   const canCreateMore = businessCount < 5;
 
   return (
-    <DashboardLayout
-      title="Business Dashboard"
-      description="Overview of your registered storefronts, community feedback, and customer ratings."
+    <Layout
+      title={isAdmin ? "My Storefronts" : "Business Dashboard"}
+      description={
+        isAdmin
+          ? "Overview of your personal registered storefronts, community feedback, and customer ratings."
+          : "Overview of your registered storefronts, community feedback, and customer ratings."
+      }
       action={
         canCreateMore && businessCount > 0 ? (
           <Link
-            to="/dashboard/business/new"
+            to={newStorefrontPath}
             className="inline-flex items-center justify-center gap-1.5 px-3.5 py-2 text-xs sm:text-sm font-semibold text-white bg-teal-700 hover:bg-teal-800 rounded-xl transition-colors min-h-[44px] sm:min-h-[38px] w-full sm:w-auto shadow-2xs focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2 cursor-pointer"
           >
             <PlusCircle className="w-4 h-4" />
-            <span>Register Business</span>
+            <span>{isAdmin ? "Register Storefront" : "Register Business"}</span>
           </Link>
         ) : null
       }
@@ -137,11 +148,11 @@ export default function BusinessDashboardPage() {
           </p>
           <div className="mt-6">
             <Link
-              to="/dashboard/business/new"
+              to={newStorefrontPath}
               className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white bg-teal-700 hover:bg-teal-800 rounded-lg transition-colors min-h-[44px] shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-600 focus:ring-offset-2"
             >
               <PlusCircle className="w-4 h-4" />
-              <span>Register Your First Business</span>
+              <span>{isAdmin ? "Register First Storefront" : "Register Your First Business"}</span>
             </Link>
           </div>
         </div>
@@ -168,7 +179,7 @@ export default function BusinessDashboardPage() {
           {/* Business Cards Grid: 2-column layout on desktop (storefront 1 | storefront 2) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {businessList.map((biz) => (
-              <OwnerBusinessCard key={biz.id || biz.slug} business={biz} />
+              <BusinessCard key={biz.id || biz.slug} business={biz} variant={cardVariant} />
             ))}
           </div>
 
@@ -194,6 +205,6 @@ export default function BusinessDashboardPage() {
           )}
         </div>
       )}
-    </DashboardLayout>
+    </Layout>
   );
 }

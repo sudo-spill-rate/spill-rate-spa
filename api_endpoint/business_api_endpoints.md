@@ -17,7 +17,6 @@
 | `PATCH` | `/v1/api/business/:id` | Authenticated (Owner) | Update business information and optional image replacement |
 | `DELETE` | `/v1/api/business/:id` | Authenticated (Owner) | Delete business, associated reviews, and Cloudinary assets |
 | `GET` | `/v1/api/business/:id/analytics` | Authenticated (Owner) | Comprehensive business owner analytics dashboard metrics |
-| `GET` | `/v1/api/business/:id/reviews/export` | Authenticated (Owner) | Export all reviews to downloadable CSV file |
 
 ---
 
@@ -279,14 +278,4 @@ Provides deep reputation analytics, rating distributions, monthly trends, and re
   }
   ```
 
----
 
-## 9. Export Reviews to CSV
-### `GET /v1/api/business/:id/reviews/export`
-
-Exports all business reviews into a downloadable `.csv` file.
-
-* **Headers:** `Authorization: Bearer <access_token>`
-* **Response (`200 OK`):**
-  * **Content-Type:** `text/csv; charset=utf-8`
-  * **Content-Disposition:** `attachment; filename="kape-balangay-reviews-2026-10-14.csv"`

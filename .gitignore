@@ -25,3 +25,8 @@ dist-ssr
 
 .env
 .antigravity/
+
+# Google Service Account keys
+spillrate-*.json
+*.key.json
+credentials/

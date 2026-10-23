@@ -32,12 +32,12 @@ export default function StorefrontWizardForm({
 }) {
   const navigate = useNavigate();
   const { createBusiness, isCreating } = useBusinessProfile();
-  const { businesses, refetch } = useBusinessDirectory();
-  const { categories } = useCategories();
+  const { businesses, isLoading: isBusinessesLoading, refetch } = useBusinessDirectory();
+  const { categories, isLoading: isCategoriesLoading } = useCategories();
 
   const businessCount = businesses?.length || 0;
   const quotaLimit = 5;
-  const isAtQuota = businessCount >= quotaLimit;
+  const isAtQuota = !isBusinessesLoading && businessCount >= quotaLimit;
 
   const [formData, setFormData] = useState({
     name: "",
@@ -182,30 +182,61 @@ export default function StorefrontWizardForm({
   const descriptionLength = formData.description.length;
   const isOverCharLimit = descriptionLength > 300;
 
+  // Loading Skeleton State while storefronts or profile quota resolves
+  if (isBusinessesLoading) {
+    return (
+      <div
+        className="bg-white rounded-xl border border-slate-200/90 p-4 sm:p-6 shadow-xs animate-pulse space-y-4"
+        aria-busy="true"
+        aria-label="Loading storefront registration form"
+      >
+        <div className="flex items-center justify-between pb-3.5 border-b border-slate-100">
+          <div className="space-y-1.5">
+            <div className="h-5 w-48 bg-slate-200 rounded" />
+            <div className="h-3 w-64 bg-slate-100 rounded" />
+          </div>
+          <div className="h-6 w-20 bg-slate-100 rounded-full" />
+        </div>
+        <div className="space-y-4 pt-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <div className="h-14 bg-slate-100 rounded-lg" />
+            <div className="h-14 bg-slate-100 rounded-lg" />
+          </div>
+          <div className="h-24 bg-slate-100 rounded-lg" />
+          <div className="h-14 bg-slate-100 rounded-lg" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            <div className="h-14 bg-slate-100 rounded-lg" />
+            <div className="h-14 bg-slate-100 rounded-lg" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Quota Reached View
   if (isAtQuota) {
     return (
       <div
         role="alert"
-        className="bg-white rounded-xl border border-amber-200 p-5 sm:p-6 shadow-xs text-center space-y-3"
+        className="bg-white rounded-xl border border-amber-200/90 p-6 sm:p-8 shadow-xs text-center space-y-3.5"
       >
-        <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center mx-auto">
-          <AlertCircle className="w-5 h-5" aria-hidden="true" />
+        <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center mx-auto shadow-2xs">
+          <AlertCircle className="w-6 h-6" aria-hidden="true" />
         </div>
-        <div>
-          <h2 className="text-sm font-bold text-slate-900">
-            Account Quota Limit Reached
+        <div className="space-y-1">
+          <h2 className="text-base font-bold text-slate-900">
+            Account Quota Limit Reached ({quotaLimit} of {quotaLimit})
           </h2>
-          <p className="mt-1 text-xs text-slate-600 max-w-md mx-auto leading-relaxed">
-            You have already registered the maximum limit of {quotaLimit} active storefronts on your account. Manage your existing storefronts or contact support for a quota upgrade.
+          <p className="text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
+            You have already registered the maximum limit of {quotaLimit} active storefronts on this account. Manage existing storefronts or remove inactive profiles to register a new one.
           </p>
         </div>
-        <div className="pt-1">
+        <div className="pt-2">
           <Link
             to={quotaDashboardPath}
-            className="inline-flex items-center justify-center px-4 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg transition-colors min-h-[40px] shadow-2xs focus:outline-none focus:ring-2 focus:ring-teal-600"
+            className="inline-flex items-center justify-center px-4 py-2.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 active:bg-slate-100 rounded-xl transition-colors min-h-[44px] shadow-2xs focus:outline-none focus:ring-2 focus:ring-teal-700"
           >
-            Return to Dashboard
+            Return to Storefronts
           </Link>
         </div>
       </div>
@@ -213,12 +244,12 @@ export default function StorefrontWizardForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-3">
+    <form onSubmit={handleSubmit} noValidate className="w-full">
       {/* Server Error Alert */}
       {serverError && (
         <div
           role="alert"
-          className="p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-900 flex items-start gap-2.5 shadow-xs"
+          className="mb-3.5 p-3.5 rounded-xl bg-red-50 border border-red-200 text-red-900 flex items-start gap-2.5 shadow-xs"
         >
           <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" aria-hidden="true" />
           <div className="text-xs leading-relaxed">
@@ -227,170 +258,176 @@ export default function StorefrontWizardForm({
         </div>
       )}
 
-      {/* Single Consolidated Registration Card */}
+      {/* Main Registration Card */}
       <div className="bg-white rounded-xl border border-slate-200/90 shadow-xs overflow-hidden">
-        {/* Card Header: Compact title & Quota Badge */}
-        <div className="px-4 py-3 bg-slate-50/70 border-b border-slate-100 flex items-center justify-between gap-3">
-          <div>
-            <h1 className="text-sm font-bold text-slate-900 tracking-tight">
+        {/* Card Header: Title & Quota Counter */}
+        <div className="px-4 py-3.5 bg-slate-50/80 border-b border-slate-200/80 flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <h1 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
               Register New Storefront
             </h1>
-            <p className="text-[11px] text-slate-500">
-              Create a public profile to start collecting verified customer feedback.
+            <p className="text-xs text-slate-600 truncate sm:whitespace-normal">
+              Create a public storefront to collect verified customer ratings and feedback.
             </p>
           </div>
-          <span className="text-[11px] font-semibold text-slate-700 bg-white border border-slate-200 px-2.5 py-1 rounded-full shadow-2xs shrink-0">
+          <span className="text-xs font-semibold text-teal-800 bg-teal-50 border border-teal-200 px-2.5 py-1 rounded-full shadow-2xs shrink-0">
             Slot {businessCount + 1} of {quotaLimit}
           </span>
         </div>
 
-        {/* Form Body: Compact grid layout */}
-        <div className="p-4 sm:p-5 space-y-3.5">
-          {/* Row 1: Name and Category in 2 columns */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
-            {/* Storefront Name */}
+        {/* Form Body: Grouped in Logical Sections */}
+        <div className="p-4 sm:p-6 space-y-6">
+          {/* Section 1: Storefront Profile */}
+          <div className="space-y-3.5">
+            <div className="border-b border-slate-100 pb-1.5">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                Storefront Profile
+              </h2>
+            </div>
+
+            {/* Row 1: Storefront Name & Industry Category */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              {/* Storefront Name */}
+              <div>
+                <label
+                  htmlFor="biz-name"
+                  className="block text-xs font-semibold text-slate-800 mb-1"
+                >
+                  Storefront Name <span className="text-red-500">*</span>
+                </label>
+                <input
+                  id="biz-name"
+                  name="name"
+                  type="text"
+                  autoComplete="organization"
+                  required
+                  disabled={isCreating}
+                  value={formData.name}
+                  onChange={handleInputChange}
+                  placeholder="e.g., Kape Balangay Roastery"
+                  aria-invalid={!!formErrors.name}
+                  aria-describedby={formErrors.name ? "name-error" : undefined}
+                  className={`w-full px-3 py-2 text-base sm:text-sm rounded-lg border bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-700 min-h-[44px] transition-colors ${
+                    formErrors.name
+                      ? "border-red-500 focus:border-red-500"
+                      : "border-slate-300 focus:border-teal-700"
+                  } disabled:bg-slate-50 disabled:text-slate-400`}
+                />
+                {formErrors.name ? (
+                  <p id="name-error" className="mt-1 text-xs text-red-600 font-medium">
+                    {formErrors.name}
+                  </p>
+                ) : (
+                  <p className="mt-1 text-[11px] text-slate-500 flex items-center gap-1 truncate">
+                    <span>Public URL:</span>
+                    <span className="font-mono text-slate-700 font-medium truncate">
+                      /business/{slugPreview}
+                    </span>
+                  </p>
+                )}
+              </div>
+
+              {/* Industry Category */}
+              <div>
+                <label
+                  htmlFor="biz-category"
+                  className="block text-xs font-semibold text-slate-800 mb-1"
+                >
+                  Industry Category <span className="text-red-500">*</span>
+                </label>
+                <select
+                  id="biz-category"
+                  name="category"
+                  autoComplete="off"
+                  required
+                  disabled={isCreating}
+                  value={formData.category}
+                  onChange={handleInputChange}
+                  aria-invalid={!!formErrors.category}
+                  aria-describedby={formErrors.category ? "category-error" : undefined}
+                  className={`w-full px-3 py-2 text-base sm:text-sm rounded-lg border bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-700 min-h-[44px] transition-colors ${
+                    formErrors.category
+                      ? "border-red-500 focus:border-red-500"
+                      : "border-slate-300 focus:border-teal-700"
+                  } disabled:bg-slate-50 disabled:text-slate-400`}
+                >
+                  <option value="">Select industry category...</option>
+                  {categories.map((cat) => {
+                    const catName = typeof cat === "string" ? cat : cat.name;
+                    const catKey = typeof cat === "string" ? cat : cat.id || cat.slug || cat.name;
+                    return (
+                      <option key={catKey} value={catName}>
+                        {catName}
+                      </option>
+                    );
+                  })}
+                </select>
+                {formErrors.category && (
+                  <p id="category-error" className="mt-1 text-xs text-red-600 font-medium">
+                    {formErrors.category}
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Row 2: Storefront Description */}
             <div>
-              <label
-                htmlFor="biz-name"
-                className="block text-xs font-semibold text-slate-800 mb-1"
-              >
-                Storefront Name <span className="text-red-500">*</span>
-              </label>
-              <input
-                id="biz-name"
-                name="name"
-                type="text"
-                autoComplete="organization"
+              <div className="flex items-center justify-between mb-1">
+                <label
+                  htmlFor="biz-description"
+                  className="block text-xs font-semibold text-slate-800"
+                >
+                  Storefront Description <span className="text-red-500">*</span>
+                </label>
+                <span
+                  className={`text-[11px] font-mono font-medium ${
+                    isOverCharLimit
+                      ? "text-red-600 font-bold"
+                      : descriptionLength > 270
+                      ? "text-amber-600"
+                      : "text-slate-500"
+                  }`}
+                >
+                  {descriptionLength} / 300
+                </span>
+              </div>
+              <textarea
+                id="biz-description"
+                name="description"
+                autoComplete="off"
+                rows={2}
                 required
                 disabled={isCreating}
-                value={formData.name}
+                value={formData.description}
                 onChange={handleInputChange}
-                placeholder="e.g., Kape Balangay Roastery"
-                aria-invalid={!!formErrors.name}
-                aria-describedby={formErrors.name ? "name-error" : undefined}
-                className={`w-full px-3 py-2 text-base sm:text-sm rounded-lg border bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[44px] sm:min-h-[40px] ${
-                  formErrors.name
+                placeholder="Describe your products, services, and specialties in 1 to 2 clear sentences."
+                aria-invalid={!!formErrors.description || isOverCharLimit}
+                aria-describedby={formErrors.description ? "desc-error" : undefined}
+                className={`w-full px-3 py-2 text-base sm:text-sm rounded-lg border bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-700 transition-colors ${
+                  formErrors.description || isOverCharLimit
                     ? "border-red-500 focus:border-red-500"
-                    : "border-slate-300 focus:border-teal-600"
+                    : "border-slate-300 focus:border-teal-700"
                 } disabled:bg-slate-50 disabled:text-slate-400`}
               />
-              {formErrors.name ? (
-                <p id="name-error" className="mt-1 text-xs text-red-600">
-                  {formErrors.name}
-                </p>
-              ) : (
-                <p className="mt-1 text-[11px] text-slate-500 flex items-center gap-1 truncate">
-                  <span>Slug:</span>
-                  <span className="font-mono text-slate-700 font-medium">
-                    /business/{slugPreview}
-                  </span>
+              {formErrors.description && (
+                <p id="desc-error" className="mt-1 text-xs text-red-600 font-medium">
+                  {formErrors.description}
                 </p>
               )}
             </div>
 
-            {/* Industry Category */}
-            <div>
-              <label
-                htmlFor="biz-category"
-                className="block text-xs font-semibold text-slate-800 mb-1"
-              >
-                Industry Category <span className="text-red-500">*</span>
-              </label>
-              <select
-                id="biz-category"
-                name="category"
-                autoComplete="off"
-                required
-                disabled={isCreating}
-                value={formData.category}
-                onChange={handleInputChange}
-                aria-invalid={!!formErrors.category}
-                aria-describedby={formErrors.category ? "category-error" : undefined}
-                className={`w-full px-3 py-2 text-xs sm:text-sm rounded-lg border bg-white text-slate-900 focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[40px] ${
-                  formErrors.category
-                    ? "border-red-500 focus:border-red-500"
-                    : "border-slate-300 focus:border-teal-600"
-                } disabled:bg-slate-50 disabled:text-slate-400`}
-              >
-                <option value="">Select industry category...</option>
-                {categories.map((cat) => {
-                  const catName = typeof cat === "string" ? cat : cat.name;
-                  const catKey = typeof cat === "string" ? cat : cat.id || cat.slug || cat.name;
-                  return (
-                    <option key={catKey} value={catName}>
-                      {catName}
-                    </option>
-                  );
-                })}
-              </select>
-              {formErrors.category && (
-                <p id="category-error" className="mt-1 text-xs text-red-600">
-                  {formErrors.category}
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* Row 2: Description */}
-          <div>
-            <div className="flex items-center justify-between mb-1">
-              <label
-                htmlFor="biz-description"
-                className="block text-xs font-semibold text-slate-800"
-              >
-                Storefront Description <span className="text-red-500">*</span>
-              </label>
-              <span
-                className={`text-[11px] font-mono font-medium ${
-                  isOverCharLimit
-                    ? "text-red-600 font-bold"
-                    : descriptionLength > 270
-                    ? "text-amber-600"
-                    : "text-slate-400"
-                }`}
-              >
-                {descriptionLength} / 300
-              </span>
-            </div>
-            <textarea
-              id="biz-description"
-              name="description"
-              autoComplete="off"
-              rows={2}
-              required
-              disabled={isCreating}
-              value={formData.description}
-              onChange={handleInputChange}
-              placeholder="Describe your products, services, and specialties in 1 to 2 clear sentences."
-              aria-invalid={!!formErrors.description || isOverCharLimit}
-              aria-describedby={formErrors.description ? "desc-error" : undefined}
-              className={`w-full px-3 py-2 text-base sm:text-sm rounded-lg border bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 ${
-                formErrors.description || isOverCharLimit
-                  ? "border-red-500 focus:border-red-500"
-                  : "border-slate-300 focus:border-teal-600"
-              } disabled:bg-slate-50 disabled:text-slate-400`}
-            />
-            {formErrors.description && (
-              <p id="desc-error" className="mt-1 text-xs text-red-600">
-                {formErrors.description}
-              </p>
-            )}
-          </div>
-
-          {/* Row 3: Logo Upload & Contact in a compact 2-column grid */}
-          <div className="pt-3 border-t border-slate-100 grid grid-cols-1 md:grid-cols-2 gap-3.5">
-            {/* Column 1: Logo or Storefront Photo */}
+            {/* Row 3: Storefront Logo or Photo */}
             <div>
               <label className="block text-xs font-semibold text-slate-800 mb-1">
-                Storefront Logo or Photo <span className="text-xs font-normal text-slate-400">(Optional)</span>
+                Storefront Logo or Photo <span className="text-xs font-normal text-slate-500">(Optional)</span>
               </label>
 
               {imagePreview ? (
-                <div className="flex items-center gap-3 p-2.5 bg-slate-50 rounded-lg border border-slate-200">
+                <div className="flex items-center gap-3 p-3 bg-slate-50 rounded-xl border border-slate-200">
                   <img
                     src={imagePreview}
                     alt="Logo preview"
-                    className="w-11 h-11 object-cover rounded-lg border border-slate-200 shrink-0"
+                    className="w-12 h-12 object-cover rounded-lg border border-slate-200 shrink-0 bg-white shadow-2xs"
                   />
                   <div className="flex-1 min-w-0">
                     <p className="text-xs font-semibold text-slate-900 truncate">
@@ -406,26 +443,27 @@ export default function StorefrontWizardForm({
                     type="button"
                     onClick={handleRemoveImage}
                     disabled={isCreating}
-                    className="p-1.5 text-slate-500 hover:text-red-700 hover:bg-red-50 rounded-md transition-colors min-h-[36px] min-w-[36px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-red-600 cursor-pointer"
-                    aria-label="Remove image"
+                    className="p-2.5 text-slate-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-red-600 cursor-pointer"
+                    aria-label="Remove storefront image"
+                    title="Remove storefront image"
                   >
-                    <X className="w-4 h-4" />
+                    <X className="w-4 h-4" aria-hidden="true" />
                   </button>
                 </div>
               ) : (
                 <label
                   htmlFor="biz-logo-upload"
-                  className="flex items-center gap-3 border border-dashed border-slate-300 hover:border-slate-400 rounded-lg p-2.5 cursor-pointer bg-slate-50/50 hover:bg-slate-50 transition-colors min-h-[44px]"
+                  className="flex items-center gap-3 border border-dashed border-slate-300 hover:border-teal-600 rounded-xl p-3 cursor-pointer bg-slate-50/60 hover:bg-slate-50 active:bg-slate-100 transition-colors min-h-[44px] focus-within:ring-2 focus-within:ring-teal-700 focus-within:ring-offset-2"
                 >
-                  <div className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-500 shrink-0">
-                    <Upload className="w-4 h-4 text-slate-600" aria-hidden="true" />
+                  <div className="w-10 h-10 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 shrink-0 shadow-2xs">
+                    <Upload className="w-5 h-5 text-slate-600" aria-hidden="true" />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <span className="text-xs font-semibold text-teal-700 hover:underline block truncate">
-                      Choose logo image
+                    <span className="text-xs font-semibold text-teal-800 hover:underline block truncate">
+                      Choose storefront logo or photo
                     </span>
-                    <span className="text-[10px] text-slate-400 block truncate">
-                      PNG, JPG, WebP up to 5MB
+                    <span className="text-[11px] text-slate-500 block truncate">
+                      PNG, JPG, or WebP up to 5MB
                     </span>
                   </div>
                   <input
@@ -436,18 +474,27 @@ export default function StorefrontWizardForm({
                     onChange={handleImageChange}
                     disabled={isCreating}
                     aria-label="Upload storefront logo image"
-                    className="hidden"
-                    style={{ display: "none" }}
+                    className="sr-only"
                   />
                 </label>
               )}
               {formErrors.image && (
-                <p className="mt-1 text-xs text-red-600">{formErrors.image}</p>
+                <p className="mt-1 text-xs text-red-600 font-medium">{formErrors.image}</p>
               )}
             </div>
+          </div>
 
-            {/* Column 2: Phone & Website stacked neatly */}
-            <div className="space-y-2.5">
+          {/* Section 2: Contact & Location Details */}
+          <div className="space-y-3.5 pt-2 border-t border-slate-100">
+            <div className="border-b border-slate-100 pb-1.5">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
+                Contact & Location
+              </h2>
+            </div>
+
+            {/* Row 4: Phone and Website */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+              {/* Contact Phone */}
               <div>
                 <label
                   htmlFor="biz-phone"
@@ -467,25 +514,26 @@ export default function StorefrontWizardForm({
                   placeholder="+63 917 123 4567"
                   aria-invalid={!!formErrors.phone}
                   aria-describedby={formErrors.phone ? "phone-error" : undefined}
-                  className={`w-full px-3 py-2 text-base sm:text-sm rounded-lg border bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[44px] sm:min-h-[40px] ${
+                  className={`w-full px-3 py-2 text-base sm:text-sm rounded-lg border bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-700 min-h-[44px] transition-colors ${
                     formErrors.phone
                       ? "border-red-500 focus:border-red-500"
-                      : "border-slate-300 focus:border-teal-600"
+                      : "border-slate-300 focus:border-teal-700"
                   } disabled:bg-slate-50 disabled:text-slate-400`}
                 />
                 {formErrors.phone && (
-                  <p id="phone-error" className="mt-1 text-xs text-red-600">
+                  <p id="phone-error" className="mt-1 text-xs text-red-600 font-medium">
                     {formErrors.phone}
                   </p>
                 )}
               </div>
 
+              {/* Website URL */}
               <div>
                 <label
                   htmlFor="biz-website"
                   className="block text-xs font-semibold text-slate-800 mb-1"
                 >
-                  Website URL <span className="text-xs font-normal text-slate-400">(Optional)</span>
+                  Website URL <span className="text-xs font-normal text-slate-500">(Optional)</span>
                 </label>
                 <input
                   id="biz-website"
@@ -496,46 +544,46 @@ export default function StorefrontWizardForm({
                   value={formData.website}
                   onChange={handleInputChange}
                   placeholder="https://example.com"
-                  className="w-full px-3 py-2 text-base sm:text-sm rounded-lg border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[44px] sm:min-h-[40px] disabled:bg-slate-50 disabled:text-slate-400"
+                  className="w-full px-3 py-2 text-base sm:text-sm rounded-lg border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-700 min-h-[44px] transition-colors disabled:bg-slate-50 disabled:text-slate-400"
                 />
               </div>
             </div>
-          </div>
 
-          {/* Row 4: Physical Address (full width) */}
-          <div className="pt-3 border-t border-slate-100">
-            <label
-              htmlFor="biz-address"
-              className="block text-xs font-semibold text-slate-800 mb-1"
-            >
-              Physical Address <span className="text-xs font-normal text-slate-400">(Optional)</span>
-            </label>
-            <input
-              id="biz-address"
-              name="address"
-              type="text"
-              autoComplete="street-address"
-              disabled={isCreating}
-              value={formData.address}
-              onChange={handleInputChange}
-              placeholder="e.g., 123 Rizal St., Poblacion, Makati City"
-              className="w-full px-3 py-2 text-base sm:text-sm rounded-lg border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-600 min-h-[44px] sm:min-h-[40px] disabled:bg-slate-50 disabled:text-slate-400"
-            />
+            {/* Row 5: Physical Address */}
+            <div>
+              <label
+                htmlFor="biz-address"
+                className="block text-xs font-semibold text-slate-800 mb-1"
+              >
+                Physical Address <span className="text-xs font-normal text-slate-500">(Optional)</span>
+              </label>
+              <input
+                id="biz-address"
+                name="address"
+                type="text"
+                autoComplete="street-address"
+                disabled={isCreating}
+                value={formData.address}
+                onChange={handleInputChange}
+                placeholder="e.g., 123 Rizal St., Poblacion, Makati City"
+                className="w-full px-3 py-2 text-base sm:text-sm rounded-lg border border-slate-300 bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-teal-700 min-h-[44px] transition-colors disabled:bg-slate-50 disabled:text-slate-400"
+              />
+            </div>
           </div>
         </div>
 
-        {/* Card Footer: Compact actions */}
-        <div className="px-4 py-3 bg-slate-50/70 border-t border-slate-100 flex items-center justify-between gap-3 text-xs">
-          <p className="text-[11px] text-slate-500 hidden sm:block">
-            Published immediately upon registration.
+        {/* Card Footer: Responsive actions */}
+        <div className="px-4 sm:px-6 py-3.5 bg-slate-50/80 border-t border-slate-200/80 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 text-xs">
+          <p className="text-xs text-slate-600 hidden sm:block">
+            Storefront will be published immediately upon registration.
           </p>
 
-          <div className="flex items-center gap-2 ml-auto">
+          <div className="w-full sm:w-auto flex flex-col-reverse sm:flex-row items-stretch sm:items-center gap-2.5 sm:ml-auto">
             <button
               type="button"
               onClick={handleCancelClick}
               disabled={isCreating}
-              className="px-3.5 py-2 text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 rounded-lg transition-colors min-h-[44px] sm:min-h-[40px] shadow-2xs focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2.5 text-xs font-semibold text-slate-700 bg-white border border-slate-300 hover:bg-slate-50 active:bg-slate-100 rounded-xl transition-colors min-h-[44px] shadow-2xs focus:outline-none focus:ring-2 focus:ring-teal-700 cursor-pointer disabled:opacity-50"
             >
               Cancel
             </button>
@@ -543,16 +591,16 @@ export default function StorefrontWizardForm({
             <button
               type="submit"
               disabled={isCreating || isOverCharLimit}
-              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-teal-700 hover:bg-teal-800 rounded-lg transition-colors min-h-[44px] sm:min-h-[40px] shadow-xs disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-teal-600 cursor-pointer"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-5 py-2.5 text-xs font-semibold text-white bg-teal-700 hover:bg-teal-800 active:bg-teal-900 rounded-xl transition-colors min-h-[44px] shadow-xs disabled:opacity-50 focus:outline-none focus:ring-2 focus:ring-teal-700 focus:ring-offset-2 cursor-pointer"
             >
               {isCreating ? (
                 <>
-                  <RotateCw className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
-                  <span>Registering...</span>
+                  <RotateCw className="w-4 h-4 animate-spin" aria-hidden="true" />
+                  <span>Registering storefront...</span>
                 </>
               ) : (
                 <>
-                  <Building className="w-3.5 h-3.5" aria-hidden="true" />
+                  <Building className="w-4 h-4" aria-hidden="true" />
                   <span>Register Storefront</span>
                 </>
               )}
